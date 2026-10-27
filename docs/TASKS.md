@@ -15,11 +15,11 @@ Every stage ends the same way: run `npm test`, `npm run typecheck`, `npm run bui
 
 ## Stage 1: Avatar engine (no UI)
 Port the logic from `reference/prototype.html` (REQUIREMENTS section 6).
-- [ ] `AvatarModel` type and `generateAvatar(seed, options)`.
-- [ ] Port hash, seeded random number generator, mirror and ensure helpers, the shared 5×5 base pattern.
-- [ ] The ten styles (4.2), Light background, default hue (Auto).
-- [ ] Tests: identical output for identical input; every style gives a valid model for sample names, including empty, 40 characters and non-English text.
-- [ ] Parity test: generate the cell patterns for at least five names in the prototype (run its code in Node or Playwright) and assert the engine matches them for the styles that exist in both.
+- [x] `AvatarModel` type and `generateAvatar(seed, options)`.
+- [x] Port hash, seeded random number generator, mirror and ensure helpers, the shared 5×5 base pattern.
+- [x] The ten styles (4.2), Light background, default hue (Auto).
+- [x] Tests: identical output for identical input; every style gives a valid model for sample names, including empty, 40 characters and non-English text.
+- [x] Parity test: generate the cell patterns for at least five names in the prototype (run its code in Node or Playwright) and assert the engine matches them for the styles that exist in both.
 
 ## Stage 2: Colour and Background in the engine
 - [ ] Hue override: Auto plus ten hues (4.3). Hue only; saturation and lightness stay in each style's band.
@@ -75,12 +75,15 @@ Read the phone design files (see CLAUDE.md). Requirements in 4.10.
 
 - 2026-10-27 Stage 0: the prototype was shipped at `docs/prototype.html`, not `reference/prototype.html` as CLAUDE.md says. Copied it to `reference/prototype.html` (the docs copy is left untouched); tests read the `reference/` copy.
 - 2026-10-27 Stage 0: npm resolved TypeScript 7 and Vite 8. Used a single `tsconfig.json` with `tsc --noEmit` for `typecheck` and before `vite build`, instead of project references.
+- 2026-10-27 Stage 1: `AvatarCell` has optional fields beyond x, y, height, colour and kind: `w`/`h` (sub-cell footprint for Critter pupils), `z` (3D base elevation), and `dx`/`dy`/`grow` (2D-only offset and outline growth for Sticker's shadow and outline). `AvatarModel` also carries `padding` (empty margin in cells) so every flat renderer frames the avatar the same way. Needed so renderers read nothing but the model.
+- 2026-10-27 Stage 1: the parity test compares pixels, not just cell lists: it runs the prototype's own draw functions (extracted from `reference/prototype.html`) and the new engine + canvas renderer into an in-memory raster. Invader and Aurora are compared on the Dark background, because the prototype only drew them dark.
 - 2026-10-27 Stage 0: added `@fontsource/instrument-sans` and `@fontsource/jetbrains-mono` (dependencies not in the stack list). The design uses these fonts; self-hosting them keeps the app free of third-party network requests (Principle 3, Private).
 
 ## Log
 (One short line per stage when finished: what was built, checks run, anything skipped or `[!]`.)
 
 - Stage 0: Vite + React 19 + TS strict scaffold, three / R3F / drei, Vitest, Playwright 1.64 (dev), folders, git. Smoke test, typecheck and build pass.
+- Stage 1: engine in `src/engine/` (hash, RNG, mirror/ensure, base 5×5, ten styles), canvas renderer in `src/render/canvas.ts`. 28 tests incl. pixel parity with the prototype for all ten styles over 8 names (empty, 40 chars, non-Latin) and 3 hue overrides.
 
 ## Final report
 (Fill in at the end: what works, what was skipped or blocked, what the user should look at first, known gaps.)
