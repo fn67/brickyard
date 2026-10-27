@@ -62,11 +62,11 @@ Read the phone design files (see CLAUDE.md). Requirements in 4.10.
 - [x] Verify: Playwright screenshots at 390×650 and 360×600 for each tab, the Download sheet, light and dark; compare with the phone design frames; check no horizontal or vertical page scroll.
 
 ## Stage 7: Finish
-- [ ] Go through the acceptance checklist (REQUIREMENTS section 8) item by item; tick each with the evidence (test name or screenshot path) in the log.
-- [ ] Accessibility pass: keyboard, focus states, text alternatives, contrast in both appearances, reduced motion. Fix what you find.
-- [ ] Update `docs/ARCHITECTURE.md` for 3D and the final structure.
-- [ ] `README.md`: what it is, how to run, build, test.
-- [ ] Final commit. Fill in the final report below.
+- [x] Go through the acceptance checklist (REQUIREMENTS section 8) item by item; tick each with the evidence (test name or screenshot path) in the log.
+- [x] Accessibility pass: keyboard, focus states, text alternatives, contrast in both appearances, reduced motion. Fix what you find.
+- [x] Update `docs/ARCHITECTURE.md` for 3D and the final structure.
+- [x] `README.md`: what it is, how to run, build, test.
+- [x] Final commit. Fill in the final report below.
 
 ---
 
@@ -98,6 +98,9 @@ Read the phone design files (see CLAUDE.md). Requirements in 4.10.
 - 2026-10-27 Stage 6: on the phone the preview is the design's square, except (a) in 3D and (b) on short screens (stage area under 230 px tall, e.g. 360 × 600), where it takes the full width so the "3D is available for Critter. Try it" note and the five angle chips fit on one line instead of covering the avatar. The avatar keeps the same size.
 - 2026-10-27 Stage 6: "keyboard open" is detected from the name field's focus (the design's `kbd` state hides the tab panel and the action row) and the editor sizes itself to `visualViewport.height`, so it fits above an on-screen keyboard. Playwright cannot open a real keyboard; it was simulated with focus plus a 380 px tall viewport (the design's keyboard frame).
 - 2026-10-27 Stage 6: on short phones the "Enter anything to see your avatar" label is visually hidden but kept for screen readers (design rule `max-height: 700px`).
+- 2026-10-27 Stage 7: pinch zoom is configured (OrbitControls two-finger dolly, pan off) but Playwright cannot synthesise a two-finger pinch, so it is not covered by an automated check; wheel, keyboard and button zoom are.
+- 2026-10-27 Stage 7: one verify-ui check ("app appearance never changes the avatar") failed once in the final run because it sampled the preview canvas right after it re-mounted from 3D, before its first resize-and-draw. The test now waits for the canvas to settle; it then passed in 4 runs in a row. The app itself was not changed for this.
+- 2026-10-27 Stage 7: accessibility fixes from the pass: the phone editor gained a `main` landmark, and "Try it" now moves focus to the 3D view (it used to vanish under the keyboard focus).
 
 ## Log
 (One short line per stage when finished: what was built, checks run, anything skipped or `[!]`.)
@@ -109,8 +112,42 @@ Read the phone design files (see CLAUDE.md). Requirements in 4.10.
 - Stage 4: verify-ui `export` section, 26 checks: pattern mask unchanged across hue/Dark/Transparent, cards follow Background, checkerboard, Download menu with disabled SVG/STL "Soon", PNG 512/1024/2048 real pixel sizes, RGBA with transparent corner, file name `hello-world-classic-1024.png`, Copy PNG reads back as 460×460 from the clipboard, blocked-clipboard message. Screenshots `desktop-bg-dark-blue.png`, `desktop-bg-transparent.png`, `desktop-download-menu.png`, `desktop-copied.png`, `desktop-clipboard-blocked.png`.
 - Stage 5: Critter height rule (`src/engine/heights.ts`, 4 new tests, 56 total), instanced matte boxes with contact shadow (`src/ui/Scene3D.tsx`, layout in `src/render/scene3d.ts`), orbit rotate/zoom with pan off, keyboard, presets, Reset view, 3D capture for Copy/Download, WebGL fallback. verify-ui `three` section: 51 checks (presets × Light/Dark/Transparent, drag, wheel, pan attempts keep it centred, Reset restores the exact frame, keys, downloads follow the angle, transparent 3D PNG, 460 px copy, no-WebGL fallback). Screenshots `docs/screenshots/critter-3d-{light,dark,transparent}-{front,three-quarter,top,side}.png`. Only console warnings (three.js `Clock` deprecation from R3F, SwiftShader ReadPixels notices), no errors.
 - Stage 6: phone editor (`src/ui/PhoneEditor.tsx`, `PhoneTabs`, `DownloadSheet`, `src/styles/phone.css`). verify-ui `phone` section, 93 checks at 390×650 and 360×600 in light and dark: every tab, fixed dock position across tabs, no vertical or horizontal page scroll (also in 3D and with the keyboard open), bottom sheet with disabled SVG/STL, sheet download, 3D chips, touch hint, style/variation/colour/background/copy flows, arrow keys on tabs, 400 px wide desktop has no scroll. Fixed during review: Download icon squeezed at 360 px, 3D note and chips wrapping over the avatar. Screenshots `docs/screenshots/phone-*.png`.
+- Stage 7: acceptance checklist (REQUIREMENTS 8), each with evidence:
+  - [x] Same avatar for `hello-world` in every style, after reload and on another machine: engine is pure and seeded only by the name (`tests/engine.test.ts` "gives identical output for identical input"; `tests/parity.test.ts` pixel parity with the prototype for all ten styles).
+  - [x] Background changes colours only: `tests/options.test.ts` "never change which cells are filled"; verify-ui `export` "changing background leaves the pattern unchanged", "Transparent leaves the pattern unchanged".
+  - [x] Colour changes hue only: `tests/options.test.ts` "a swatch overrides only the hue"; verify-ui `export` "changing colour leaves the pattern unchanged".
+  - [x] Auto returns to the name's colour: `tests/options.test.ts` "Auto returns to the name's own colour"; verify-ui `export` PNG after picking Auto matches the Light preview.
+  - [x] All ten styles in Light and Dark, Invader and Aurora readable in Light: `tests/options.test.ts` lightness band and contrast tests (Invader/Aurora ≥ 2.5:1 on Light); `docs/screenshots/desktop-1440-light.png`, `desktop-bg-dark-blue.png`.
+  - [x] Transparent shows a checkerboard and gives a PNG with transparency: verify-ui `export` "checkerboard behind the preview", "PNG has an alpha channel", "Transparent PNG corner is transparent"; `three` "Transparent 3D download has a transparent background"; `docs/screenshots/desktop-bg-transparent.png`.
+  - [x] 3D works for Critter, disabled with "3D is available for Critter." for the other nine: verify-ui `desktop` "3D switch disabled for Classic", "3D note visible", "3D switch enabled for Critter"; `three` "another style returns to 2D".
+  - [x] 3D drag rotates, wheel zooms, no pan, Reset view, four presets: verify-ui `three` (drag, wheel, right/shift/ctrl-drag keep it centred, Reset restores the exact frame, four distinct presets); `docs/screenshots/critter-3d-*.png`. Pinch: configured, not automatable (see Decisions).
+  - [x] Copy PNG and Download 512/1024/2048 match the screen, incl. the 3D angle: verify-ui `export` (pixel sizes, Light preview pixel, 460 px clipboard image) and `three` ("download follows the camera angle", 3D copy 460 px).
+  - [x] SVG and STL visible, disabled, "Soon": verify-ui `export` and `phone`; `docs/screenshots/desktop-download-menu.png`, `phone-390x650-light-download-sheet.png`.
+  - [x] No circle crop; the only moon/sun control is the header toggle: no crop code in `src/` (only `<circle>` is in the sun icon); screenshots.
+  - [x] Toggle switches the whole app immediately, no reload: verify-ui `desktop` "toggle switches to dark", "toggle label flips".
+  - [x] First visit follows the system; choice survives a reload: verify-ui `desktop` "first visit follows a dark system", "choice survives a reload".
+  - [x] No flash of the light theme when reloading in dark: verify-ui `desktop` "dark theme applied before the app script runs", "page background is dark before first app paint" (app bundle held back while sampling).
+  - [x] App appearance never changes the avatar, the Background setting, the 3D scene or exports: verify-ui `desktop` "app appearance never changes the avatar"; `export` "never changes the exported PNG", "never changes the avatar Background setting"; `three` "never changes the 3D scene or its background".
+  - [x] 400 px wide with no horizontal scroll, and keyboard only: verify-ui `phone` "400 px wide: no page scroll" plus every phone size; `keyboard` and `a11y` sections (every control reached with Tab, visible focus ring, Enter picks a style); `docs/screenshots/desktop-focus-visible.png`.
+  - [x] Empty, 40-character and non-English names work: `tests/engine.test.ts` sample names (empty, 40 × "x", José Martí, 山田太郎, مرحبا, emoji); verify-ui `desktop` "empty name uses hello-world", "non-English name", 40-character limit.
+- Stage 7: accessibility pass (verify-ui `a11y`, 26 checks: text alternatives on every avatar, one main landmark per layout, labelled field, named buttons, focus after "Try it", no transitions or animations with reduced motion, phone keyboard reach) and `tests/ui-contrast.test.ts` (all text tokens ≥ 4.5:1 in both appearances). ARCHITECTURE.md updated for 3D and the final structure; README.md written. Final run: 59 unit tests, typecheck and build pass; `npm run verify:ui` 261 checks pass, 0 console errors.
 
 ## Final report
 (Fill in at the end: what works, what was skipped or blocked, what the user should look at first, known gaps.)
 
--
+**What works.** Everything in the MVP scope of `REQUIREMENTS.md`: name field with Shuffle and the 40-character limit; ten styles ported from the prototype (pixel-identical to it); Colour (Auto + ten hues) and Background (Light, Dark, Transparent) applied to every card, preview, size preview, variation, the 3D scene and exports; six variations with "Using variation N" and "Use original"; Copy PNG (460 px) with Copied / Clipboard blocked messages; Download menu with PNG 512 / 1024 / 2048 and disabled SVG / STL "Soon" items; a 3D view for Critter (matte instanced boxes, raised eyes and mouth, pupils on top, soft ground shadow, rotate and zoom with no pan, Front / 3/4 / Top / Side, Reset view, keyboard, exports at the current angle, 2D fallback without WebGL); the app light/dark toggle (follows the system first, remembers the choice, no flash); the single-screen phone editor with Style / Variations / Colour tabs and a Download bottom sheet. Checks: 59 Vitest tests, strict typecheck, production build and 261 Playwright checks all pass with no console errors.
+
+**Nothing was blocked or skipped.** No `[!]` items.
+
+**Look at first.**
+1. `npm run dev`, then click "Try it" under the Preview switch to see Critter in 3D.
+2. `docs/screenshots/` for every state (desktop light/dark, backgrounds, menu, 3D presets in each background, phone tabs and sheet at 390×650 and 360×600, keyboard open).
+3. The Decisions list above, especially where the design and REQUIREMENTS differed (placeholder, hue values, Shuffle words, card notes) and the 3D "Top" angle.
+
+**Known gaps.**
+- Pinch zoom is configured but untested by automation (Playwright cannot pinch). Worth a try on a real phone.
+- The prototype's own Light palettes are kept exactly, so yellow-ish avatars on Light have low contrast (about 1.4:1), as they always did. Only the new Invader and Aurora Light palettes were tuned for contrast.
+- The design's canvas frames could not be rendered as images here (Claude Design format), so the comparison was against the design's markup and inline styles rather than pixel screenshots of the design.
+- On the smallest phone (360 × 600) the 3D view is short (about 130 px tall); pinch or the zoom keys make it bigger.
+- The 3D chunk (three.js + drei) is about 935 kB (250 kB gzip). It only loads when 3D is opened.
+- Console shows warnings (not errors) from libraries in 3D: three.js `Clock` deprecation inside R3F, and SwiftShader "ReadPixels" performance notices in headless Chrome.

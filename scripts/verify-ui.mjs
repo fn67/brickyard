@@ -140,18 +140,22 @@ sections.desktop = async (browser) => {
 
   // Try it selects Critter.
   await page.getByRole('button', { name: 'Try it' }).click();
-  check((await alt()) === null || (await page.locator('.style-tile[aria-pressed="true"]').innerText()).includes('Critter'), 'Try it selects Critter');
+  check((await page.locator('.style-tile[aria-pressed="true"]').innerText()).includes('Critter'), 'Try it selects Critter');
+  check((await page.getByRole('button', { name: '3D', exact: true }).getAttribute('aria-pressed')) === 'true', 'Try it switches to 3D');
   check(!(await page.getByRole('button', { name: '3D', exact: true }).isDisabled()), '3D switch enabled for Critter');
   await page.locator('.style-tile', { hasText: 'Classic' }).click();
   check((await page.getByRole('button', { name: '2D', exact: true }).getAttribute('aria-pressed')) === 'true', 'another style returns to 2D');
 
   // App appearance toggle: immediate, remembered, independent of the avatar.
+  // The preview canvas was just re-mounted (back from 3D); let it size itself before sampling.
+  await page.waitForTimeout(400);
   const before = await page.locator('.preview-stage canvas').evaluate((c) => c.toDataURL());
   const toggle = page.getByRole('button', { name: 'Switch app to dark mode' });
   check(await toggle.isVisible(), 'dark mode toggle visible with the light-mode label');
   await toggle.click();
   check((await page.evaluate(() => document.documentElement.dataset.theme)) === 'dark', 'toggle switches to dark');
   check(await page.getByRole('button', { name: 'Switch app to light mode' }).isVisible(), 'toggle label flips');
+  await page.waitForTimeout(400);
   const after = await page.locator('.preview-stage canvas').evaluate((c) => c.toDataURL());
   check(before === after, 'app appearance never changes the avatar');
   await page.reload();
@@ -291,13 +295,21 @@ sections.export = async (browser) => {
 
   await page.getByRole('button', { name: 'Light', exact: true }).click();
   await page.getByRole('button', { name: 'Auto, colour from the name' }).click();
+  let lightAppPng = null;
   for (const size of [512, 2048]) {
     const d = await downloadVia(page, size);
     const info = pngInfo(d.path);
     check(info.width === size && info.height === size, `PNG ${size} is ${size} px`);
     check((await pngPixel(page, d.path, 2, 2)).join() === '240,240,240,255', `PNG ${size} matches the Light preview`);
+    if (size === 512) lightAppPng = info.bytes;
     rmSync(d.path);
   }
+  await page.getByRole('button', { name: 'Switch app to dark mode' }).click();
+  const darkApp = await downloadVia(page, 512);
+  check(pngInfo(darkApp.path).bytes.equals(lightAppPng), 'app dark mode never changes the exported PNG');
+  check((await page.getByRole('button', { name: 'Light', exact: true }).getAttribute('aria-pressed')) === 'true', 'app dark mode never changes the avatar Background setting');
+  rmSync(darkApp.path);
+  await page.getByRole('button', { name: 'Switch app to light mode' }).click();
 
   // Copy PNG.
   await page.getByRole('button', { name: 'Copy PNG' }).click();
@@ -482,6 +494,17 @@ sections.three = async (browser) => {
   });
   check(clip[0] === 460 && clip[1] === 460, '3D Copy PNG is 460 px');
 
+  // The app appearance never changes the 3D scene.
+  await page.getByRole('button', { name: 'Light', exact: true }).click();
+  await presetBtn('Front').click();
+  await page.waitForTimeout(400);
+  const sceneLightApp = await sceneStats(page);
+  await page.getByRole('button', { name: 'Switch app to dark mode' }).click();
+  await page.waitForTimeout(400);
+  const sceneDarkApp = await sceneStats(page);
+  check(sceneDarkApp.url === sceneLightApp.url, 'app dark mode never changes the 3D scene or its background');
+  await page.getByRole('button', { name: 'Switch app to light mode' }).click();
+
   // Leaving Critter returns to 2D.
   await page.locator('.style-tile', { hasText: 'Invader' }).click();
   check((await page.locator('.scene3d').count()) === 0, 'another style returns to 2D');
@@ -647,6 +670,58 @@ sections.keyboard = async (browser) => {
   await page.locator('.style-tile', { hasText: 'Dither' }).focus();
   await shot(page, 'desktop-focus-visible');
   await context.close();
+};
+
+sections.a11y = async (browser) => {
+  console.log('Accessibility');
+  for (const [w, h, touch] of [[1440, 900, false], [390, 650, true]]) {
+    const { page, context } = await newPage(browser, { width: w, height: h, touch });
+    const tag = w + 'px';
+    const canv = await page.locator('canvas').evaluateAll((cs) =>
+      cs.map((c) => ({ role: c.getAttribute('role'), label: c.getAttribute('aria-label'), hidden: c.getAttribute('aria-hidden') })),
+    );
+    check(canv.every((c) => (c.role === 'img' && c.label) || c.hidden === 'true'), `${tag}: every avatar has a text alternative or is marked decorative`);
+    check(canv.filter((c) => c.role === 'img').length === 1, `${tag}: one labelled preview image`);
+    check((await page.locator('main').count()) === 1, `${tag}: one main landmark`);
+    check((await page.locator('h1').innerText()) === 'Brickyard', `${tag}: h1 is Brickyard`);
+    check((await page.locator('#name').evaluate((el) => el.labels?.[0]?.textContent?.trim())) === 'Enter anything to see your avatar', `${tag}: name field has its label`);
+    const unnamed = await page.locator('button').evaluateAll((bs) =>
+      bs.filter((b) => !(b.getAttribute('aria-label') || b.textContent?.trim())).map((b) => b.outerHTML.slice(0, 80)),
+    );
+    check(unnamed.length === 0, `${tag}: every button has an accessible name ${unnamed.join(' ')}`);
+    // "Try it" moves focus to the 3D view instead of dropping it.
+    await page.getByRole('button', { name: 'Try it' }).focus();
+    await page.keyboard.press('Enter');
+    await page.waitForSelector('.scene3d canvas');
+    await page.waitForTimeout(300);
+    const focused = await page.evaluate(() => document.activeElement?.className ?? '');
+    check(String(focused).includes('scene3d'), `${tag}: Try it moves focus to the 3D view (got ${focused})`);
+    await context.close();
+  }
+
+  // Reduced motion: no transitions, and nothing animates.
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  await page.goto(URL);
+  await page.waitForSelector('#name');
+  const durations = await page.locator('.btn, .tile, .seg, .swatch').evaluateAll((els) =>
+    els.map((e) => getComputedStyle(e).transitionDuration).filter((d) => d !== '0s'),
+  );
+  check(durations.length === 0, 'reduced motion: no transitions');
+  check((await page.evaluate(() => document.getAnimations().length)) === 0, 'reduced motion: no running animations');
+  await ctx.close();
+
+  // Phone: every control reachable with the keyboard.
+  const { page: pp, context: pc } = await newPage(browser, { width: 390, height: 650 });
+  const seen = new Set();
+  for (let i = 0; i < 30; i++) {
+    await pp.keyboard.press('Tab');
+    seen.add(await pp.evaluate(() => document.activeElement?.getAttribute('aria-label') || document.activeElement?.textContent?.trim() || document.activeElement?.id));
+  }
+  for (const want of ['Switch app to dark mode', 'name', 'Shuffle', 'Try it', '2D', 'Copy PNG', 'Download', 'Classic style, 5×5', 'Style']) {
+    check([...seen].some((x) => x && x.startsWith(want)), 'phone keyboard reaches: ' + want);
+  }
+  await pc.close();
 };
 
 const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });

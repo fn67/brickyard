@@ -5,6 +5,7 @@ import { avatarAlt } from './avatarText';
 import { BackgroundControl } from './BackgroundControl';
 import { CopyIcon } from './icons';
 import { DownloadMenu } from './DownloadMenu';
+import { tryCritterAndFocus } from './focus';
 import { ModeSwitch } from './ModeSwitch';
 import { Stage } from './Stage';
 import { StatusMessage } from './StatusMessage';
@@ -35,7 +36,7 @@ export function PreviewPanel({ state, exporter, webgl, scene, viewControls }: Pr
         <p id="note3d" className="note">
           3D is available for Critter.
           {webgl && (
-            <button type="button" className="link" onClick={state.tryCritter}>
+            <button type="button" className="link" onClick={() => tryCritterAndFocus(state.tryCritter)}>
               Try it
             </button>
           )}

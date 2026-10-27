@@ -14,8 +14,14 @@ One page on what was actually built. Behaviour and copy live in `REQUIREMENTS.md
 | `src/engine/generate.ts` | `generateAvatar(seed, { style, hue, background })`. |
 | `src/engine/catalog.ts` | Style names, grid labels, notes, which style has 3D, the ten hues. |
 | `src/engine/names.ts` | Default name, Shuffle words, variation helpers (`:1`, `:2` …). |
-| `src/render/` | Renderers that read an `AvatarModel` and nothing else. |
-| `tests/` | Vitest tests, including pixel parity with `reference/prototype.html`. |
+| `src/engine/heights.ts` | 3D height rules per style (only Critter in the MVP). |
+| `src/render/canvas.ts` | Flat renderer: `drawAvatar(ctx, model, size)`. |
+| `src/render/scene3d.ts` | 3D layout: model cells → box matrices and colours, ground height, camera offsets. |
+| `src/render/presets.ts` | Angle presets and zoom limits (no three.js, so the main bundle stays small). |
+| `src/ui/` | React components and hooks (see "Interface" below). |
+| `src/styles/` | `tokens.css` (light and dark CSS variables), `base.css`, `desktop.css`, `phone.css`. |
+| `tests/` | Vitest tests, including pixel parity with `reference/prototype.html` and UI token contrast. |
+| `scripts/verify-ui.mjs` | Playwright checks and screenshots (`npm run verify:ui`). |
 
 ## The model
 
@@ -64,10 +70,49 @@ Every renderer reads only the model.
 - `src/render/canvas.ts` — `drawAvatar(ctx, model, size)`: unit `u = size / (width + 2·padding)`,
   cell edges rounded to whole pixels so neighbours never leave hairline gaps. Used for cards,
   previews, variations, Copy PNG and Download PNG.
-- 3D (Critter) — see the 3D section, added in Stage 5.
+- `src/render/scene3d.ts` + `src/ui/Scene3D.tsx` — the 3D view (below).
+
+## 3D (Critter only)
+
+- **Heights.** `generateAvatar` runs the style's rule from `HEIGHT_RULES` (`heights.ts`) over the
+  cells. Critter: body 1, eyes and mouth 1.25, pupils 0.5 × 0.5 blocks 0.2 deep with `z = 1.25`, on
+  top of their eye. Styles without a rule keep height 1 and never reach the 3D view.
+- **Layout.** `layoutBlocks(model)` turns every cell with `height > 0` into one box: x right, y up
+  (grid row 0 at the top), z towards the viewer, so the Front preset shows the 2D face.
+- **Scene.** One `InstancedMesh` of unit boxes with `meshLambertMaterial` (matte, no studs or
+  bevels), hemisphere + two directional lights, drei `ContactShadows` on the ground. The scene
+  background is the model's background; Transparent has no background and no shadow plane.
+- **Camera.** Perspective, 35° fov, orbiting a target in the middle of the avatar. drei
+  `OrbitControls` with pan off, no damping, distance 11–36. Presets set azimuth/elevation
+  (Front 0/0, 3/4 32/22, Top 0/70, Side 90/0). Arrow keys rotate 10°, +/− zoom. `frameloop="demand"`:
+  nothing renders unless something changes, so there is no animation.
+- **Capture.** While 3D is shown it registers a `Capture` (`size → canvas`) that resizes the WebGL
+  drawing buffer to the export size for one frame, renders the current camera, and copies it out.
+  Copy PNG and Download PNG use it, so exports match the on-screen angle.
+- **Loading and fallback.** `Scene3D` is lazy-loaded (three.js is a separate chunk). If WebGL is
+  missing, or the view throws (`ErrorBoundary`), the app stays in 2D and says
+  "3D is not available on this device."
+- **Adding 3D to another style.** Add a height rule for it in `HEIGHT_RULES` and set `has3d` in
+  `catalog.ts`. No renderer changes.
+
+## Interface
+
+- `App.tsx` picks the layout: the desktop layout (`Header`, `NameField`, `PreviewPanel`,
+  `StylesPanel`) or, below 641 px wide, `PhoneEditor` (single screen, tabs, bottom sheet).
+- State lives in hooks shared by both layouts: `useAvatarState` (name field, style, hue,
+  background, view; derives the model and the variation names), `useExport` (Copy / Download,
+  messages), `useView3d` (the single 3D scene and its controls), `useAppearance` (app light/dark).
+- **App appearance.** Colours are CSS variables in `tokens.css`, with dark values under
+  `prefers-color-scheme` (when no choice is saved) and under `[data-theme='dark']`. The toggle
+  saves the choice in `localStorage` (`brickyard-appearance`); a tiny inline script in `index.html`
+  sets `data-theme` before first paint. Avatars and the 3D scene never use these variables.
+- `AvatarCanvas` draws a model into a canvas sized to its box × device pixel ratio; every card,
+  preview, size preview and variation is one.
 
 ## Adding a style
 
 1. Add its id to `StyleId` and a builder to `BUILDERS` in `styles.ts` (with a Light and a Dark palette).
-2. Add its entry to `STYLES` in `catalog.ts`.
-3. The tests in `tests/engine.test.ts` and `tests/options.test.ts` run over every style automatically.
+2. Add its entry to `STYLES` in `catalog.ts` (name, grid label, note, `has3d`).
+3. For 3D, add a height rule in `heights.ts`.
+4. The tests in `tests/engine.test.ts`, `tests/options.test.ts` and `tests/heights.test.ts` run over
+   every style automatically. The UI picks the new style up from `STYLES`.
