@@ -109,7 +109,7 @@ Notes:
 
 ### 4.4 Background
 - Segmented control: **Light | Dark | Transparent**. Default is **Light**.
-- It applies to everything at once: all style cards, the large preview, the size previews, the variations, the 3D scene, and every export.
+- It applies to the large preview (2D and the 3D scene), the size previews (56, 48, 20 px) and every export. Style cards and variation thumbnails always show the Light background, on desktop and phone, so they stay easy to compare (layout revision).
 - Each style defines a light palette and a dark palette. Light: pale or neutral background, cells at roughly 40 to 56% lightness. Dark: near-black background (about `#0d1117`), cells at roughly 60 to 66% lightness.
 - Invader and Aurora are dark by design today, so they need a proper light palette. Quilt fills the whole square, so for Dark its tones shift instead.
 - **Transparent:** no background is drawn. The preview shows a checkerboard so transparency is visible. PNG exports keep the transparent background. In 3D there is no floor or backdrop.
@@ -248,7 +248,7 @@ Notes:
 | Platform | New local web app built with Claude Code |
 | Styles | Ten: Classic, Duotone, Sticker, Invader, Critter, Quilt, Dither, Aurora, Kaleido, Frame |
 | Removed styles | Midnight (now the Dark background), Dots |
-| Background | Light (default), Dark, Transparent; applies everywhere |
+| Background | Light (default), Dark, Transparent; applies to the large preview, size previews, 3D scene and exports. Style cards and variations always show Light |
 | Colour | Auto plus ten hue swatches; hue only |
 | 3D | Critter only in the MVP. 360° rotate and zoom, no pan; matte plain blocks, no studs |
 | 3D for other styles | Later, starting with Invader and Dither |

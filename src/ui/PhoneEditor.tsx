@@ -95,7 +95,7 @@ export function PhoneEditor({ state, exporter, view3d, appearance, onToggleAppea
           {!typing && (
             <div id="phone-panel" role="tabpanel" aria-labelledby={'tab-' + tab} className="dock-panel">
               {tab === 'style' && (
-                <StyleGrid compact name={state.name} style={state.style} hue={state.hue} background={state.background} onPick={state.setStyle} />
+                <StyleGrid compact name={state.name} style={state.style} hue={state.hue} onPick={state.setStyle} />
               )}
               {tab === 'variations' && (
                 <Variations
@@ -105,7 +105,6 @@ export function PhoneEditor({ state, exporter, view3d, appearance, onToggleAppea
                   variation={state.variation}
                   style={state.style}
                   hue={state.hue}
-                  background={state.background}
                   onPick={state.setField}
                   onUseOriginal={state.useOriginal}
                 />

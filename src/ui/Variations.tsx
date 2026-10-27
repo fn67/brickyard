@@ -1,4 +1,4 @@
-import { generateAvatar, type BackgroundMode, type StyleId } from '../engine';
+import { generateAvatar, type StyleId } from '../engine';
 import { AvatarCanvas } from './AvatarCanvas';
 
 interface Props {
@@ -7,13 +7,12 @@ interface Props {
   variation: number;
   style: StyleId;
   hue: number | null;
-  background: BackgroundMode;
   onPick: (name: string) => void;
   onUseOriginal: () => void;
   showHeading?: boolean;
 }
 
-export function Variations({ name, names, variation, style, hue, background, onPick, onUseOriginal, showHeading = true }: Props) {
+export function Variations({ name, names, variation, style, hue, onPick, onUseOriginal, showHeading = true }: Props) {
   // On desktop the note sits on the heading line; on the phone tab it sits under the thumbnails.
   const note = variation > 0 && (
     <div className="variation-note">
@@ -40,7 +39,7 @@ export function Variations({ name, names, variation, style, hue, background, onP
             aria-label={i === 0 ? 'Original, ' + n : 'Variation ' + i + ', ' + n}
             onClick={() => onPick(n)}
           >
-            <AvatarCanvas model={generateAvatar(n, { style, hue, background })} />
+            <AvatarCanvas model={generateAvatar(n, { style, hue, background: 'light' })} />
           </button>
         ))}
       </div>

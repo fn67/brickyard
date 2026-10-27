@@ -10,7 +10,7 @@ export function StylesPanel({ state }: { state: AvatarState }) {
       <div className="colour-row">
         <ColourControl hue={state.hue} onChange={state.setHue} />
       </div>
-      <StyleGrid name={state.name} style={state.style} hue={state.hue} background={state.background} onPick={state.setStyle} />
+      <StyleGrid name={state.name} style={state.style} hue={state.hue} onPick={state.setStyle} />
       <div className="variations-section">
         <Variations
           name={state.name}
@@ -18,7 +18,6 @@ export function StylesPanel({ state }: { state: AvatarState }) {
           variation={state.variation}
           style={state.style}
           hue={state.hue}
-          background={state.background}
           onPick={state.setField}
           onUseOriginal={state.useOriginal}
         />

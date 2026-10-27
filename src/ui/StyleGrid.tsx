@@ -1,4 +1,4 @@
-import { generateAvatar, STYLES, type BackgroundMode, type StyleId } from '../engine';
+import { generateAvatar, STYLES, type StyleId } from '../engine';
 import { AvatarCanvas } from './AvatarCanvas';
 import { CubeIcon } from './icons';
 
@@ -6,12 +6,12 @@ interface Props {
   name: string;
   style: StyleId;
   hue: number | null;
-  background: BackgroundMode;
   onPick: (style: StyleId) => void;
   compact?: boolean;
 }
 
-export function StyleGrid({ name, style, hue, background, onPick, compact }: Props) {
+/** Tiles always show the Light background; the Background control only changes the large preview, size previews and exports. */
+export function StyleGrid({ name, style, hue, onPick, compact }: Props) {
   return (
     <div className={compact ? 'style-grid style-grid-compact' : 'style-grid'}>
       {STYLES.map((s) => (
@@ -25,7 +25,7 @@ export function StyleGrid({ name, style, hue, background, onPick, compact }: Pro
         >
           <span className="tile-img">
             <span className="tile-art">
-              <AvatarCanvas className="tile-avatar" model={generateAvatar(name, { style: s.id, hue, background })} />
+              <AvatarCanvas className="tile-avatar" model={generateAvatar(name, { style: s.id, hue, background: 'light' })} />
               {s.has3d && (
                 <span className="badge-3d" aria-hidden="true">
                   {!compact && <CubeIcon size={12} strokeWidth={2.2} />}
