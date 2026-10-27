@@ -13,15 +13,17 @@ export function hueLabel(hue: number): string {
 interface Props {
   hue: number | null;
   onChange: (hue: number | null) => void;
+  /** Keep "Colour" for screen readers only (desktop); the phone shows it. */
+  hideLabel?: boolean;
   className?: string;
 }
 
 const AUTO_LABEL = 'Auto, colour from the name';
 
-export function ColourControl({ hue, onChange, className }: Props) {
+export function ColourControl({ hue, onChange, hideLabel, className }: Props) {
   return (
     <div className={'colour-control ' + (className ?? '')}>
-      <span id="lbl-colour" className="field-label">
+      <span id="lbl-colour" className={hideLabel ? 'visually-hidden' : 'field-label'}>
         Colour
       </span>
       <div role="group" aria-labelledby="lbl-colour" className="swatches">

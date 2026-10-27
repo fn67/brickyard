@@ -8,7 +8,7 @@ export function StylesPanel({ state }: { state: AvatarState }) {
     <section className="panel styles-panel" aria-label="Styles">
       <h2 className="panel-title">Styles</h2>
       <div className="colour-row">
-        <ColourControl hue={state.hue} onChange={state.setHue} />
+        <ColourControl hideLabel hue={state.hue} onChange={state.setHue} />
       </div>
       <StyleGrid name={state.name} style={state.style} hue={state.hue} onPick={state.setStyle} />
       <div className="variations-section">
