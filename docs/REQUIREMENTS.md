@@ -204,7 +204,7 @@ Notes:
   1. Replace "Identicon Lab" and its subtitle with **Brickyard**. No tagline (removed in the layout revision), no second line and no helper text.
   2. Remove the old moon icon and the Circle crop checkbox. (The moon returns as the app dark mode toggle in item 11.)
   3. Add the **Colour** control and the **Background** control (Light, Dark, Transparent).
-  4. Ten styles instead of twelve. Claude Design chooses the grid. Suggestion: 5 columns × 2 rows on desktop, 2 columns on phones.
+  4. Ten styles instead of twelve. Claude Design chooses the grid. Built: on desktop the tiles fill the width and wrap (about 7 per row at 1440 px, compact revision); 5 per row on phones.
   5. Add the "3D" badge on the Critter card only.
   6. The **2D | 3D** switch is active when Critter is selected (no longer "Soon") and disabled with a note for every other style. When 3D is on, show the 3D controls (Reset view, angle presets, a short hint such as "Drag to rotate, scroll to zoom").
   7. Show a checkerboard behind the preview when Background is Transparent.
