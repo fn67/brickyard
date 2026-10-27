@@ -71,7 +71,7 @@ Read the phone design files (see CLAUDE.md). Requirements in 4.10.
 ## Stage 8: Layout revision
 The design was revised (single-screen desktop). Re-read the design files and save fresh copies to `reference/design/` first. Where this stage disagrees with REQUIREMENTS or CLAUDE.md, the new design wins: update those docs and log it.
 - [x] 1. Single-screen desktop layout: the page fills the window (640 px high or more; below that it scrolls); the avatar square takes the height left; Styles shows swatches in one row, tiles 5 × 2, Variations as one row of six; 3D controls as chips along the bottom of the preview; Copied, Clipboard blocked, the 3D hint and "3D is available for Critter." as overlays on the preview; the variation note on the Variations heading line; narrow screens keep the stacked layout.
-- [ ] 3. Large-screen fixes: style tiles capped to roughly square, layout capped at 1000 px high, the same 12 px gap between the two tile rows.
+- [x] 3. Large-screen fixes: style tiles capped to roughly square, layout capped at 1000 px high, the same 12 px gap between the two tile rows.
 - [ ] 4. Top section: header as its own top bar (hairline under it, page colour with a 3% shift, dark-mode button on the right); name field and Shuffle full width above the cards; no tagline on desktop or phone; placeholder "Username, name or any string".
 - [ ] 5. Background changes only the large preview and the 56/48/20 px size previews; style tiles and variation thumbnails always use Light (desktop and phone).
 - [ ] 6. Phone: the 3D chips never start a drag when tapped; the shorter header gives the preview more height.
@@ -110,6 +110,7 @@ The design was revised (single-screen desktop). Re-read the design files and sav
 - 2026-10-27 Stage 7: pinch zoom is configured (OrbitControls two-finger dolly, pan off) but Playwright cannot synthesise a two-finger pinch, so it is not covered by an automated check; wheel, keyboard and button zoom are.
 - 2026-10-27 Stage 7: one verify-ui check ("app appearance never changes the avatar") failed once in the final run because it sampled the preview canvas right after it re-mounted from 3D, before its first resize-and-draw. The test now waits for the canvas to settle; it then passed in 4 runs in a row. The app itself was not changed for this.
 - 2026-10-27 Stage 7: accessibility fixes from the pass: the phone editor gained a `main` landmark, and "Try it" now moves focus to the 3D view (it used to vanish under the keyboard focus).
+- 2026-10-27 Stage 8: the design caps the tile rows with `100cqw` on the tile grid itself, but container units resolve against an ancestor container, so in the design the cap never applies (it falls back to the window width). The app makes the Styles card the container and subtracts its 40 px padding, which gives the intended roughly square tiles (155 × 215 px tile, 133 px art at 1920 × 1080).
 
 ## Log
 (One short line per stage when finished: what was built, checks run, anything skipped or `[!]`.)
