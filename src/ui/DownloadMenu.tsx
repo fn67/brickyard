@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { ChevronDownIcon, DownloadIcon } from './icons';
+import { DownloadIcon } from './icons';
 import { PNG_SIZES } from './exportImage';
 
 interface Props {
@@ -31,6 +31,7 @@ export function DownloadItems({ onPick, role }: { onPick: (size: number) => void
   );
 }
 
+/** The icon-only Download button in the desktop preview header and its menu, which opens downward. */
 export function DownloadMenu({ onDownload }: Props) {
   const [open, setOpen] = useState(false);
   const wrap = useRef<HTMLDivElement>(null);
@@ -83,15 +84,15 @@ export function DownloadMenu({ onDownload }: Props) {
       <button
         ref={trigger}
         type="button"
-        className="btn btn-lg download-btn"
+        className="btn icon-btn"
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls="download-menu"
+        aria-label="Download"
+        title="Download"
         onClick={() => setOpen((o) => !o)}
       >
         <DownloadIcon />
-        Download
-        <ChevronDownIcon />
       </button>
       {open && (
         <div id="download-menu" ref={menu} role="menu" aria-label="Download options" className="menu">

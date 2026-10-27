@@ -68,12 +68,6 @@ button:disabled {
   flex: none;
 }
 
-.btn-lg {
-  height: 48px;
-  padding: 0 18px;
-  font-size: 15px;
-}
-
 .icon-btn {
   width: 40px;
   height: 40px;

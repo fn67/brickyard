@@ -81,12 +81,6 @@ export const DownloadIcon = (p: IconProps) => (
   </Svg>
 );
 
-export const ChevronDownIcon = (p: IconProps) => (
-  <Svg size={16} strokeWidth={2} {...p}>
-    <path d="m6 9 6 6 6-6" />
-  </Svg>
-);
-
 export const CheckIcon = (p: IconProps) => (
   <Svg strokeWidth={2} {...p}>
     <path d="M20 6 9 17l-5-5" />

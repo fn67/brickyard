@@ -77,6 +77,16 @@ The design was revised (single-screen desktop). Re-read the design files and sav
 - [x] 6. Phone: the 3D chips never start a drag when tapped; the shorter header gives the preview more height.
 - [x] Verify: screenshots in light and dark at 1440×900, 1920×1080, 1440×640, 1440×600, phone 390×650 and 360×600 (each tab and the Download sheet), Critter 3D on desktop; compare with the design frames and fix differences; no page scroll on desktop at 900 px high and above; nothing cut off at 640 px; chips do not start a drag on touch. Report below.
 
+## Stage 9: Compact desktop revision
+The desktop design was revised again (phone unchanged). Refresh `reference/design/` first. Where this stage disagrees with REQUIREMENTS, CLAUDE.md or Stage 8, the new design wins: update the docs and log it.
+- [x] 1. Copy PNG and Download become icon-only buttons in the preview header, next to 2D | 3D; the Download menu opens downward from the header; both keep a tooltip and an accessible name.
+- [ ] 2. Background (Light, Dark, Transparent) becomes three icon-only swatch buttons in the preview header, each with a tooltip and accessible name; the "Preview" heading is visually hidden but kept for screen readers.
+- [ ] 3. Compact style tiles (12 px name, smaller 3D badge, no grid caption), smaller variation thumbnails, and the Styles card at its natural height at the top.
+- [ ] 4. Tiles fill the width and wrap instead of a fixed 5 × 2 grid.
+- [ ] 5. The visible "Colour" label is removed on desktop; screen readers still get "Colour" as the swatch group's name. The phone keeps its label.
+- [ ] 6. Everything more compact on desktop (top bar, title, input, Shuffle, switch, icons, chips, swatches, menu rows, card padding, heading and facts type). Desktop controls may go below 40 px; the phone keeps 40 px.
+- [ ] Verify: screenshots in light and dark at 1440×900, 1920×1080, 1280×720, 1440×640 and 1024×768, plus Critter 3D, the Download menu open, Background Dark and Transparent, and a variation selected; compare with the design and fix; no page scroll from 900 px high; nothing cut off at 640 px; the menu stays on screen; tiles wrap; phone at 390×650 and 360×600 unchanged. Report below.
+
 ---
 
 ## Decisions and open questions
@@ -115,6 +125,7 @@ The design was revised (single-screen desktop). Re-read the design files and sav
 - 2026-10-27 Stage 8: at 640 px high the design's spacing leaves the avatar about 36 px and the tile art about 5 px (it was calculated, not checked). Windows 640–799 px high therefore get tighter spacing: the Background label sits beside its control, the preview fills the width left (so the 3D note and chips stay on one line), tiles hide the grid line, 3D chips are 30 px, and variation thumbnails are 56 px. From 800 px high the design's numbers are used unchanged. The size previews and facts never wrap in the single-screen layout (they wrapped at the 380 px minimum panel width).
 - 2026-10-27 Stage 8: Background (Light, Dark, Transparent) now changes only the large preview, the 3D scene, the size previews and exports. Style tiles and variation thumbnails always render with the Light palette, on desktop and phone (new design). REQUIREMENTS 4.4 and 9 updated. This replaces the Stage 4 behaviour "applied everywhere at once".
 - 2026-10-27 Stage 8: the design stops a 3D drag from starting on a chip by checking the pointer target. In the app the chips already sit outside the 3D view's event area (they are overlays beside the canvas, not inside it), so a touch that starts on a chip never reaches the camera controls. The chips also get `touch-action: manipulation`. A new verify-ui check slides a real touch (CDP touch events) from a chip across the view and asserts the frame and preset are unchanged.
+- 2026-10-27 Stage 9: Copy PNG and Download are icon-only buttons in the desktop preview header (accessible names and tooltips "Copy PNG" and "Download"); the menu opens downward from there. The labelled Download button is gone, so `DownloadMenu` is now icon-only; the phone keeps its labelled buttons and bottom sheet.
 
 ## Log
 (One short line per stage when finished: what was built, checks run, anything skipped or `[!]`.)

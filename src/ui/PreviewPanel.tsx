@@ -28,6 +28,12 @@ export function PreviewPanel({ state, exporter, webgl, scene, viewControls }: Pr
       <div className="panel-head">
         <h2 className="panel-title">Preview</h2>
         <ModeSwitch view={state.view} can3d={can3d} onChange={state.setView} noteId="note3d" />
+        <div className="preview-tools">
+          <button type="button" className="btn icon-btn" aria-label="Copy PNG" title="Copy PNG" onClick={exporter.copy}>
+            <CopyIcon />
+          </button>
+          <DownloadMenu onDownload={exporter.download} />
+        </div>
       </div>
       <div className="stage-fit">
         <Stage
@@ -70,14 +76,6 @@ export function PreviewPanel({ state, exporter, webgl, scene, viewControls }: Pr
           <dt>Name</dt>
           <dd className="mono">{state.name}</dd>
         </dl>
-      </div>
-
-      <div className="actions">
-        <button type="button" className="btn btn-lg" onClick={exporter.copy}>
-          <CopyIcon />
-          Copy PNG
-        </button>
-        <DownloadMenu onDownload={exporter.download} />
       </div>
     </section>
   );

@@ -122,9 +122,10 @@
 
 .panel-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
 }
 
 .stage-fit {
@@ -219,29 +220,15 @@
   overflow-wrap: anywhere;
 }
 
-.actions {
-  margin-top: 20px;
+.preview-tools {
+  margin-left: auto;
   display: flex;
+  align-items: center;
   gap: 8px;
-}
-
-.actions > .btn {
-  flex: none;
-}
-
-.actions .btn {
-  height: 44px;
 }
 
 .download {
   position: relative;
-  flex: 1;
-  min-width: 0;
-}
-
-.download-btn {
-  width: 100%;
-  padding: 0 14px 0 18px;
 }
 
 .menu {
@@ -396,8 +383,7 @@
   }
 
   .preview-bg,
-  .details,
-  .actions {
+  .details {
     margin-top: 0;
   }
 
