@@ -189,6 +189,145 @@ sections.desktop = async (browser) => {
   }
 };
 
+/** Which grid cells of the preview canvas differ from its corner pixel (or are opaque when transparent). */
+async function previewMask(page, cells) {
+  return page.locator('.preview-stage canvas').evaluate((c, n) => {
+    const ctx = c.getContext('2d');
+    const d = ctx.getImageData(0, 0, c.width, c.height).data;
+    const at = (x, y) => {
+      const i = (Math.floor(y) * c.width + Math.floor(x)) * 4;
+      return [d[i], d[i + 1], d[i + 2], d[i + 3]];
+    };
+    const corner = at(1, 1);
+    const u = c.width / n;
+    let mask = '';
+    for (let y = 0; y < n; y++) {
+      for (let x = 0; x < n; x++) {
+        const p = at((x + 0.5) * u, (y + 0.5) * u);
+        const filled = corner[3] === 0 ? p[3] > 0 : p.some((v, i) => Math.abs(v - corner[i]) > 2);
+        mask += filled ? '#' : '.';
+      }
+    }
+    return { mask, corner };
+  }, cells);
+}
+
+async function pngPixel(page, path, x, y) {
+  const b64 = readFileSync(path).toString('base64');
+  return page.evaluate(
+    async ({ b64, x, y }) => {
+      const img = new Image();
+      img.src = 'data:image/png;base64,' + b64;
+      await img.decode();
+      const c = document.createElement('canvas');
+      c.width = img.width;
+      c.height = img.height;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      return Array.from(ctx.getImageData(x, y, 1, 1).data);
+    },
+    { b64, x, y },
+  );
+}
+
+async function downloadVia(page, size) {
+  await page.getByRole('button', { name: 'Download' }).click();
+  const [dl] = await Promise.all([page.waitForEvent('download'), page.getByRole('menuitem', { name: 'PNG ' + size }).click()]);
+  const path = join(tmpdir(), 'brickyard-' + Date.now() + '-' + dl.suggestedFilename());
+  await dl.saveAs(path);
+  return { path, name: dl.suggestedFilename() };
+}
+
+sections.export = async (browser) => {
+  console.log('Colour, Background, copy and download');
+  const { page, context } = await newPage(browser, { width: 1440, height: 900 });
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: URL });
+
+  // Classic: 5x5 grid with one cell of padding = 7 units.
+  const base = await previewMask(page, 7);
+  check(base.mask.includes('#'), 'preview has filled cells');
+  check(base.corner.join() === '240,240,240,255', 'Light background is drawn (got ' + base.corner + ')');
+
+  await page.getByRole('button', { name: 'Blue, hue 215°' }).click();
+  check((await page.getByRole('button', { name: 'Blue, hue 215°' }).getAttribute('aria-pressed')) === 'true', 'swatch pressed');
+  const blue = await previewMask(page, 7);
+  check(blue.mask === base.mask, 'changing colour leaves the pattern unchanged');
+
+  await page.getByRole('button', { name: 'Dark', exact: true }).click();
+  const dark = await previewMask(page, 7);
+  check(dark.mask === base.mask, 'changing background leaves the pattern unchanged');
+  check(dark.corner.join() === '13,17,23,255', 'Dark background is #0d1117 (got ' + dark.corner + ')');
+  const tileCorners = await page.locator('.style-tile canvas').evaluateAll((cs) =>
+    cs.map((c) => Array.from(c.getContext('2d').getImageData(1, 1, 1, 1).data).join()),
+  );
+  check(tileCorners.filter((c) => c !== '13,17,23,255').length <= 3, 'cards follow the Dark background (Quilt, Invader, Aurora differ)');
+  await shot(page, 'desktop-bg-dark-blue', { full: true });
+
+  await page.getByRole('button', { name: 'Transparent' }).click();
+  const clear = await previewMask(page, 7);
+  check(clear.mask === base.mask, 'Transparent leaves the pattern unchanged');
+  check(clear.corner[3] === 0, 'Transparent draws no background');
+  check(await page.locator('.preview-stage.stage-checker').isVisible(), 'checkerboard behind the preview when Transparent');
+  await shot(page, 'desktop-bg-transparent', { full: true });
+
+  // Download menu.
+  await page.getByRole('button', { name: 'Download' }).click();
+  check(await page.getByRole('menu', { name: 'Download options' }).isVisible(), 'Download opens a menu');
+  for (const label of ['Download as SVG', 'Download as STL']) {
+    const item = page.getByRole('menuitem', { name: label });
+    check((await item.isVisible()) && (await item.isDisabled()) && (await item.innerText()).includes('Soon'), label + ' disabled with Soon');
+  }
+  await shot(page, 'desktop-download-menu');
+  await page.keyboard.press('Escape');
+  check(!(await page.getByRole('menu').isVisible().catch(() => false)), 'Escape closes the menu');
+
+  const t = await downloadVia(page, 1024);
+  const ti = pngInfo(t.path);
+  check(t.name === 'hello-world-classic-1024.png', 'file name uses name, style and size (got ' + t.name + ')');
+  check(ti.width === 1024 && ti.height === 1024, 'PNG 1024 is 1024 px');
+  check(ti.colorType === 6, 'PNG has an alpha channel');
+  check((await pngPixel(page, t.path, 2, 2))[3] === 0, 'Transparent PNG corner is transparent');
+  rmSync(t.path);
+
+  await page.getByRole('button', { name: 'Light', exact: true }).click();
+  await page.getByRole('button', { name: 'Auto, colour from the name' }).click();
+  for (const size of [512, 2048]) {
+    const d = await downloadVia(page, size);
+    const info = pngInfo(d.path);
+    check(info.width === size && info.height === size, `PNG ${size} is ${size} px`);
+    check((await pngPixel(page, d.path, 2, 2)).join() === '240,240,240,255', `PNG ${size} matches the Light preview`);
+    rmSync(d.path);
+  }
+
+  // Copy PNG.
+  await page.getByRole('button', { name: 'Copy PNG' }).click();
+  await page.getByText('Copied to clipboard').waitFor({ timeout: 3000 });
+  check(true, 'Copied message');
+  const clip = await page.evaluate(async () => {
+    const items = await navigator.clipboard.read();
+    const blob = await items[0].getType('image/png');
+    const bmp = await createImageBitmap(blob);
+    return [bmp.width, bmp.height];
+  });
+  check(clip[0] === 460 && clip[1] === 460, 'Copy PNG is a 460 px square (got ' + clip + ')');
+  await shot(page, 'desktop-copied');
+  await context.close();
+
+  // Clipboard blocked.
+  const blocked = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  await blocked.addInitScript(() => {
+    Object.defineProperty(navigator, 'clipboard', { value: { write: () => Promise.reject(new Error('blocked')) } });
+  });
+  const bp = await blocked.newPage();
+  bp.on('pageerror', (e) => consoleErrors.push(String(e)));
+  await bp.goto(URL);
+  await bp.getByRole('button', { name: 'Copy PNG' }).click();
+  await bp.getByText('Clipboard blocked. Use Download instead.').waitFor({ timeout: 3000 });
+  check(true, 'Clipboard blocked message');
+  await bp.screenshot({ path: join(OUT, 'desktop-clipboard-blocked.png') });
+  await blocked.close();
+};
+
 sections.keyboard = async (browser) => {
   console.log('Keyboard');
   const { page, context } = await newPage(browser, { width: 1440, height: 900 });

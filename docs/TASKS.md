@@ -38,11 +38,11 @@ First read the design files (see CLAUDE.md) and save copies to `reference/design
 - [x] Verify: Playwright screenshots at 1440×900 in light and dark app appearance; compare with the desktop design frames; fix differences. Keyboard: every control reachable with a visible focus state.
 
 ## Stage 4: Colour, Background, copy and download
-- [ ] Colour control (Auto plus swatches) and Background control (Light, Dark, Transparent), applied everywhere at once.
-- [ ] Checkerboard behind the preview when Transparent.
-- [ ] Copy PNG (460 px) with "Copied" and "Clipboard blocked" messages.
-- [ ] Download menu: PNG at 512, 1024, 2048; SVG and STL disabled with "Soon".
-- [ ] Verify with Playwright: downloaded PNGs have the right pixel size; the Transparent PNG has an alpha channel; changing colour or background leaves the pattern unchanged.
+- [x] Colour control (Auto plus swatches) and Background control (Light, Dark, Transparent), applied everywhere at once.
+- [x] Checkerboard behind the preview when Transparent.
+- [x] Copy PNG (460 px) with "Copied" and "Clipboard blocked" messages.
+- [x] Download menu: PNG at 512, 1024, 2048; SVG and STL disabled with "Soon".
+- [x] Verify with Playwright: downloaded PNGs have the right pixel size; the Transparent PNG has an alpha channel; changing colour or background leaves the pattern unchanged.
 
 ## Stage 5: 3D view for Critter
 - [ ] Critter height rule in the model (body 1 unit, eyes and mouth +0.25, pupils small dark blocks on top).
@@ -87,6 +87,8 @@ Read the phone design files (see CLAUDE.md). Requirements in 4.10.
 - 2026-10-27 Stage 3: swatch accessible names are colour plus hue, for example "Blue, hue 215°"; the Auto swatch has no text, only the tooltip and accessible name "Auto, colour from the name" (design).
 - 2026-10-27 Stage 3: Colour, Background, Copy PNG and the Download menu were built with the desktop layout because they are part of the designed panels; they are verified and ticked in Stage 4.
 - 2026-10-27 Stage 3: the design's rendered frames could not be opened as images (Claude Design's own format needs its runtime), so comparison was against the design's markup and inline styles: sizes, spacing, colours, radii and copy were copied from it.
+- 2026-10-27 Stage 4: download file names replace characters that file systems reject (`\ / : * ? " < > |` and spaces) with "-", so `hello-world:3` downloads as `hello-world-3-classic-1024.png`.
+- 2026-10-27 Stage 4: the "Copied" message hides after 3 s, the "Clipboard blocked. Use Download instead." message after 6 s (design copy).
 
 ## Log
 (One short line per stage when finished: what was built, checks run, anything skipped or `[!]`.)
@@ -95,6 +97,7 @@ Read the phone design files (see CLAUDE.md). Requirements in 4.10.
 - Stage 1: engine in `src/engine/` (hash, RNG, mirror/ensure, base 5×5, ten styles), canvas renderer in `src/render/canvas.ts`. 28 tests incl. pixel parity with the prototype for all ten styles over 8 names (empty, 40 chars, non-Latin) and 3 hue overrides.
 - Stage 2: hue override and Light / Dark / Transparent palettes for all ten styles; 45 tests (pattern invariance over 3 backgrounds × 11 hue settings × 13 names, transparent = no background, lightness bands, contrast, Duotone/Kaleido second hue). `docs/ARCHITECTURE.md` written.
 - Stage 3: desktop UI from the design (tokens for light and dark, header with theme toggle and no-flash inline script, name field, Preview panel, Styles panel, Variations, canvas renderer). `scripts/verify-ui.mjs` (desktop + keyboard sections): 64 checks pass incl. no console errors; screenshots `docs/screenshots/desktop-1440-light.png`, `desktop-1440-dark.png`, `desktop-focus-visible.png`.
+- Stage 4: verify-ui `export` section, 26 checks: pattern mask unchanged across hue/Dark/Transparent, cards follow Background, checkerboard, Download menu with disabled SVG/STL "Soon", PNG 512/1024/2048 real pixel sizes, RGBA with transparent corner, file name `hello-world-classic-1024.png`, Copy PNG reads back as 460×460 from the clipboard, blocked-clipboard message. Screenshots `desktop-bg-dark-blue.png`, `desktop-bg-transparent.png`, `desktop-download-menu.png`, `desktop-copied.png`, `desktop-clipboard-blocked.png`.
 
 ## Final report
 (Fill in at the end: what works, what was skipped or blocked, what the user should look at first, known gaps.)
