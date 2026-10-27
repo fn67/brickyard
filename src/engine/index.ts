@@ -12,3 +12,4 @@ export {
   variationNumber,
   variationNames,
 } from './names';
+export { HEIGHT_RULES, CRITTER_FACE_RAISE, CRITTER_PUPIL_DEPTH, type HeightRule } from './heights';

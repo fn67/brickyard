@@ -310,3 +310,29 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+.view-controls {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.view-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 12px;
+}
+
+.view-hint {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink2);
+}
+
+.view-buttons {
+  display: flex;
+  gap: 6px;
+}

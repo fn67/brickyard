@@ -1,3 +1,4 @@
+import { applyHeights } from './heights';
 import { BUILDERS } from './styles';
 import type { AvatarModel, AvatarOptions } from './types';
 
@@ -6,6 +7,6 @@ import type { AvatarModel, AvatarOptions } from './types';
  * the same model. Hue and background change colours only, never which cells are filled.
  */
 export function generateAvatar(seed: string, options: AvatarOptions): AvatarModel {
-  const build = BUILDERS[options.style];
-  return build({ seed, hue: options.hue ?? null, mode: options.background ?? 'light' });
+  const model = BUILDERS[options.style]({ seed, hue: options.hue ?? null, mode: options.background ?? 'light' });
+  return { ...model, cells: applyHeights(options.style, model.cells) };
 }

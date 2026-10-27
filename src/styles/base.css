@@ -395,3 +395,23 @@ button:disabled {
     transition: border-color 0.12s ease, color 0.12s ease, background-color 0.12s ease;
   }
 }
+
+/* 3D view */
+.scene3d {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+  cursor: grab;
+}
+
+.scene3d:active {
+  cursor: grabbing;
+}
+
+.scene3d:focus-visible {
+  outline-offset: -3px;
+}
+
+.scene3d canvas {
+  display: block;
+}

@@ -45,13 +45,13 @@ First read the design files (see CLAUDE.md) and save copies to `reference/design
 - [x] Verify with Playwright: downloaded PNGs have the right pixel size; the Transparent PNG has an alpha channel; changing colour or background leaves the pattern unchanged.
 
 ## Stage 5: 3D view for Critter
-- [ ] Critter height rule in the model (body 1 unit, eyes and mouth +0.25, pupils small dark blocks on top).
-- [ ] Three.js scene: plain matte boxes, soft lighting, soft ground shadow; no floor or backdrop when Transparent.
-- [ ] Rotate 360° (drag), zoom (wheel, pinch), no pan. Keyboard rotate and zoom when focused.
-- [ ] Reset view and four presets (Front, 3/4, Top, Side), plus the hint text.
-- [ ] Copy PNG and Download PNG use the current camera angle.
-- [ ] Fallback to 2D with a short message if WebGL is unavailable. Switching to another style returns to 2D.
-- [ ] Verify with Playwright: screenshots of Critter in 3D for each preset, in Light, Dark and Transparent; no console errors.
+- [x] Critter height rule in the model (body 1 unit, eyes and mouth +0.25, pupils small dark blocks on top).
+- [x] Three.js scene: plain matte boxes, soft lighting, soft ground shadow; no floor or backdrop when Transparent.
+- [x] Rotate 360° (drag), zoom (wheel, pinch), no pan. Keyboard rotate and zoom when focused.
+- [x] Reset view and four presets (Front, 3/4, Top, Side), plus the hint text.
+- [x] Copy PNG and Download PNG use the current camera angle.
+- [x] Fallback to 2D with a short message if WebGL is unavailable. Switching to another style returns to 2D.
+- [x] Verify with Playwright: screenshots of Critter in 3D for each preset, in Light, Dark and Transparent; no console errors.
 
 ## Stage 6: Phone layout
 Read the phone design files (see CLAUDE.md). Requirements in 4.10.
@@ -89,6 +89,11 @@ Read the phone design files (see CLAUDE.md). Requirements in 4.10.
 - 2026-10-27 Stage 3: the design's rendered frames could not be opened as images (Claude Design's own format needs its runtime), so comparison was against the design's markup and inline styles: sizes, spacing, colours, radii and copy were copied from it.
 - 2026-10-27 Stage 4: download file names replace characters that file systems reject (`\ / : * ? " < > |` and spaces) with "-", so `hello-world:3` downloads as `hello-world-3-classic-1024.png`.
 - 2026-10-27 Stage 4: the "Copied" message hides after 3 s, the "Clipboard blocked. Use Download instead." message after 6 s (design copy).
+- 2026-10-27 Stage 5: the character stands upright: grid rows go up the y axis and cell heights extrude towards the viewer, so Front shows the same face as 2D. A true overhead "Top" view would only show a thin strip of block tops, so Top looks steeply down from 70° above. Side is a 90° profile, 3/4 is 32° round and 22° up (the design's default angle), Front is straight on.
+- 2026-10-27 Stage 5: dragging clears the pressed angle preset; zooming keeps it. Zoom is also on the design's − / + buttons. Two-finger touch zooms (pinch) with panning switched off; right-drag rotates instead of panning.
+- 2026-10-27 Stage 5: Copy PNG and Download PNG in 3D re-render the current camera at the export size (460, 512, 1024 or 2048 px) by resizing the WebGL drawing buffer for one frame, so exports are sharp and match the on-screen angle.
+- 2026-10-27 Stage 5: if the device has no WebGL, or the 3D view throws, the switch stays on 2D and the note under it reads "3D is not available on this device." (copy not given in REQUIREMENTS).
+- 2026-10-27 Stage 5: three.js, R3F and drei load in a separate chunk only when 3D is opened (main bundle ~250 kB, 3D chunk ~935 kB); `chunkSizeWarningLimit` raised to 1000 kB for that chunk. The 3D view renders on demand (no render loop), so nothing animates.
 
 ## Log
 (One short line per stage when finished: what was built, checks run, anything skipped or `[!]`.)
@@ -98,6 +103,7 @@ Read the phone design files (see CLAUDE.md). Requirements in 4.10.
 - Stage 2: hue override and Light / Dark / Transparent palettes for all ten styles; 45 tests (pattern invariance over 3 backgrounds × 11 hue settings × 13 names, transparent = no background, lightness bands, contrast, Duotone/Kaleido second hue). `docs/ARCHITECTURE.md` written.
 - Stage 3: desktop UI from the design (tokens for light and dark, header with theme toggle and no-flash inline script, name field, Preview panel, Styles panel, Variations, canvas renderer). `scripts/verify-ui.mjs` (desktop + keyboard sections): 64 checks pass incl. no console errors; screenshots `docs/screenshots/desktop-1440-light.png`, `desktop-1440-dark.png`, `desktop-focus-visible.png`.
 - Stage 4: verify-ui `export` section, 26 checks: pattern mask unchanged across hue/Dark/Transparent, cards follow Background, checkerboard, Download menu with disabled SVG/STL "Soon", PNG 512/1024/2048 real pixel sizes, RGBA with transparent corner, file name `hello-world-classic-1024.png`, Copy PNG reads back as 460×460 from the clipboard, blocked-clipboard message. Screenshots `desktop-bg-dark-blue.png`, `desktop-bg-transparent.png`, `desktop-download-menu.png`, `desktop-copied.png`, `desktop-clipboard-blocked.png`.
+- Stage 5: Critter height rule (`src/engine/heights.ts`, 4 new tests, 56 total), instanced matte boxes with contact shadow (`src/ui/Scene3D.tsx`, layout in `src/render/scene3d.ts`), orbit rotate/zoom with pan off, keyboard, presets, Reset view, 3D capture for Copy/Download, WebGL fallback. verify-ui `three` section: 51 checks (presets × Light/Dark/Transparent, drag, wheel, pan attempts keep it centred, Reset restores the exact frame, keys, downloads follow the angle, transparent 3D PNG, 460 px copy, no-WebGL fallback). Screenshots `docs/screenshots/critter-3d-{light,dark,transparent}-{front,three-quarter,top,side}.png`. Only console warnings (three.js `Clock` deprecation from R3F, SwiftShader ReadPixels notices), no errors.
 
 ## Final report
 (Fill in at the end: what works, what was skipped or blocked, what the user should look at first, known gaps.)

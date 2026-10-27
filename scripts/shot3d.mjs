@@ -1,0 +1,14 @@
+import { chromium } from 'playwright';
+const out = process.argv[2];
+const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+const errors = [];
+page.on('console', (m) => (m.type() === 'error' || m.type() === 'warning') && errors.push(m.type() + ': ' + m.text()));
+page.on('pageerror', (e) => errors.push(String(e)));
+await page.goto('http://localhost:4317');
+await page.getByRole('button', { name: 'Try it' }).click();
+await page.waitForSelector('.scene3d canvas');
+await page.waitForTimeout(1500);
+await page.locator('.preview-panel').screenshot({ path: out });
+console.log(errors.join('\n'));
+await browser.close();

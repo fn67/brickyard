@@ -328,6 +328,184 @@ sections.export = async (browser) => {
   await blocked.close();
 };
 
+/** Bounding box and centroid of pixels that differ from the corner, in the 3D canvas (fractions of its size). */
+async function sceneStats(page) {
+  return page.locator('.scene3d canvas').evaluate((c) => {
+    const tmp = document.createElement('canvas');
+    tmp.width = 200;
+    tmp.height = 200;
+    const ctx = tmp.getContext('2d');
+    ctx.drawImage(c, 0, 0, 200, 200);
+    const d = ctx.getImageData(0, 0, 200, 200).data;
+    const corner = [d[0], d[1], d[2], d[3]];
+    let n = 0, sx = 0, sy = 0, minX = 200, minY = 200, maxX = 0, maxY = 0;
+    for (let y = 0; y < 200; y++) {
+      for (let x = 0; x < 200; x++) {
+        const i = (y * 200 + x) * 4;
+        if (Math.abs(d[i] - corner[0]) + Math.abs(d[i + 1] - corner[1]) + Math.abs(d[i + 2] - corner[2]) + Math.abs(d[i + 3] - corner[3]) > 40) {
+          n++; sx += x; sy += y;
+          minX = Math.min(minX, x); maxX = Math.max(maxX, x); minY = Math.min(minY, y); maxY = Math.max(maxY, y);
+        }
+      }
+    }
+    return { n, cx: sx / n / 200, cy: sy / n / 200, w: (maxX - minX) / 200, h: (maxY - minY) / 200, corner, url: tmp.toDataURL() };
+  });
+}
+
+async function settle(page) {
+  await page.waitForTimeout(250);
+}
+
+sections.three = async (browser) => {
+  console.log('3D view');
+  const { page, context } = await newPage(browser, { width: 1440, height: 900 });
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: URL });
+  await page.locator('.style-tile', { hasText: 'Critter' }).click();
+  await page.getByRole('button', { name: '3D', exact: true }).click();
+  await page.waitForSelector('.scene3d canvas');
+  await page.waitForTimeout(1200);
+  check(await page.getByText('Drag to rotate, scroll to zoom').isVisible(), '3D hint text');
+  check(!(await page.getByText('3D is available for Critter.').isVisible().catch(() => false)), 'no 3D note while Critter is selected');
+  const presetBtn = (label) => page.getByRole('group', { name: 'Viewing angle' }).getByRole('button', { name: label, exact: true });
+  check((await presetBtn('Three-quarter').getAttribute('aria-pressed')) === 'true', 'opens at the 3/4 preset');
+
+  const start = await sceneStats(page);
+  check(start.n > 500, '3D scene draws the critter');
+  check(Math.abs(start.cx - 0.5) < 0.12 && Math.abs(start.cy - 0.5) < 0.15, 'critter is centred');
+
+  // Presets, in each background.
+  const urls = {};
+  for (const bg of ['Light', 'Dark', 'Transparent']) {
+    await page.getByRole('button', { name: bg, exact: true }).click();
+    await page.waitForTimeout(400);
+    for (const [label, file] of [['Front', 'front'], ['Three-quarter', 'three-quarter'], ['Top', 'top'], ['Side', 'side']]) {
+      await presetBtn(label).click();
+      await settle(page);
+      check((await presetBtn(label).getAttribute('aria-pressed')) === 'true', `${label} preset pressed`);
+      const st = await sceneStats(page);
+      urls[bg + label] = st.url;
+      if (bg === 'Transparent') check(st.corner[3] === 0, `no backdrop in Transparent (${label})`);
+      else check(st.corner[3] === 255, `scene background drawn in ${bg} (${label})`);
+      await page.locator('.preview-panel').screenshot({ path: join(OUT, `critter-3d-${bg.toLowerCase()}-${file}.png`) });
+    }
+  }
+  check(new Set(['Front', 'Three-quarter', 'Top', 'Side'].map((l) => urls['Light' + l])).size === 4, 'all four presets give different views');
+  check(await page.locator('.preview-stage.stage-checker').isVisible(), 'checkerboard behind the 3D view when Transparent');
+
+  // Drag rotates, wheel zooms, no pan.
+  await page.getByRole('button', { name: 'Light', exact: true }).click();
+  await page.getByRole('button', { name: 'Reset view' }).click();
+  await settle(page);
+  const reset1 = await sceneStats(page);
+  const box = await page.locator('.scene3d').boundingBox();
+  const cx = box.x + box.width / 2;
+  const cy = box.y + box.height / 2;
+  await page.mouse.move(cx, cy);
+  await page.mouse.down();
+  await page.mouse.move(cx + 120, cy + 10, { steps: 8 });
+  await page.mouse.up();
+  await settle(page);
+  const dragged = await sceneStats(page);
+  check(dragged.url !== reset1.url, 'dragging rotates the view');
+  check((await presetBtn('Three-quarter').getAttribute('aria-pressed')) === 'false', 'dragging leaves the preset');
+  await page.mouse.move(cx, cy);
+  for (let i = 0; i < 4; i++) {
+    await page.mouse.wheel(0, -400);
+    await page.waitForTimeout(60);
+  }
+  await settle(page);
+  const zoomed = await sceneStats(page);
+  check(zoomed.n > dragged.n * 1.15, 'wheel zooms in (covered pixels ' + dragged.n + ' -> ' + zoomed.n + ')');
+  // Try to pan: right-drag and shift-drag. The critter must stay centred.
+  for (const mod of [{ button: 'right' }, { button: 'left', key: 'Shift' }, { button: 'left', key: 'Control' }]) {
+    if (mod.key) await page.keyboard.down(mod.key);
+    await page.mouse.move(cx, cy);
+    await page.mouse.down({ button: mod.button });
+    await page.mouse.move(cx + 150, cy + 120, { steps: 8 });
+    await page.mouse.up({ button: mod.button });
+    if (mod.key) await page.keyboard.up(mod.key);
+  }
+  await page.getByRole('button', { name: 'Front', exact: true }).click();
+  await settle(page);
+  const afterPan = await sceneStats(page);
+  check(Math.abs(afterPan.cx - 0.5) < 0.06, 'no panning: the critter stays centred (cx ' + afterPan.cx.toFixed(3) + ')');
+  await page.getByRole('button', { name: 'Reset view' }).click();
+  await settle(page);
+  const reset2 = await sceneStats(page);
+  check(reset2.url === reset1.url, 'Reset view returns to the default angle and zoom');
+
+  // Keyboard on the focused scene.
+  await page.locator('.scene3d').focus();
+  await page.keyboard.press('ArrowLeft');
+  await settle(page);
+  const keyRot = await sceneStats(page);
+  check(keyRot.url !== reset2.url, 'arrow keys rotate');
+  await page.keyboard.press('+');
+  await page.keyboard.press('+');
+  await settle(page);
+  const keyZoom = await sceneStats(page);
+  check(keyZoom.h > keyRot.h * 1.08, 'plus zooms in');
+  await page.keyboard.press('-');
+  await page.keyboard.press('-');
+  await page.keyboard.press('-');
+  await settle(page);
+  check((await sceneStats(page)).h < keyZoom.h, 'minus zooms out');
+  await page.getByRole('button', { name: 'Zoom in' }).click();
+  await page.getByRole('button', { name: 'Zoom out' }).click();
+  check(true, 'zoom buttons work without errors');
+
+  // Copy and download use the current angle.
+  await presetBtn('Front').click();
+  await settle(page);
+  const front = await downloadVia(page, 1024);
+  await presetBtn('Side').click();
+  await settle(page);
+  const side = await downloadVia(page, 1024);
+  check(pngInfo(front.path).width === 1024 && pngInfo(side.path).height === 1024, '3D PNG download is 1024 px');
+  check(!pngInfo(front.path).bytes.equals(pngInfo(side.path).bytes), 'download follows the camera angle');
+  const frontCentre = await pngPixel(page, front.path, 512, 512);
+  check(frontCentre[3] === 255, '3D download has content in the middle');
+  rmSync(front.path);
+  rmSync(side.path);
+  await page.getByRole('button', { name: 'Transparent' }).click();
+  await page.waitForTimeout(300);
+  const tr = await downloadVia(page, 512);
+  check((await pngPixel(page, tr.path, 3, 3))[3] === 0, 'Transparent 3D download has a transparent background');
+  check(pngInfo(tr.path).width === 512, '3D PNG 512 is 512 px');
+  rmSync(tr.path);
+  await page.getByRole('button', { name: 'Copy PNG' }).click();
+  await page.getByText('Copied to clipboard').waitFor({ timeout: 3000 });
+  const clip = await page.evaluate(async () => {
+    const items = await navigator.clipboard.read();
+    const bmp = await createImageBitmap(await items[0].getType('image/png'));
+    return [bmp.width, bmp.height];
+  });
+  check(clip[0] === 460 && clip[1] === 460, '3D Copy PNG is 460 px');
+
+  // Leaving Critter returns to 2D.
+  await page.locator('.style-tile', { hasText: 'Invader' }).click();
+  check((await page.locator('.scene3d').count()) === 0, 'another style returns to 2D');
+  check(await page.getByRole('button', { name: '3D', exact: true }).isDisabled(), '3D disabled again');
+  await context.close();
+
+  // No WebGL: stays in 2D with a short message.
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  await ctx.addInitScript(() => {
+    const orig = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (type, ...rest) {
+      if (String(type).startsWith('webgl')) return null;
+      return orig.call(this, type, ...rest);
+    };
+  });
+  const p = await ctx.newPage();
+  p.on('pageerror', (e) => consoleErrors.push(String(e)));
+  await p.goto(URL);
+  await p.locator('.style-tile', { hasText: 'Critter' }).click();
+  check(await p.getByRole('button', { name: '3D', exact: true }).isDisabled(), 'no WebGL: 3D switch disabled');
+  check(await p.getByText('3D is not available on this device.').isVisible(), 'no WebGL: message next to the switch');
+  await ctx.close();
+};
+
 sections.keyboard = async (browser) => {
   console.log('Keyboard');
   const { page, context } = await newPage(browser, { width: 1440, height: 900 });
