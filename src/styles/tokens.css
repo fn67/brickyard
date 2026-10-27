@@ -1,0 +1,69 @@
+/* App appearance tokens from the design's Foundations. Avatars and the 3D scene never use these. */
+:root {
+  --bg: #f6f5f3;
+  --surface: #ffffff;
+  --sunken: #efeeeb;
+  --line: #e3e1dc;
+  --line2: #cfccc5;
+  --ink: #121214;
+  --ink2: #55534e;
+  --ink3: #6a6862;
+  --accent: #2f3bd0;
+  --onaccent: #ffffff;
+  --dot: #d9d6cf;
+  --chk1: #e2e0db;
+  --chk2: #ffffff;
+  --danger: #b42318;
+  --pop: 0 12px 32px -12px rgba(0, 0, 0, 0.28);
+  --pop-up: 0 -12px 32px -12px rgba(0, 0, 0, 0.28);
+  --scrim: rgba(0, 0, 0, 0.5);
+
+  --sans: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #0e0e10;
+    --surface: #17171a;
+    --sunken: #0b0b0d;
+    --line: #2a2a2f;
+    --line2: #3b3b42;
+    --ink: #f2f1ee;
+    --ink2: #b6b4ae;
+    --ink3: #8e8c86;
+    --accent: #98a0ff;
+    --onaccent: #0b0b1a;
+    --dot: #26262b;
+    --chk1: #2a2a2f;
+    --chk2: #1b1b1f;
+    --danger: #ff9c93;
+    --pop: 0 12px 32px -12px rgba(0, 0, 0, 0.8);
+    --pop-up: 0 -12px 32px -12px rgba(0, 0, 0, 0.8);
+    --scrim: rgba(0, 0, 0, 0.6);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #0e0e10;
+  --surface: #17171a;
+  --sunken: #0b0b0d;
+  --line: #2a2a2f;
+  --line2: #3b3b42;
+  --ink: #f2f1ee;
+  --ink2: #b6b4ae;
+  --ink3: #8e8c86;
+  --accent: #98a0ff;
+  --onaccent: #0b0b1a;
+  --dot: #26262b;
+  --chk1: #2a2a2f;
+  --chk2: #1b1b1f;
+  --danger: #ff9c93;
+  --pop: 0 12px 32px -12px rgba(0, 0, 0, 0.8);
+  --pop-up: 0 -12px 32px -12px rgba(0, 0, 0, 0.8);
+  --scrim: rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}

@@ -29,13 +29,13 @@ Port the logic from `reference/prototype.html` (REQUIREMENTS section 6).
 
 ## Stage 3: Desktop app (2D)
 First read the design files (see CLAUDE.md) and save copies to `reference/design/`.
-- [ ] CSS variable tokens for light and dark app appearance, taken from the design's Foundations.
-- [ ] Header: logo, name, tagline, name field (exact label and placeholder), Shuffle, app dark mode toggle (4.9: follows the system first, remembers the choice, no flash on load).
-- [ ] Preview panel: large preview, size previews (56, 48, 20 px), facts (Style, Grid, Name), 2D | 3D switch (disabled except for Critter, with its note).
-- [ ] Styles panel: ten cards in the designed grid; "3D" badge on Critter only.
-- [ ] Variations: six, with heading, line and the "Using variation N" note.
-- [ ] Canvas 2D renderer reading the `AvatarModel`.
-- [ ] Verify: Playwright screenshots at 1440×900 in light and dark app appearance; compare with the desktop design frames; fix differences. Keyboard: every control reachable with a visible focus state.
+- [x] CSS variable tokens for light and dark app appearance, taken from the design's Foundations.
+- [x] Header: logo, name, tagline, name field (exact label and placeholder), Shuffle, app dark mode toggle (4.9: follows the system first, remembers the choice, no flash on load).
+- [x] Preview panel: large preview, size previews (56, 48, 20 px), facts (Style, Grid, Name), 2D | 3D switch (disabled except for Critter, with its note).
+- [x] Styles panel: ten cards in the designed grid; "3D" badge on Critter only.
+- [x] Variations: six, with heading, line and the "Using variation N" note.
+- [x] Canvas 2D renderer reading the `AvatarModel`.
+- [x] Verify: Playwright screenshots at 1440×900 in light and dark app appearance; compare with the desktop design frames; fix differences. Keyboard: every control reachable with a visible focus state.
 
 ## Stage 4: Colour, Background, copy and download
 - [ ] Colour control (Auto plus swatches) and Background control (Light, Dark, Transparent), applied everywhere at once.
@@ -80,6 +80,13 @@ Read the phone design files (see CLAUDE.md). Requirements in 4.10.
 - 2026-10-27 Stage 2: Dark palettes are new (the prototype only had Light, apart from Midnight, Invader and Aurora). Classic Dark reuses the removed Midnight style's colours; Invader and Aurora Dark keep the prototype's exact colours (backgrounds `#0f131a` / `#10131b`, "about #0d1117"). All other Dark backgrounds are `#0d1117`. Sticker's outline and shadow turn light on Dark so the sticker edge stays visible.
 - 2026-10-27 Stage 2: the prototype's Light palettes are kept exactly (parity), so yellow cells on Light sit near 1.4:1 contrast, as they always did. The two new Light palettes (Invader, Aurora) darken hues 35°–200° to 36% lightness (others 45%) so they reach at least 2.5:1; this is slightly below the "roughly 40%" band in 4.4 but keeps them readable.
 - 2026-10-27 Stage 1: the parity test compares pixels, not just cell lists: it runs the prototype's own draw functions (extracted from `reference/prototype.html`) and the new engine + canvas renderer into an in-memory raster. Invader and Aurora are compared on the Dark background, because the prototype only drew them dark.
+- 2026-10-27 Stage 3: design and REQUIREMENTS differ in a few places; followed REQUIREMENTS for behaviour and copy: name placeholder "Username, name…" (design: "hello-world"); swatch hues 0, 28, 48, 100, 160, 190, 215, 250, 285, 320 (design: 2, 25, 48, 85 …); Shuffle uses the prototype's git words (design: a fixed list of names); variations use `name:N` in the field (design: an internal `#N`). The design's pattern code is a mock-up; the engine is the prototype port.
+- 2026-10-27 Stage 3: style cards show name and grid only (design + Decisions log "Cards show the name and grid only"), not the note from 4.2. The facts list shows the style name only ("Classic"), as in the design.
+- 2026-10-27 Stage 3: the app opens on Classic (design default) and makes 3D easy to find with the always-visible note "3D is available for Critter." plus the design's "Try it" link, which selects Critter and switches to 3D.
+- 2026-10-27 Stage 3: kept the design's "Use original" link next to "Using variation N"; it sets the field back to the name without the suffix.
+- 2026-10-27 Stage 3: swatch accessible names are colour plus hue, for example "Blue, hue 215°"; the Auto swatch has no text, only the tooltip and accessible name "Auto, colour from the name" (design).
+- 2026-10-27 Stage 3: Colour, Background, Copy PNG and the Download menu were built with the desktop layout because they are part of the designed panels; they are verified and ticked in Stage 4.
+- 2026-10-27 Stage 3: the design's rendered frames could not be opened as images (Claude Design's own format needs its runtime), so comparison was against the design's markup and inline styles: sizes, spacing, colours, radii and copy were copied from it.
 
 ## Log
 (One short line per stage when finished: what was built, checks run, anything skipped or `[!]`.)
@@ -87,6 +94,7 @@ Read the phone design files (see CLAUDE.md). Requirements in 4.10.
 - Stage 0: Vite + React 19 + TS strict scaffold, three / R3F / drei, Vitest, Playwright 1.64 (dev), folders, git. Smoke test, typecheck and build pass.
 - Stage 1: engine in `src/engine/` (hash, RNG, mirror/ensure, base 5×5, ten styles), canvas renderer in `src/render/canvas.ts`. 28 tests incl. pixel parity with the prototype for all ten styles over 8 names (empty, 40 chars, non-Latin) and 3 hue overrides.
 - Stage 2: hue override and Light / Dark / Transparent palettes for all ten styles; 45 tests (pattern invariance over 3 backgrounds × 11 hue settings × 13 names, transparent = no background, lightness bands, contrast, Duotone/Kaleido second hue). `docs/ARCHITECTURE.md` written.
+- Stage 3: desktop UI from the design (tokens for light and dark, header with theme toggle and no-flash inline script, name field, Preview panel, Styles panel, Variations, canvas renderer). `scripts/verify-ui.mjs` (desktop + keyboard sections): 64 checks pass incl. no console errors; screenshots `docs/screenshots/desktop-1440-light.png`, `desktop-1440-dark.png`, `desktop-focus-visible.png`.
 
 ## Final report
 (Fill in at the end: what works, what was skipped or blocked, what the user should look at first, known gaps.)

@@ -1,0 +1,312 @@
+/* Desktop and tablet layout: header, name field, then Preview beside Styles. */
+.desktop {
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 32px clamp(16px, 4vw, 40px) 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  flex: none;
+  color: var(--ink);
+}
+
+.title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.theme-toggle {
+  margin: -5px 0 -5px auto;
+}
+
+.tagline {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink2);
+}
+
+.name-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.name-row {
+  display: flex;
+  gap: 12px;
+}
+
+.name-input {
+  flex: 1;
+  min-width: 0;
+  height: 56px;
+  padding: 0 18px;
+  border-radius: 8px;
+  border: 1px solid var(--line2);
+  background: var(--surface);
+  color: var(--ink);
+  font: 500 18px var(--mono);
+}
+
+.name-input::placeholder {
+  color: var(--ink3);
+}
+
+.shuffle-btn {
+  height: 56px;
+  padding: 0 22px;
+  font-size: 15px;
+}
+
+.workspace {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.panel {
+  min-width: 0;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.panel-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.preview-panel {
+  flex: 1 1 440px;
+  max-width: 440px;
+  padding: 20px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.note {
+  margin: 8px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 6px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink2);
+}
+
+.preview-stage {
+  margin-top: 12px;
+}
+
+.preview-bg {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.details {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px 24px;
+}
+
+.ladder {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.ladder-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.ladder-avatar {
+  flex: none;
+  overflow: hidden;
+  background: var(--sunken);
+}
+
+.ladder-56 {
+  width: 56px;
+  border-radius: 4px;
+}
+
+.ladder-48 {
+  width: 48px;
+  border-radius: 4px;
+}
+
+.ladder-20 {
+  width: 20px;
+  border-radius: 2px;
+}
+
+.facts {
+  margin: 0;
+  flex: 1 1 170px;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 18px;
+  row-gap: 6px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.facts dt {
+  color: var(--ink3);
+}
+
+.facts dd {
+  margin: 0;
+}
+
+.facts .mono {
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 8px;
+}
+
+.actions > .btn {
+  flex: none;
+}
+
+.download {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.download-btn {
+  width: 100%;
+  padding: 0 14px 0 18px;
+}
+
+.menu {
+  position: absolute;
+  z-index: 10;
+  right: 0;
+  top: calc(100% + 6px);
+  width: 248px;
+  padding: 6px;
+  border-radius: 10px;
+  border: 1px solid var(--line2);
+  background: var(--surface);
+  box-shadow: var(--pop);
+}
+
+.status {
+  margin-top: 12px;
+  min-height: 40px;
+}
+
+.styles-panel {
+  flex: 999 1 560px;
+  padding: 24px;
+}
+
+.colour-row {
+  margin-top: 16px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.colour-control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
+}
+
+.colour-control .field-label {
+  flex: 0 0 100px;
+}
+
+.colour-control .swatches {
+  flex: 1 1 260px;
+}
+
+.style-grid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(max(128px, calc((100% - 52px) / 5)), 1fr));
+  gap: 12px;
+}
+
+.variations-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.hint {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink3);
+}
+
+.variation-grid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 88px));
+  gap: 12px;
+}
+
+.variation-note {
+  margin-top: 6px;
+  min-height: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 8px;
+  font-size: 13px;
+  color: var(--ink2);
+}
+
+@media (max-width: 520px) {
+  .variation-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
