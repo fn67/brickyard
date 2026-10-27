@@ -22,10 +22,10 @@ Port the logic from `reference/prototype.html` (REQUIREMENTS section 6).
 - [x] Parity test: generate the cell patterns for at least five names in the prototype (run its code in Node or Playwright) and assert the engine matches them for the styles that exist in both.
 
 ## Stage 2: Colour and Background in the engine
-- [ ] Hue override: Auto plus ten hues (4.3). Hue only; saturation and lightness stay in each style's band.
-- [ ] Backgrounds Light, Dark, Transparent (4.4). Each style has a light and a dark palette (Invader and Aurora need a proper light palette; Quilt shifts tones in Dark).
-- [ ] Tests: changing hue or background never changes which cells are filled; Transparent returns no background.
-- [ ] Write `docs/ARCHITECTURE.md` (one page, what was actually built): folder map, the `AvatarModel` shape, how a name becomes cells (hash, random numbers, style, hue, background), how renderers read the model, how to add a style.
+- [x] Hue override: Auto plus ten hues (4.3). Hue only; saturation and lightness stay in each style's band.
+- [x] Backgrounds Light, Dark, Transparent (4.4). Each style has a light and a dark palette (Invader and Aurora need a proper light palette; Quilt shifts tones in Dark).
+- [x] Tests: changing hue or background never changes which cells are filled; Transparent returns no background.
+- [x] Write `docs/ARCHITECTURE.md` (one page, what was actually built): folder map, the `AvatarModel` shape, how a name becomes cells (hash, random numbers, style, hue, background), how renderers read the model, how to add a style.
 
 ## Stage 3: Desktop app (2D)
 First read the design files (see CLAUDE.md) and save copies to `reference/design/`.
@@ -75,15 +75,18 @@ Read the phone design files (see CLAUDE.md). Requirements in 4.10.
 
 - 2026-10-27 Stage 0: the prototype was shipped at `docs/prototype.html`, not `reference/prototype.html` as CLAUDE.md says. Copied it to `reference/prototype.html` (the docs copy is left untouched); tests read the `reference/` copy.
 - 2026-10-27 Stage 0: npm resolved TypeScript 7 and Vite 8. Used a single `tsconfig.json` with `tsc --noEmit` for `typecheck` and before `vite build`, instead of project references.
-- 2026-10-27 Stage 1: `AvatarCell` has optional fields beyond x, y, height, colour and kind: `w`/`h` (sub-cell footprint for Critter pupils), `z` (3D base elevation), and `dx`/`dy`/`grow` (2D-only offset and outline growth for Sticker's shadow and outline). `AvatarModel` also carries `padding` (empty margin in cells) so every flat renderer frames the avatar the same way. Needed so renderers read nothing but the model.
-- 2026-10-27 Stage 1: the parity test compares pixels, not just cell lists: it runs the prototype's own draw functions (extracted from `reference/prototype.html`) and the new engine + canvas renderer into an in-memory raster. Invader and Aurora are compared on the Dark background, because the prototype only drew them dark.
 - 2026-10-27 Stage 0: added `@fontsource/instrument-sans` and `@fontsource/jetbrains-mono` (dependencies not in the stack list). The design uses these fonts; self-hosting them keeps the app free of third-party network requests (Principle 3, Private).
+- 2026-10-27 Stage 1: `AvatarCell` has optional fields beyond x, y, height, colour and kind: `w`/`h` (sub-cell footprint for Critter pupils), `z` (3D base elevation), and `dx`/`dy`/`grow` (2D-only offset and outline growth for Sticker's shadow and outline). `AvatarModel` also carries `padding` (empty margin in cells) so every flat renderer frames the avatar the same way. Needed so renderers read nothing but the model.
+- 2026-10-27 Stage 2: Dark palettes are new (the prototype only had Light, apart from Midnight, Invader and Aurora). Classic Dark reuses the removed Midnight style's colours; Invader and Aurora Dark keep the prototype's exact colours (backgrounds `#0f131a` / `#10131b`, "about #0d1117"). All other Dark backgrounds are `#0d1117`. Sticker's outline and shadow turn light on Dark so the sticker edge stays visible.
+- 2026-10-27 Stage 2: the prototype's Light palettes are kept exactly (parity), so yellow cells on Light sit near 1.4:1 contrast, as they always did. The two new Light palettes (Invader, Aurora) darken hues 35°–200° to 36% lightness (others 45%) so they reach at least 2.5:1; this is slightly below the "roughly 40%" band in 4.4 but keeps them readable.
+- 2026-10-27 Stage 1: the parity test compares pixels, not just cell lists: it runs the prototype's own draw functions (extracted from `reference/prototype.html`) and the new engine + canvas renderer into an in-memory raster. Invader and Aurora are compared on the Dark background, because the prototype only drew them dark.
 
 ## Log
 (One short line per stage when finished: what was built, checks run, anything skipped or `[!]`.)
 
 - Stage 0: Vite + React 19 + TS strict scaffold, three / R3F / drei, Vitest, Playwright 1.64 (dev), folders, git. Smoke test, typecheck and build pass.
 - Stage 1: engine in `src/engine/` (hash, RNG, mirror/ensure, base 5×5, ten styles), canvas renderer in `src/render/canvas.ts`. 28 tests incl. pixel parity with the prototype for all ten styles over 8 names (empty, 40 chars, non-Latin) and 3 hue overrides.
+- Stage 2: hue override and Light / Dark / Transparent palettes for all ten styles; 45 tests (pattern invariance over 3 backgrounds × 11 hue settings × 13 names, transparent = no background, lightness bands, contrast, Duotone/Kaleido second hue). `docs/ARCHITECTURE.md` written.
 
 ## Final report
 (Fill in at the end: what works, what was skipped or blocked, what the user should look at first, known gaps.)

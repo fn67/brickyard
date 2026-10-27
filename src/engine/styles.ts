@@ -24,6 +24,12 @@ function isDark(ctx: BuildContext): boolean {
   return ctx.mode === 'dark';
 }
 
+/** Yellows and greens read lighter, so the new light palettes darken them to stay readable. */
+function lightBand(hue: number, normal: number): number {
+  const h = ((Math.round(hue) % 360) + 360) % 360;
+  return h > 35 && h < 200 ? 36 : normal;
+}
+
 function background(ctx: BuildContext, light: string, dark: string): string | null {
   if (ctx.mode === 'transparent') return null;
   return ctx.mode === 'dark' ? dark : light;
@@ -105,7 +111,7 @@ const invader: Builder = (ctx) => {
   const hue = pickHue(ctx, Math.floor(r() * 360));
   const g = mirror(8, 8, r, 0.55);
   // The prototype drew Invader on dark only; the dark palette keeps those colours.
-  const fill = isDark(ctx) ? hsl(hue, 80, 62) : hsl(hue, 70, 48);
+  const fill = isDark(ctx) ? hsl(hue, 80, 62) : hsl(hue, 70, lightBand(hue, 45));
   return model(ctx, 'invader', 8, 1, background(ctx, hsl(hue, 30, 94), '#0f131a'), cellsOf(g, fill));
 };
 
@@ -226,7 +232,7 @@ const aurora: Builder = (ctx) => {
   const cells: AvatarCell[] = [];
   forEachCell(b.grid, (x, y) => {
     const h = b.hue + y * 26 + x * 6;
-    cells.push({ x, y, height: 1, color: dark ? hsl(h, 85, 62) : hsl(h, 72, 48), kind: 'body' });
+    cells.push({ x, y, height: 1, color: dark ? hsl(h, 85, 62) : hsl(h, 72, lightBand(h, 45)), kind: 'body' });
   });
   // The prototype drew Aurora on dark only; the dark palette keeps those colours.
   return model(ctx, 'aurora', 5, 1, background(ctx, hsl(b.hue, 25, 95), '#10131b'), cells);
