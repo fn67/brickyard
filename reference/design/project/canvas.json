@@ -1,0 +1,181 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Brickyard.dc.html": {
+      "expand": "fill",
+      "h": 1240,
+      "is_interactive": true,
+      "title": "Desktop, default (Classic)",
+      "w": 1440,
+      "x": 2100,
+      "y": 0
+    },
+    "BrickyardPhone.dc.html": {
+      "h": 650,
+      "is_interactive": true,
+      "title": "Phone editor, Style tab (default, Classic), 390 x 650",
+      "w": 390,
+      "x": 4500,
+      "y": 0
+    },
+    "DesktopDark.dc.html": {
+      "h": 1240,
+      "title": "Desktop, default (Classic), dark appearance",
+      "w": 1440,
+      "x": 2100,
+      "y": 3600
+    },
+    "Foundations.dc.html": {
+      "h": 2060,
+      "w": 1440,
+      "x": 2129,
+      "y": 1394
+    },
+    "PhoneColour.dc.html": {
+      "h": 650,
+      "title": "Phone editor, Colour tab (Colour + Background)",
+      "w": 390,
+      "x": 5480,
+      "y": 0
+    },
+    "PhoneDarkApp.dc.html": {
+      "h": 650,
+      "title": "Phone editor, dark appearance, Copied (Pink)",
+      "w": 390,
+      "x": 5480,
+      "y": 770
+    },
+    "PhoneDefault.dc.html": {
+      "h": 2640,
+      "is_interactive": true,
+      "title": "Phone, default",
+      "w": 400,
+      "x": 3837,
+      "y": 0
+    },
+    "PhoneDefaultDark.dc.html": {
+      "h": 2640,
+      "title": "Phone, default, dark appearance",
+      "w": 400,
+      "x": 7500,
+      "y": 0
+    },
+    "PhoneKeyboard.dc.html": {
+      "h": 380,
+      "title": "Phone editor, keyboard open (visible area 390 x 380)",
+      "w": 390,
+      "x": 5970,
+      "y": 770
+    },
+    "PhoneKeyboardDark.dc.html": {
+      "h": 380,
+      "title": "Phone editor, keyboard open, dark appearance",
+      "w": 390,
+      "x": 5580,
+      "y": 2926
+    },
+    "PhoneSheet.dc.html": {
+      "h": 650,
+      "title": "Phone editor, Download sheet open",
+      "w": 390,
+      "x": 4990,
+      "y": 770
+    },
+    "PhoneSheetDark.dc.html": {
+      "h": 650,
+      "title": "Phone editor, Download sheet, dark appearance",
+      "w": 390,
+      "x": 5090,
+      "y": 2880
+    },
+    "PhoneSmall.dc.html": {
+      "h": 600,
+      "title": "Small phone, Style tab, 360 x 600",
+      "w": 360,
+      "x": 4500,
+      "y": 1540
+    },
+    "PhoneSmallColour.dc.html": {
+      "h": 600,
+      "title": "Small phone, Colour tab, 360 x 600",
+      "w": 360,
+      "x": 5480,
+      "y": 1540
+    },
+    "PhoneStyleDark.dc.html": {
+      "h": 650,
+      "title": "Phone editor, Style tab, dark appearance",
+      "w": 390,
+      "x": 4523,
+      "y": 2880
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-27T07:55:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "noteOrder": [
+    "t-desktop",
+    "t-phone",
+    "t-phone-editor",
+    "t-light"
+  ],
+  "notes": {
+    "t-desktop": {
+      "kind": "title1",
+      "maxW": 3000,
+      "text": "Brickyard, desktop",
+      "w": 240,
+      "x": 2100,
+      "y": -300
+    },
+    "t-light": {
+      "kind": "title1",
+      "maxW": 2000,
+      "text": "Dark appearance (app toggle)",
+      "w": 240,
+      "x": 4505,
+      "y": 2588
+    },
+    "t-phone": {
+      "kind": "title1",
+      "maxW": 1900,
+      "text": "Brickyard, phone",
+      "w": 240,
+      "x": 3837,
+      "y": -300
+    },
+    "t-phone-editor": {
+      "kind": "title1",
+      "maxW": 2000,
+      "text": "Phone editor, single screen",
+      "w": 240,
+      "x": 4500,
+      "y": -300
+    }
+  },
+  "order": [
+    "Foundations.dc.html",
+    "Brickyard.dc.html",
+    "PhoneDefault.dc.html",
+    "BrickyardPhone.dc.html",
+    "PhoneColour.dc.html",
+    "PhoneSheet.dc.html",
+    "PhoneDarkApp.dc.html",
+    "PhoneKeyboard.dc.html",
+    "PhoneSmall.dc.html",
+    "PhoneSmallColour.dc.html",
+    "PhoneStyleDark.dc.html",
+    "PhoneSheetDark.dc.html",
+    "PhoneKeyboardDark.dc.html",
+    "DesktopDark.dc.html",
+    "PhoneDefaultDark.dc.html"
+  ],
+  "pages": [],
+  "title": "Identicon Lab"
+}

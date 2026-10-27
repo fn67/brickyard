@@ -1,0 +1,950 @@
+<title>Brickyard</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a narrow preview panel beside a grid of style cards. Stacks on phones. Neutral palette, one accent. */
+:root {
+    --bg: #fafafb;
+    --surface: #ffffff;
+    --ink: #14181f;
+    --muted: #5f6773;
+    --line: #e1e4e9;
+    --line-strong: #c9ced6;
+    --accent: #2456e6;
+    --accent-ink: #ffffff;
+    --sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --bg: #0e1115;
+        --surface: #14181d;
+        --ink: #e6e9ee;
+        --muted: #8b94a1;
+        --line: #242a32;
+        --line-strong: #343b45;
+        --accent: #7ba3ff;
+        --accent-ink: #0e1115;
+        color-scheme: dark;
+    }
+}
+:root[data-theme="dark"] {
+    --bg: #0e1115;
+    --surface: #14181d;
+    --ink: #e6e9ee;
+    --muted: #8b94a1;
+    --line: #242a32;
+    --line-strong: #343b45;
+    --accent: #7ba3ff;
+    --accent-ink: #0e1115;
+    color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+    padding-block: 32px 48px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+.wrap {
+    max-width: 1040px;
+    margin: 0 auto;
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin: 0 0 4px;
+}
+
+.intro {
+    margin: 0;
+    font-size: 17px;
+}
+.intro-sub {
+    margin: 2px 0 0;
+    color: var(--muted);
+}
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 12px 12px;
+    margin-top: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+}
+
+.field {
+    display: grid;
+    gap: 6px;
+    flex: 1 1 240px;
+    max-width: 380px;
+    min-width: 0;
+}
+.field label {
+    font-size: 13px;
+    font-weight: 500;
+}
+.field input {
+    font: 400 14px/20px var(--mono);
+    height: 36px;
+    padding: 0 12px;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    width: 100%;
+    min-width: 0;
+}
+
+.colors {
+    display: grid;
+    gap: 6px;
+}
+.colors .lbl {
+    font-size: 13px;
+    font-weight: 500;
+}
+.swatches {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+}
+.swatch {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 0 1px var(--line-strong);
+}
+.swatch.auto {
+    background: conic-gradient(#e5484d, #f5a524, #9fd356, #2bb4a0, #3e63dd, #a24fd6, #e5484d);
+}
+.swatch[aria-pressed="true"] {
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+}
+@media (pointer: coarse) {
+    .swatch { width: 30px; height: 30px; }
+}
+
+.btn {
+    font: 500 14px/20px var(--sans);
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 6px;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+}
+.btn:hover { border-color: var(--muted); }
+.btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+}
+.btn.primary:hover { filter: brightness(0.95); }
+
+.toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+.toggle input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: var(--accent);
+}
+
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.layout {
+    display: grid;
+    gap: 32px;
+    margin-top: 24px;
+    align-items: start;
+}
+
+.panel {
+    min-width: 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 16px;
+    display: grid;
+    gap: 16px;
+}
+
+h2 {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.av { border-radius: 6px; }
+
+.big {
+    display: block;
+    width: min(100%, 280px);
+    aspect-ratio: 1 / 1;
+    height: auto;
+}
+
+.sizes {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+}
+.sizes figure {
+    margin: 0;
+    display: grid;
+    gap: 6px;
+    justify-items: start;
+}
+.sizes figcaption {
+    font: 400 11px/1 var(--mono);
+    color: var(--muted);
+}
+.s56 { width: 56px; height: 56px; }
+.s40 { width: 40px; height: 40px; }
+.s20 { width: 20px; height: 20px; border-radius: 4px; }
+
+.facts {
+    margin: 0;
+    display: grid;
+    gap: 6px;
+    font-size: 13px;
+}
+.facts div {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: 8px;
+}
+.facts dt { color: var(--muted); }
+.facts dd {
+    margin: 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+.facts .mono { font-family: var(--mono); font-size: 12px; }
+
+.actions {
+    display: grid;
+    gap: 8px;
+}
+.actions .btn { justify-self: start; }
+.status {
+    margin: 0;
+    min-height: 3em;
+    font-size: 12.5px;
+    color: var(--muted);
+}
+
+.hint {
+    margin: 2px 0 10px;
+    font-size: 12.5px;
+    color: var(--muted);
+}
+
+.variations {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+}
+.var {
+    padding: 2px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.var:hover { border-color: var(--line-strong); }
+.var[aria-pressed="true"] {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+}
+.var canvas { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; }
+
+.gallery-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 2px 16px;
+    margin-bottom: 12px;
+}
+.gallery-head p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr));
+    gap: 12px;
+}
+
+.card {
+    display: grid;
+    gap: 2px;
+    padding: 10px 10px 12px;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    cursor: pointer;
+    min-width: 0;
+}
+.card canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    margin-bottom: 8px;
+}
+.card:hover { border-color: var(--line-strong); }
+.card[aria-pressed="true"] {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+}
+.card-name { font-weight: 500; font-size: 14px; }
+.card-meta { font-size: 12px; color: var(--muted); }
+
+.circle .av { border-radius: 50%; }
+
+.foot {
+    margin: 32px 0 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--muted);
+}
+
+@media (min-width: 860px) {
+    .layout { grid-template-columns: 300px minmax(0, 1fr); }
+}
+@media (min-width: 860px) and (min-height: 820px) {
+    .panel { position: sticky; top: 16px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+    .card, .var, .btn { transition: border-color 0.12s ease; }
+}
+</style>
+
+<div class="wrap" id="app">
+    <header>
+        <h1>Brickyard</h1>
+        <p class="intro">A profile picture for people who hate profile pictures.</p>
+        <p class="intro-sub">Pixel avatars from any name, in twelve styles, built brick by brick.</p>
+        <div class="toolbar">
+            <div class="field">
+                <label for="seed">Username or text</label>
+                <input id="seed" type="text" value="hello-world" maxlength="40" autocomplete="off" spellcheck="false">
+            </div>
+            <div class="colors" role="group" aria-labelledby="colorLabel">
+                <span class="lbl" id="colorLabel">Colour</span>
+                <div class="swatches" id="swatches"></div>
+            </div>
+            <button class="btn" id="shuffle" type="button">Shuffle</button>
+            <label class="toggle" for="circle">
+                <input id="circle" type="checkbox">
+                Circle crop
+            </label>
+        </div>
+    </header>
+
+    <main class="layout">
+        <aside class="panel" id="panel" aria-label="Selected avatar">
+            <h2>Preview</h2>
+            <img class="big av" id="bigImg" width="280" height="280" alt="">
+            <div class="sizes">
+                <figure><img class="av s56" id="img56" alt=""><figcaption>56 px</figcaption></figure>
+                <figure><img class="av s40" id="img40" alt=""><figcaption>40 px</figcaption></figure>
+                <figure><img class="av s20" id="img20" alt=""><figcaption>20 px</figcaption></figure>
+            </div>
+            <dl class="facts">
+                <div><dt>Style</dt><dd id="fStyle"></dd></div>
+                <div><dt>Grid</dt><dd id="fGrid"></dd></div>
+                <div><dt>Colour</dt><dd id="fColor"></dd></div>
+                <div><dt>Seed</dt><dd id="fSeed" class="mono"></dd></div>
+            </dl>
+            <div class="actions">
+                <button class="btn primary" id="copy" type="button">Copy PNG</button>
+                <p class="status" id="status" aria-live="polite">Copies the 460 px square image. GitHub applies the circle crop itself.</p>
+            </div>
+            <div>
+                <h2>Variations</h2>
+                <p class="hint">Same style, different seeds. Select one to use it.</p>
+                <div class="variations" id="variations"></div>
+            </div>
+        </aside>
+
+        <section aria-labelledby="stylesHead">
+            <div class="gallery-head">
+                <h2 id="stylesHead">Styles</h2>
+                <p>Every style renders the same seed.</p>
+            </div>
+            <div class="gallery" id="gallery"></div>
+        </section>
+    </main>
+
+    <p class="foot">Avatars are generated in your browser. Nothing is uploaded.</p>
+</div>
+
+<script>
+(function () {
+    'use strict';
+
+    var DEFAULT_SEED = 'hello-world';
+
+    function hashString(str) {
+        var h = 1779033703 ^ str.length;
+        for (var i = 0; i < str.length; i++) {
+            h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+            h = (h << 13) | (h >>> 19);
+        }
+        h = Math.imul(h ^ (h >>> 16), 2246822507);
+        h = Math.imul(h ^ (h >>> 13), 3266489909);
+        return (h ^ (h >>> 16)) >>> 0;
+    }
+
+    function makeRng(seed, salt) {
+        var a = hashString(seed + '|' + salt);
+        return function () {
+            a = (a + 0x6D2B79F5) | 0;
+            var t = Math.imul(a ^ (a >>> 15), 1 | a);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+    }
+
+    function hsl(h, s, l) {
+        return 'hsl(' + (((Math.round(h) % 360) + 360) % 360) + ',' + s + '%,' + l + '%)';
+    }
+
+    // The colour picker overrides only the hue, so saturation and lightness stay in the designed band.
+    function pickHue(ownHue) {
+        return state.hue === null ? ownHue : state.hue;
+    }
+
+    function fillBg(ctx, S, color) {
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, S, S);
+    }
+
+    // Fills one grid cell. Edges are rounded so neighbours never leave hairline gaps.
+    function cell(ctx, u, ox, oy, gx, gy, grow) {
+        var g = grow || 0;
+        var x0 = Math.round(ox + gx * u) - g;
+        var y0 = Math.round(oy + gy * u) - g;
+        var x1 = Math.round(ox + (gx + 1) * u) + g;
+        var y1 = Math.round(oy + (gy + 1) * u) + g;
+        ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+    }
+
+    function forEachCell(grid, fn) {
+        for (var y = 0; y < grid.length; y++) {
+            for (var x = 0; x < grid[y].length; x++) {
+                if (grid[y][x]) { fn(x, y); }
+            }
+        }
+    }
+
+    // Keeps a sparse pattern from looking empty by filling the centre column(s).
+    function ensure(g) {
+        var h = g.length;
+        var w = g[0].length;
+        var n = 0;
+        forEachCell(g, function () { n++; });
+        if (n < Math.ceil(w * h * 0.28)) {
+            var cols = w % 2 ? [(w - 1) / 2] : [w / 2 - 1, w / 2];
+            for (var y = 0; y < h; y++) {
+                for (var i = 0; i < cols.length; i++) { g[y][cols[i]] = true; }
+            }
+        }
+        return g;
+    }
+
+    function mirror(w, h, r, density) {
+        var g = [];
+        var half = Math.ceil(w / 2);
+        for (var y = 0; y < h; y++) {
+            var row = new Array(w).fill(false);
+            for (var x = 0; x < half; x++) {
+                var v = r() < density;
+                row[x] = v;
+                row[w - 1 - x] = v;
+            }
+            g.push(row);
+        }
+        return ensure(g);
+    }
+
+    // Shared by every 5x5 style, so one name keeps its pattern and hue across skins.
+    function base5(seed) {
+        var r = makeRng(seed, 'g5');
+        var hue = pickHue(Math.floor(r() * 360));
+        var sat = 48 + Math.floor(r() * 22);
+        var light = 46 + Math.floor(r() * 10);
+        return { hue: hue, sat: sat, light: light, grid: mirror(5, 5, r, 0.5) };
+    }
+
+    function drawClassic(ctx, S, seed) {
+        var b = base5(seed);
+        var u = S / 7;
+        fillBg(ctx, S, '#f0f0f0');
+        ctx.fillStyle = hsl(b.hue, b.sat, b.light);
+        forEachCell(b.grid, function (x, y) { cell(ctx, u, u, u, x, y); });
+    }
+
+    function drawMidnight(ctx, S, seed) {
+        var b = base5(seed);
+        var u = S / 7;
+        fillBg(ctx, S, '#0d1117');
+        ctx.fillStyle = hsl(b.hue, 75, 64);
+        forEachCell(b.grid, function (x, y) { cell(ctx, u, u, u, x, y); });
+    }
+
+    function drawDuotone(ctx, S, seed) {
+        var b = base5(seed);
+        var r = makeRng(seed, 'duo');
+        var pick = mirror(5, 5, r, 0.5);
+        var u = S / 7;
+        fillBg(ctx, S, hsl(b.hue, 40, 94));
+        var a = hsl(b.hue, 70, 50);
+        var c = hsl(b.hue + 160, 70, 55);
+        forEachCell(b.grid, function (x, y) {
+            ctx.fillStyle = pick[y][x] ? a : c;
+            cell(ctx, u, u, u, x, y);
+        });
+    }
+
+    function drawDots(ctx, S, seed) {
+        var b = base5(seed);
+        var u = S / 7;
+        fillBg(ctx, S, '#f0f0f0');
+        ctx.fillStyle = hsl(b.hue, b.sat, b.light);
+        forEachCell(b.grid, function (x, y) {
+            ctx.beginPath();
+            ctx.arc(u + (x + 0.5) * u, u + (y + 0.5) * u, u * 0.43, 0, Math.PI * 2);
+            ctx.fill();
+        });
+    }
+
+    function drawSticker(ctx, S, seed) {
+        var b = base5(seed);
+        var u = S / 7;
+        var d = Math.round(u * 0.14);
+        var e = Math.max(2, Math.round(S * 0.011));
+        fillBg(ctx, S, hsl(b.hue, 70, 91));
+        ctx.fillStyle = hsl(b.hue, 55, 16);
+        forEachCell(b.grid, function (x, y) { cell(ctx, u, u + d, u + d, x, y, e); });
+        forEachCell(b.grid, function (x, y) { cell(ctx, u, u, u, x, y, e); });
+        ctx.fillStyle = hsl(b.hue, b.sat + 10, b.light + 2);
+        forEachCell(b.grid, function (x, y) { cell(ctx, u, u, u, x, y); });
+    }
+
+    function drawInvader(ctx, S, seed) {
+        var r = makeRng(seed, 'inv');
+        var hue = pickHue(Math.floor(r() * 360));
+        var g = mirror(8, 8, r, 0.55);
+        var u = S / 10;
+        fillBg(ctx, S, '#0f131a');
+        ctx.fillStyle = hsl(hue, 80, 62);
+        forEachCell(g, function (x, y) { cell(ctx, u, u, u, x, y); });
+    }
+
+    function drawCritter(ctx, S, seed) {
+        var r = makeRng(seed, 'crit');
+        var hue = pickHue(Math.floor(r() * 360));
+        var w = 9;
+        var h = 9;
+        var u = S / 11;
+        var g = [];
+        for (var i = 0; i < h; i++) { g.push(new Array(w).fill(false)); }
+        function set(x, y, v) {
+            g[y][x] = v;
+            g[y][w - 1 - x] = v;
+        }
+        var x;
+        var y;
+        for (y = 2; y <= 6; y++) {
+            for (x = 2; x <= 4; x++) { set(x, y, true); }
+        }
+        var ears = r() < 0.55;
+        set(2, 1, ears);
+        set(1, 1, ears && r() < 0.5);
+        set(4, 1, r() < 0.4);
+        for (y = 3; y <= 6; y++) {
+            set(1, y, r() < 0.5);
+            set(0, y, g[y][1] && r() < 0.4);
+        }
+        var legs = 0;
+        for (x = 2; x <= 4; x++) {
+            var leg = r() < 0.75;
+            set(x, 7, leg);
+            if (leg) { legs++; }
+        }
+        if (!legs) { set(3, 7, true); }
+        set(1, 7, r() < 0.35);
+        for (x = 1; x <= 4; x++) { set(x, 8, g[7][x] && r() < 0.6); }
+
+        fillBg(ctx, S, hsl(hue, 40, 92));
+        ctx.fillStyle = hsl(hue, 62, 56);
+        forEachCell(g, function (cx, cy) { cell(ctx, u, u, u, cx, cy); });
+
+        var look = r() < 0.5 ? 0 : 1;
+        var eyes = [3, 5];
+        for (var k = 0; k < eyes.length; k++) {
+            ctx.fillStyle = '#ffffff';
+            cell(ctx, u, u, u, eyes[k], 3);
+            ctx.fillStyle = hsl(hue, 50, 14);
+            var px = Math.round(u + eyes[k] * u + look * u * 0.5);
+            var py = Math.round(u + 3 * u + u * 0.25);
+            ctx.fillRect(px, py, Math.round(u * 0.5), Math.round(u * 0.5));
+        }
+
+        ctx.fillStyle = hsl(hue, 50, 18);
+        var kind = Math.floor(r() * 3);
+        var mouth = [[[4, 5]], [[3, 5], [4, 5], [5, 5]], [[3, 5], [5, 5], [4, 6]]][kind];
+        for (var m = 0; m < mouth.length; m++) { cell(ctx, u, u, u, mouth[m][0], mouth[m][1]); }
+    }
+
+    function drawQuilt(ctx, S, seed) {
+        var b = base5(seed);
+        var r = makeRng(seed, 'quilt');
+        var tones = [34, 52, 70];
+        var pick = [];
+        var u = S / 5;
+        var x;
+        var y;
+        for (y = 0; y < 5; y++) {
+            var row = new Array(5).fill(0);
+            for (x = 0; x < 3; x++) {
+                var t = Math.floor(r() * 3);
+                row[x] = t;
+                row[4 - x] = t;
+            }
+            pick.push(row);
+        }
+        for (y = 0; y < 5; y++) {
+            for (x = 0; x < 5; x++) {
+                ctx.fillStyle = hsl(b.hue, b.sat + 5, tones[pick[y][x]]);
+                cell(ctx, u, 0, 0, x, y);
+            }
+        }
+    }
+
+    function drawDither(ctx, S, seed) {
+        var b = base5(seed);
+        var r = makeRng(seed, 'dit');
+        var n = 12;
+        var u = S / 14;
+        var g = [];
+        var x;
+        var y;
+        for (y = 0; y < n; y++) { g.push(new Array(n).fill(false)); }
+        for (y = 0; y < n; y++) {
+            for (x = 0; x < n / 2; x++) {
+                var dist = Math.hypot(x + 0.5 - n / 2, y + 0.5 - n / 2) / 7.2;
+                var p = 1.05 - Math.pow(dist, 1.6) * 1.25;
+                var v = r() < p;
+                g[y][x] = v;
+                g[y][n - 1 - x] = v;
+            }
+        }
+        ensure(g);
+        fillBg(ctx, S, hsl(b.hue, 35, 93));
+        ctx.fillStyle = hsl(b.hue, 62, 42);
+        forEachCell(g, function (cx, cy) { cell(ctx, u, u, u, cx, cy); });
+    }
+
+    function drawAurora(ctx, S, seed) {
+        var b = base5(seed);
+        var u = S / 7;
+        fillBg(ctx, S, '#10131b');
+        forEachCell(b.grid, function (x, y) {
+            ctx.fillStyle = hsl(b.hue + y * 26 + x * 6, 85, 62);
+            cell(ctx, u, u, u, x, y);
+        });
+    }
+
+    function drawKaleido(ctx, S, seed) {
+        var b = base5(seed);
+        var r = makeRng(seed, 'kal');
+        var q = [];
+        var u = S / 8;
+        var x;
+        var y;
+        for (y = 0; y < 3; y++) {
+            var row = [];
+            for (x = 0; x < 3; x++) {
+                var v = r();
+                row.push(v < 0.3 ? 0 : (v < 0.7 ? 1 : 2));
+            }
+            q.push(row);
+        }
+        if (!q[2][2]) { q[2][2] = 1; }
+        fillBg(ctx, S, hsl(b.hue, 30, 93));
+        var colors = [null, hsl(b.hue, 65, 48), hsl(b.hue + 40, 75, 60)];
+        for (y = 0; y < 3; y++) {
+            for (x = 0; x < 3; x++) {
+                if (!q[y][x]) { continue; }
+                ctx.fillStyle = colors[q[y][x]];
+                cell(ctx, u, u, u, x, y);
+                cell(ctx, u, u, u, 5 - x, y);
+                cell(ctx, u, u, u, x, 5 - y);
+                cell(ctx, u, u, u, 5 - x, 5 - y);
+            }
+        }
+    }
+
+    function drawFrame(ctx, S, seed) {
+        var b = base5(seed);
+        var u = S / 9;
+        fillBg(ctx, S, hsl(b.hue, 30, 95));
+        ctx.fillStyle = hsl(b.hue, 45, 72);
+        for (var y = 0; y < 7; y++) {
+            for (var x = 0; x < 7; x++) {
+                var onRing = x === 0 || x === 6 || y === 0 || y === 6;
+                if (onRing && (x + y) % 2 === 0) { cell(ctx, u, u, u, x, y); }
+            }
+        }
+        ctx.fillStyle = hsl(b.hue, b.sat, b.light);
+        forEachCell(b.grid, function (x, y) { cell(ctx, u, u, u, x + 1, y + 1); });
+    }
+
+    var STYLES = [
+        { id: 'classic', name: 'Classic', grid: '5×5', note: 'Light', draw: drawClassic },
+        { id: 'midnight', name: 'Midnight', grid: '5×5', note: 'Dark', draw: drawMidnight },
+        { id: 'duotone', name: 'Duotone', grid: '5×5', note: 'Two hues', draw: drawDuotone },
+        { id: 'dots', name: 'Dots', grid: '5×5', note: 'Round cells', draw: drawDots },
+        { id: 'sticker', name: 'Sticker', grid: '5×5', note: 'Outlined', draw: drawSticker },
+        { id: 'invader', name: 'Invader', grid: '8×8', note: 'Arcade', draw: drawInvader },
+        { id: 'critter', name: 'Critter', grid: '9×9', note: 'With a face', draw: drawCritter },
+        { id: 'quilt', name: 'Quilt', grid: '5×5', note: 'Tonal', draw: drawQuilt },
+        { id: 'dither', name: 'Dither', grid: '12×12', note: 'Blob', draw: drawDither },
+        { id: 'aurora', name: 'Aurora', grid: '5×5', note: 'Hue sweep', draw: drawAurora },
+        { id: 'kaleido', name: 'Kaleido', grid: '6×6', note: 'Four-way symmetry', draw: drawKaleido },
+        { id: 'frame', name: 'Frame', grid: '7×7', note: 'Stitched edge', draw: drawFrame }
+    ];
+
+    var ADJ = ['quiet', 'tiny', 'loud', 'lazy', 'brave', 'odd', 'sunny', 'cold', 'rusty', 'sleepy'];
+    var NOUN = ['fork', 'merge', 'branch', 'commit', 'stash', 'rebase', 'patch', 'diff', 'bug', 'repo'];
+
+    var state = { style: 'classic', hue: null, lastCanvas: null };
+
+    var seedInput = document.getElementById('seed');
+    var circleBox = document.getElementById('circle');
+    var shuffleBtn = document.getElementById('shuffle');
+    var copyBtn = document.getElementById('copy');
+    var statusEl = document.getElementById('status');
+    var panel = document.getElementById('panel');
+    var gallery = document.getElementById('gallery');
+    var variationsEl = document.getElementById('variations');
+    var bigImg = document.getElementById('bigImg');
+    var imgs = [document.getElementById('img56'), document.getElementById('img40'), document.getElementById('img20')];
+    var fStyle = document.getElementById('fStyle');
+    var fGrid = document.getElementById('fGrid');
+    var fSeed = document.getElementById('fSeed');
+    var fColor = document.getElementById('fColor');
+    var swatchesEl = document.getElementById('swatches');
+
+    var DEFAULT_STATUS = statusEl.textContent;
+
+    function styleById(id) {
+        for (var i = 0; i < STYLES.length; i++) {
+            if (STYLES[i].id === id) { return STYLES[i]; }
+        }
+        return STYLES[0];
+    }
+
+    function currentSeed() {
+        return seedInput.value.trim() || DEFAULT_SEED;
+    }
+
+    function render(canvas, style, seed) {
+        var ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        style.draw(ctx, canvas.width, seed);
+    }
+
+    var cards = STYLES.map(function (s) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'card';
+        btn.setAttribute('aria-pressed', 'false');
+        btn.setAttribute('aria-label', s.name + ' style, ' + s.grid + ' grid, ' + s.note);
+        var canvas = document.createElement('canvas');
+        canvas.className = 'av';
+        canvas.width = 320;
+        canvas.height = 320;
+        canvas.setAttribute('aria-hidden', 'true');
+        var nm = document.createElement('span');
+        nm.className = 'card-name';
+        nm.textContent = s.name;
+        var mt = document.createElement('span');
+        mt.className = 'card-meta';
+        mt.textContent = s.grid + ' · ' + s.note;
+        btn.appendChild(canvas);
+        btn.appendChild(nm);
+        btn.appendChild(mt);
+        gallery.appendChild(btn);
+        btn.addEventListener('click', function () {
+            state.style = s.id;
+            update();
+            var box = panel.getBoundingClientRect();
+            if (window.matchMedia('(max-width: 859px)').matches && box.bottom < 0) {
+                var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                panel.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
+            }
+        });
+        return { style: s, button: btn, canvas: canvas };
+    });
+
+    var variationItems = [];
+    for (var vi = 0; vi < 12; vi++) {
+        (function (index) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'var';
+            btn.setAttribute('aria-pressed', 'false');
+            var canvas = document.createElement('canvas');
+            canvas.className = 'av';
+            canvas.width = 160;
+            canvas.height = 160;
+            canvas.setAttribute('aria-hidden', 'true');
+            btn.appendChild(canvas);
+            variationsEl.appendChild(btn);
+            var item = { button: btn, canvas: canvas, index: index, seed: '' };
+            btn.addEventListener('click', function () {
+                seedInput.value = item.seed;
+                update();
+            });
+            variationItems.push(item);
+        })(vi);
+    }
+
+    var HUES = [0, 28, 48, 100, 160, 190, 215, 250, 285, 320];
+    var swatchItems = [];
+
+    function addSwatch(hue) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'swatch' + (hue === null ? ' auto' : '');
+        btn.setAttribute('aria-pressed', 'false');
+        btn.setAttribute('aria-label', hue === null ? 'Colour from the name' : 'Hue ' + hue + ' degrees');
+        btn.title = hue === null ? 'Auto (from the name)' : 'Hue ' + hue + '°';
+        if (hue !== null) { btn.style.background = hsl(hue, 62, 50); }
+        swatchesEl.appendChild(btn);
+        btn.addEventListener('click', function () {
+            state.hue = hue;
+            update();
+        });
+        swatchItems.push({ button: btn, hue: hue });
+    }
+
+    addSwatch(null);
+    for (var hi = 0; hi < HUES.length; hi++) { addSwatch(HUES[hi]); }
+
+    function update() {
+        var seed = currentSeed();
+        var style = styleById(state.style);
+        var i;
+
+        for (i = 0; i < cards.length; i++) {
+            render(cards[i].canvas, cards[i].style, seed);
+            cards[i].button.setAttribute('aria-pressed', cards[i].style.id === state.style ? 'true' : 'false');
+        }
+
+        var off = document.createElement('canvas');
+        off.width = 460;
+        off.height = 460;
+        render(off, style, seed);
+        state.lastCanvas = off;
+        var url = off.toDataURL('image/png');
+        bigImg.src = url;
+        bigImg.alt = 'Avatar for ' + seed + ' in the ' + style.name + ' style';
+        for (i = 0; i < imgs.length; i++) {
+            imgs[i].src = url;
+            imgs[i].alt = '';
+        }
+        fStyle.textContent = style.name + ' (' + style.note.toLowerCase() + ')';
+        fGrid.textContent = style.grid;
+        fSeed.textContent = seed;
+        fColor.textContent = state.hue === null ? 'Auto (from the name)' : 'Hue ' + state.hue + '°';
+        for (i = 0; i < swatchItems.length; i++) {
+            swatchItems[i].button.setAttribute('aria-pressed', swatchItems[i].hue === state.hue ? 'true' : 'false');
+        }
+
+        var base = seed.replace(/:\d+$/, '');
+        for (i = 0; i < variationItems.length; i++) {
+            var item = variationItems[i];
+            item.seed = item.index === 0 ? base : base + ':' + item.index;
+            render(item.canvas, style, item.seed);
+            item.button.setAttribute('aria-label', 'Use seed ' + item.seed);
+            item.button.setAttribute('aria-pressed', item.seed === seed ? 'true' : 'false');
+        }
+        statusEl.textContent = DEFAULT_STATUS;
+    }
+
+    seedInput.addEventListener('input', update);
+
+    shuffleBtn.addEventListener('click', function () {
+        var a = ADJ[Math.floor(Math.random() * ADJ.length)];
+        var n = NOUN[Math.floor(Math.random() * NOUN.length)];
+        seedInput.value = a + '-' + n;
+        update();
+    });
+
+    circleBox.addEventListener('change', function () {
+        document.getElementById('app').classList.toggle('circle', circleBox.checked);
+    });
+
+    copyBtn.addEventListener('click', function () {
+        var canvas = state.lastCanvas;
+        if (!canvas) { return; }
+        canvas.toBlob(function (blob) {
+            try {
+                navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(function () {
+                    statusEl.textContent = 'Copied. Paste it into an image field or a chat.';
+                }, function () {
+                    statusEl.textContent = 'Clipboard is blocked here. Right-click or long-press the large avatar to save it.';
+                });
+            } catch (err) {
+                statusEl.textContent = 'Clipboard is blocked here. Right-click or long-press the large avatar to save it.';
+            }
+        }, 'image/png');
+    });
+
+    update();
+})();
+</script>

@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Brickyard phone editor</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.by{font-family:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+.by.light,.by.auto{--bg:#F6F5F3;--surface:#FFFFFF;--sunken:#EFEEEB;--line:#E3E1DC;--line2:#CFCCC5;--ink:#121214;--ink2:#55534E;--ink3:#6A6862;--accent:#2F3BD0;--onaccent:#FFFFFF;--dot:#D9D6CF;--chk1:#E2E0DB;--chk2:#FFFFFF;--danger:#B42318;--pop:0 -12px 32px -12px rgba(0,0,0,.28)}
+.by.dark{--bg:#0E0E10;--surface:#17171A;--sunken:#0B0B0D;--line:#2A2A2F;--line2:#3B3B42;--ink:#F2F1EE;--ink2:#B6B4AE;--ink3:#8E8C86;--accent:#98A0FF;--onaccent:#0B0B1A;--dot:#26262B;--chk1:#2A2A2F;--chk2:#1B1B1F;--danger:#FF9C93;--pop:0 -12px 32px -12px rgba(0,0,0,.8)}
+@media (prefers-color-scheme: dark){.by.auto{--bg:#0E0E10;--surface:#17171A;--sunken:#0B0B0D;--line:#2A2A2F;--line2:#3B3B42;--ink:#F2F1EE;--ink2:#B6B4AE;--ink3:#8E8C86;--accent:#98A0FF;--onaccent:#0B0B1A;--dot:#26262B;--chk1:#2A2A2F;--chk2:#1B1B1F;--danger:#FF9C93;--pop:0 -12px 32px -12px rgba(0,0,0,.8)}}
+.by button,.by input{font-family:inherit}
+.by button{cursor:pointer}
+.by button:disabled{cursor:not-allowed}
+.by .btn:active,.by .tile:active{border-color:var(--ink3)}
+.by .item:active:not(:disabled){background:var(--sunken)}
+.by .panel{height:172px}
+@media (max-height: 700px){.by .lblname{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
+.by :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</helmet>
+<div class="by {{appearanceCls}}" style="position: relative; width: 100%; height: {{H}}; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden">
+
+<header style="flex: none; padding: 10px 16px 0; display: flex; flex-direction: column; gap: 2px">
+<div style="display: flex; align-items: center; gap: 10px">
+<svg width="24" height="24" viewBox="0 0 5 5" shape-rendering="crispEdges" aria-hidden="true" style="flex: none; color: var(--ink)"><g fill="currentColor"><rect x="0" y="0" width="1" height="2"/><rect x="4" y="0" width="1" height="2"/><rect x="1" y="1" width="3" height="1"/><rect x="1" y="2" width="1" height="2"/><rect x="3" y="2" width="1" height="2"/><rect x="2" y="3" width="1" height="1"/><rect x="0" y="4" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/></g></svg>
+<h1 style="margin: 0; font-size: 20px; line-height: 24px; font-weight: 700; letter-spacing: -0.02em">Brickyard</h1>
+<button type="button" class="btn" aria-label="{{themeLabel}}" title="{{themeLabel}}" onClick="{{toggleTheme}}" style="margin: -8px -8px -8px 0; margin-left: auto; flex: none; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid var(--line2); background: var(--surface); color: var(--ink)">
+<sc-if value="{{isDark}}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></sc-if>
+<sc-if value="{{notDark}}" hint-placeholder-val="{{ true }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></sc-if>
+</button>
+</div>
+<p style="margin: 0; font-size: 12px; line-height: 16px; color: var(--ink2); white-space: nowrap">Pixel avatars for people who hate profile pictures.</p>
+</header>
+
+<section aria-label="Name" style="flex: none; padding: 8px 16px 0">
+<label for="name" class="lblname" style="display: block; margin-bottom: 4px; font-size: 12px; line-height: 16px; font-weight: 600; color: var(--ink2)">Enter anything to see your avatar</label>
+<div style="display: flex; gap: 8px">
+<input id="name" type="text" value="{{person}}" onChange="{{onName}}" onFocus="{{onFocus}}" onBlur="{{onBlur}}" placeholder="hello-world" spellcheck="false" autocomplete="off" style="flex: 1; min-width: 0; height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 8px; border: 1px solid var(--line2); background: var(--surface); color: var(--ink); font: 500 16px 'JetBrains Mono', ui-monospace, monospace; {{inputFocus}}">
+<button type="button" class="btn" onClick="{{shuffle}}" style="flex: none; height: 44px; padding: 0 14px; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: 8px; border: 1px solid var(--line2); background: var(--surface); color: var(--ink); font-size: 14px; font-weight: 600">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+Shuffle
+</button>
+</div>
+</section>
+
+<div style="flex: 1 1 0; min-height: 0; container-type: size; display: grid; place-items: center; padding: 8px 16px 8px; box-sizing: border-box">
+<div onPointerDown="{{vp.down}}" onPointerMove="{{vp.move}}" onPointerUp="{{vp.up}}" onPointerCancel="{{vp.up}}" onWheel="{{vp.wheel}}" style="position: relative; width: min(100cqw, 100cqh); aspect-ratio: 1; box-sizing: border-box; overflow: hidden; container-type: inline-size; border-radius: 8px; border: 1px solid var(--line); {{vp.css}}">
+
+<sc-if value="{{show2d}}" hint-placeholder-val="{{ true }}">
+<div style="position: absolute; inset: 0 0 40px 0; display: grid; place-items: center">
+<div role="img" aria-label="{{previewAlt}}" style="width: 74%; overflow: hidden; border-radius: 6px; {{vp.shadow}}">
+<div style="display: grid; {{main.css}}">
+<sc-for list="{{main.cells}}" as="cell" hint-placeholder-count="25"><div style="min-width: 0; {{cell.css}}"></div></sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{show3d}}" hint-placeholder-val="{{ false }}">
+<div role="group" tabindex="0" aria-label="{{alt3d}}" onKeyDown="{{vp.key}}" style="position: absolute; inset: 30px 0 40px 0; display: grid; place-items: center; perspective: 140cqw; touch-action: none">
+<div style="position: relative; width: 72cqw; height: 72cqw; transform-style: preserve-3d; transform: {{scene.tf}}">
+<sc-for list="{{blocks}}" as="b" hint-placeholder-count="40">
+<div style="position: absolute; transform-style: preserve-3d; {{b.css}}">
+<div style="position: absolute; backface-visibility: hidden; box-shadow: inset 0 0 0 0.3cqw rgba(0,0,0,0.22); background: {{b.c}}; {{b.front}}"></div>
+<div style="position: absolute; backface-visibility: hidden; box-shadow: inset 0 0 0 0.3cqw rgba(0,0,0,0.22); background: {{b.c}}; filter: brightness(0.6); {{b.back}}"></div>
+<div style="position: absolute; backface-visibility: hidden; box-shadow: inset 0 0 0 0.3cqw rgba(0,0,0,0.22); background: {{b.c}}; filter: brightness(0.8); {{b.right}}"></div>
+<div style="position: absolute; backface-visibility: hidden; box-shadow: inset 0 0 0 0.3cqw rgba(0,0,0,0.22); background: {{b.c}}; filter: brightness(0.7); {{b.left}}"></div>
+<div style="position: absolute; backface-visibility: hidden; box-shadow: inset 0 0 0 0.3cqw rgba(0,0,0,0.22); background: {{b.c}}; filter: brightness(1.15); {{b.top}}"></div>
+<div style="position: absolute; backface-visibility: hidden; box-shadow: inset 0 0 0 0.3cqw rgba(0,0,0,0.22); background: {{b.c}}; filter: brightness(0.55); {{b.bottom}}"></div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<div role="status" aria-live="polite" style="position: absolute; top: 8px; left: 8px; right: 8px; display: flex; justify-content: center; pointer-events: none">
+<sc-if value="{{showCopied}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 8px; border: 1px solid var(--line2); background: var(--surface); font-size: 12px; line-height: 16px; color: var(--ink)">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M20 6 9 17l-5-5"/></svg>
+Copied to clipboard
+</div>
+</sc-if>
+<sc-if value="{{showBlocked}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 8px; border: 1px solid var(--danger); background: var(--surface); font-size: 12px; line-height: 16px; color: var(--ink)">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></svg>
+<span>Clipboard blocked. Use Download instead.</span>
+</div>
+</sc-if>
+<sc-if value="{{showHint}}" hint-placeholder-val="{{ false }}">
+<div style="padding: 3px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); font-size: 11.5px; line-height: 16px; color: var(--ink2); white-space: nowrap">Drag to rotate, pinch to zoom</div>
+</sc-if>
+</div>
+
+<div style="position: absolute; left: 6px; right: 6px; bottom: 6px; display: flex; align-items: flex-end; justify-content: center">
+<sc-if value="{{showNote}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0 6px; padding: 0 8px 0 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); font-size: 11.5px; line-height: 16px; color: var(--ink2)">
+<span id="note3d">3D is available for Critter.</span>
+<button type="button" onClick="{{tryCritter}}" style="height: 32px; padding: 0 2px; border: 0; background: transparent; color: var(--accent); font-size: 11.5px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px">Try it</button>
+</div>
+</sc-if>
+<sc-if value="{{show3d}}" hint-placeholder-val="{{ false }}">
+<div role="group" aria-label="Viewing angle" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px">
+<sc-for list="{{presets}}" as="p" hint-placeholder-count="4">
+<button type="button" aria-pressed="{{p.on}}" onClick="{{p.set}}" style="height: 30px; padding: 0 8px; border-radius: 8px; background: var(--surface); color: var(--ink); font-size: 11px; font-weight: 600; {{p.css}}">{{p.label}}</button>
+</sc-for>
+<button type="button" onClick="{{resetView}}" style="height: 30px; padding: 0 8px; border-radius: 8px; border: 1px solid var(--line2); background: var(--surface); color: var(--ink); font-size: 11px; font-weight: 600">Reset view</button>
+</div>
+</sc-if>
+</div>
+
+</div>
+</div>
+
+<sc-if value="{{showActions}}" hint-placeholder-val="{{ true }}">
+<div style="flex: none; padding: 0 16px 8px; display: flex; align-items: center; gap: 8px">
+<div role="group" aria-label="Preview mode" style="flex: none; display: inline-flex; gap: 2px; padding: 3px; border-radius: 10px; background: var(--sunken); border: 1px solid var(--line)">
+<button type="button" aria-pressed="{{is2d}}" onClick="{{set2d}}" style="height: 40px; min-width: 44px; padding: 0 10px; border-radius: 8px; font-size: 14px; font-weight: 600; {{seg2d}}">2D</button>
+<button type="button" aria-pressed="{{show3d}}" aria-describedby="note3d" disabled="{{no3d}}" onClick="{{set3d}}" style="height: 40px; min-width: 52px; padding: 0 10px; display: flex; align-items: center; justify-content: center; gap: 5px; border-radius: 8px; font-size: 14px; font-weight: 600; {{seg3d}}">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+3D
+</button>
+</div>
+<button type="button" class="btn" onClick="{{copy}}" style="flex: none; height: 46px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--line2); background: var(--surface); color: var(--ink); font-size: 14px; font-weight: 600">Copy PNG</button>
+<button type="button" class="btn" aria-haspopup="dialog" onClick="{{openSheet}}" style="flex: 1; min-width: 0; height: 46px; padding: 0 12px; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: 10px; border: 1px solid var(--line2); background: var(--surface); color: var(--ink); font-size: 14px; font-weight: 600">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+Download
+</button>
+</div>
+</sc-if>
+
+<div style="flex: none; background: var(--surface); border-top: 1px solid var(--line)">
+
+<sc-if value="{{showPanel}}" hint-placeholder-val="{{ true }}">
+<div id="panel" role="tabpanel" aria-label="{{panelLabel}}" class="panel" style="box-sizing: border-box; padding: 8px 16px 0; overflow: hidden">
+
+<sc-if value="{{tabIsStyle}}" hint-placeholder-val="{{ true }}">
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px 8px">
+<sc-for list="{{styles}}" as="s" hint-placeholder-count="10">
+<button type="button" class="tile" onClick="{{s.pick}}" aria-pressed="{{s.pressed}}" aria-label="{{s.aria}}" style="min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 3px; box-sizing: border-box; padding: 4px 0; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); {{s.ring}}">
+<div style="position: relative; width: 46px">
+<div aria-hidden="true" style="overflow: hidden; border-radius: 4px; background: var(--sunken)">
+<div style="display: grid; {{s.av.css}}">
+<sc-for list="{{s.av.cells}}" as="tc" hint-placeholder-count="25"><div style="min-width: 0; {{tc.css}}"></div></sc-for>
+</div>
+</div>
+<sc-if value="{{s.has3d}}" hint-placeholder-val="{{ false }}">
+<span aria-hidden="true" style="position: absolute; top: 2px; right: 2px; height: 14px; box-sizing: border-box; padding: 0 3px; display: flex; align-items: center; border-radius: 3px; background: var(--ink); color: var(--bg); font-size: 9px; font-weight: 700; letter-spacing: 0.03em">3D</span>
+</sc-if>
+</div>
+<span style="display: block; font-size: 11px; line-height: 13px; font-weight: 600; text-align: center">{{s.name}}</span>
+</button>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{tabIsVariations}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0 0 8px; font-size: 13px; line-height: 18px; color: var(--ink2)">Not quite right? Try another.</p>
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{variants}}" as="v" hint-placeholder-count="6">
+<button type="button" class="tile" onClick="{{v.pick}}" aria-pressed="{{v.pressed}}" aria-label="{{v.label}}" style="padding: 0; overflow: hidden; aspect-ratio: 1; border-radius: 8px; border: 1px solid var(--line); background: var(--sunken); {{v.ring}}">
+<div style="display: grid; {{v.av.css}}">
+<sc-for list="{{v.av.cells}}" as="vc" hint-placeholder-count="25"><div style="min-width: 0; {{vc.css}}"></div></sc-for>
+</div>
+</button>
+</sc-for>
+</div>
+<sc-if value="{{noted}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; align-items: center; gap: 8px; min-height: 40px; font-size: 13px; color: var(--ink2)">
+<span>{{variantNote}}</span>
+<button type="button" onClick="{{useOriginal}}" style="min-height: 40px; padding: 0 4px; border: 0; background: transparent; color: var(--accent); font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px">Use original</button>
+</div>
+</sc-if>
+</sc-if>
+
+<sc-if value="{{tabIsColour}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div>
+<span id="lbl-colour" style="display: block; margin-bottom: 4px; font-size: 12px; line-height: 16px; font-weight: 600; color: var(--ink2)">Colour</span>
+<div role="group" aria-labelledby="lbl-colour" style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px 8px">
+<button type="button" aria-pressed="{{autoOn}}" aria-label="Auto, colour from the name" title="Auto, colour from the name" onClick="{{pickAuto}}" style="height: 40px; padding: 3px; box-sizing: border-box; display: flex; border-radius: 8px; background: transparent; {{autoCss}}">
+<span aria-hidden="true" style="flex: 1; border-radius: 5px; background: linear-gradient(90deg, hsl(0 65% 50%), hsl(55 65% 45%), hsl(140 65% 42%), hsl(212 65% 50%), hsl(300 65% 50%))"></span>
+</button>
+<sc-for list="{{swatches}}" as="sw" hint-placeholder-count="10">
+<button type="button" aria-pressed="{{sw.on}}" aria-label="{{sw.name}}" onClick="{{sw.pick}}" style="height: 40px; padding: 3px; box-sizing: border-box; display: flex; border-radius: 8px; background: transparent; {{sw.ring}}">
+<span style="flex: 1; display: flex; align-items: center; justify-content: center; border-radius: 5px; background: {{sw.bg}}; color: {{sw.ink}}">
+<sc-if value="{{sw.on}}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></sc-if>
+</span>
+</button>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; align-items: center; gap: 12px">
+<span id="lbl-bg" style="flex: none; width: 76px; font-size: 12px; line-height: 16px; font-weight: 600; color: var(--ink2)">Background</span>
+<div role="group" aria-labelledby="lbl-bg" style="flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; padding: 3px; border-radius: 10px; background: var(--sunken); border: 1px solid var(--line)">
+<sc-for list="{{bgs}}" as="g" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{g.on}}" onClick="{{g.pick}}" style="height: 40px; padding: 0 2px; border-radius: 8px; font-size: 12.5px; font-weight: 600; {{g.css}}">{{g.label}}</button>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+</div>
+</sc-if>
+
+<div role="tablist" aria-label="Customise" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; padding: 2px 8px 6px">
+<button type="button" role="tab" aria-selected="{{tabStyle.on}}" onClick="{{tabStyle.pick}}" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 8px; font-size: 11px; font-weight: 600; {{tabStyle.css}}">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+Style
+</button>
+<button type="button" role="tab" aria-selected="{{tabVariations.on}}" onClick="{{tabVariations.pick}}" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 8px; font-size: 11px; font-weight: 600; {{tabVariations.css}}">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7l10-5Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg>
+Variations
+</button>
+<button type="button" role="tab" aria-selected="{{tabColour.on}}" onClick="{{tabColour.pick}}" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 8px; font-size: 11px; font-weight: 600; {{tabColour.css}}">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
+Colour
+</button>
+</div>
+</div>
+
+<sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
+<div onKeyDown="{{sheetKey}}" style="position: absolute; inset: 0; z-index: 20">
+<button type="button" aria-label="Close download options" onClick="{{closeSheet}}" style="position: absolute; inset: 0; width: 100%; padding: 0; border: 0; background: rgba(0,0,0,0.5)"></button>
+<div role="dialog" aria-modal="true" aria-label="Download options" style="position: absolute; left: 0; right: 0; bottom: 0; box-sizing: border-box; padding: 8px 16px 16px; border-radius: 16px 16px 0 0; border-top: 1px solid var(--line2); background: var(--surface); box-shadow: var(--pop)">
+<div aria-hidden="true" style="width: 36px; height: 4px; margin: 0 auto 8px; border-radius: 2px; background: var(--line2)"></div>
+<h2 style="margin: 0 4px 4px; font-size: 15px; font-weight: 600">Download</h2>
+<sc-for list="{{pngItems}}" as="m" hint-placeholder-count="3">
+<button type="button" class="item" onClick="{{closeSheet}}" style="width: 100%; height: 48px; box-sizing: border-box; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; border: 0; border-radius: 8px; background: transparent; color: var(--ink); font-size: 15px; font-weight: 500; text-align: left">
+{{m.label}}
+<span style="font: 400 12px 'JetBrains Mono', ui-monospace, monospace; color: var(--ink3)">{{m.dim}}</span>
+</button>
+</sc-for>
+<div aria-hidden="true" style="height: 1px; margin: 4px 12px; background: var(--line)"></div>
+<button type="button" class="item" disabled aria-disabled="true" style="width: 100%; height: 48px; box-sizing: border-box; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; border: 0; border-radius: 8px; background: transparent; color: var(--ink3); font-size: 15px; font-weight: 500; text-align: left">
+Download as SVG
+<span style="padding: 2px 7px; border-radius: 6px; border: 1px solid var(--line2); font-size: 11px; font-weight: 600">Soon</span>
+</button>
+<button type="button" class="item" disabled aria-disabled="true" style="width: 100%; height: 48px; box-sizing: border-box; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; border: 0; border-radius: 8px; background: transparent; color: var(--ink3); font-size: 15px; font-weight: 500; text-align: left">
+Download as STL
+<span style="padding: 2px 7px; border-radius: 6px; border: 1px solid var(--line2); font-size: 11px; font-weight: 600">Soon</span>
+</button>
+</div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"appearance":{"editor":"enum","options":["light","dark","auto"],"default":"light","section":"Appearance"},"tab":{"editor":"enum","options":["style","variations","colour"],"default":"style","section":"State"},"styleId":{"editor":"enum","options":["classic","duotone","sticker","invader","critter","quilt","dither","aurora","kaleido","frame"],"default":"classic","section":"State"},"bg":{"editor":"enum","options":["light","dark","transparent"],"default":"light","section":"State"},"colour":{"editor":"text","default":"auto","section":"State"},"threeD":{"editor":"boolean","default":false,"section":"State"},"sheet":{"editor":"boolean","default":false,"section":"State"},"kbd":{"editor":"boolean","default":false,"section":"State"},"toast":{"editor":"enum","options":["none","copied","blocked"],"default":"none","section":"State"},"variant":{"editor":"text","default":"","section":"State"},"person":{"editor":"text","default":"hello-world","section":"State"},"h":{"editor":"text","default":"650px","section":"State"},"$preview":{"width":390,"height":650}}'>
+class Component extends DCLogic {
+  state = {};
+
+  val(k, d) {
+    const s = this.state[k];
+    if (s !== undefined) return s;
+    const p = this.props[k];
+    return p === undefined || p === null || p === '' ? d : p;
+  }
+  flag(k) { const v = this.val(k, false); return v === true || v === 'true'; }
+
+  hues() {
+    return [
+      { id: 'red', name: 'Red', h: 2 }, { id: 'orange', name: 'Orange', h: 25 }, { id: 'yellow', name: 'Yellow', h: 48 },
+      { id: 'lime', name: 'Lime', h: 85 }, { id: 'green', name: 'Green', h: 140 }, { id: 'teal', name: 'Teal', h: 175 },
+      { id: 'blue', name: 'Blue', h: 212 }, { id: 'violet', name: 'Violet', h: 262 }, { id: 'purple', name: 'Purple', h: 290 },
+      { id: 'pink', name: 'Pink', h: 332 }
+    ];
+  }
+
+  defs() {
+    return [
+      { id: 'classic', name: 'Classic', n: 5 }, { id: 'duotone', name: 'Duotone', n: 5 },
+      { id: 'sticker', name: 'Sticker', n: 5 }, { id: 'invader', name: 'Invader', n: 8 },
+      { id: 'critter', name: 'Critter', n: 9 }, { id: 'quilt', name: 'Quilt', n: 5 },
+      { id: 'dither', name: 'Dither', n: 12 }, { id: 'aurora', name: 'Aurora', n: 5 },
+      { id: 'kaleido', name: 'Kaleido', n: 6 }, { id: 'frame', name: 'Frame', n: 7 }
+    ];
+  }
+
+  rng(str) {
+    let h = 1779033703 ^ str.length;
+    for (let i = 0; i < str.length; i++) { h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19); }
+    h = Math.imul(h ^ (h >>> 16), 2246822507); h = Math.imul(h ^ (h >>> 13), 3266489909);
+    let a = (h ^ (h >>> 16)) >>> 0;
+    return () => {
+      a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  mirror(n, fn) {
+    const half = Math.ceil(n / 2), g = [];
+    for (let y = 0; y < n; y++) {
+      const row = [];
+      for (let x = 0; x < half; x++) row.push(fn(x, y));
+      for (let x = n - half - 1; x >= 0; x--) row.push(row[x]);
+      g.push(row);
+    }
+    return g;
+  }
+
+  build(id, key, hueOverride, bgMode) {
+    const r = this.rng(key);
+    const auto = Math.floor(r() * 360);
+    const h = hueOverride === null ? auto : hueOverride;
+    const L = h > 35 && h < 125 ? 42 : 50;
+    const fg = 'hsl(' + h + ' 62% ' + L + '%)';
+    const dark = bgMode === 'dark';
+    const bg = dark ? '#14151A' : bgMode === 'transparent' ? 'transparent' : '#EFEEEA';
+    const n = this.defs().find((s) => s.id === id).n;
+    let pad = '14%', cells = [];
+    const flat = (g, f) => g.flatMap((row, y) => row.map((v, x) => f(v, x, y)));
+    const C = (c, sh) => ({ c: c || '', sh: sh || '' });
+    if (id === 'classic') {
+      cells = flat(this.mirror(5, () => r() < 0.55), (v) => C(v && fg));
+    } else if (id === 'duotone') {
+      const b = 'hsl(' + ((h + 150) % 360) + ' 62% ' + (L + 2) + '%)';
+      cells = flat(this.mirror(5, () => r() < 0.6), (v, x) => C(v && (x === 2 ? b : fg)));
+    } else if (id === 'sticker') {
+      pad = '16%';
+      const sh = '1.6cqw 1.6cqw 0 ' + (dark ? 'hsl(' + h + ' 45% 78%)' : 'hsl(' + h + ' 55% 18%)');
+      cells = flat(this.mirror(5, () => r() < 0.6), (v) => C(v && fg, v && sh));
+    } else if (id === 'invader') {
+      pad = '10%';
+      cells = flat(this.mirror(8, () => r() < 0.58), (v) => C(v && fg));
+    } else if (id === 'critter') {
+      pad = '9%';
+      const g = this.mirror(9, () => r() < 0.45);
+      cells = flat(g, (v, x, y) => {
+        if (y === 3 && (x === 3 || x === 5)) return C('#FFFFFF');
+        if (y === 5 && x >= 3 && x <= 5) return C('#241633');
+        const head = y >= 2 && y <= 6 && x >= 2 && x <= 6;
+        return C((v || head) && fg);
+      });
+    } else if (id === 'quilt') {
+      pad = '6%';
+      const tone = ['', 'hsl(' + h + ' 55% ' + (L - 14) + '%)', fg, 'hsl(' + h + ' 62% ' + (L + 16) + '%)'];
+      cells = flat(this.mirror(5, () => Math.floor(r() * 4)), (v) => C(tone[v]));
+    } else if (id === 'dither') {
+      pad = '8%';
+      const g = this.mirror(12, (x, y) => {
+        const d = Math.hypot(x - 5.5, y - 5.5) / 6;
+        return r() < 1.1 - d * 1.35 ? (d > 0.55 ? 2 : 1) : 0;
+      });
+      cells = flat(g, (v) => C(v === 1 ? 'hsl(' + h + ' 60% 38%)' : v === 2 ? 'hsl(' + h + ' 55% 64%)' : ''));
+    } else if (id === 'aurora') {
+      cells = flat(this.mirror(5, () => r() < 0.6), (v, x) => C(v && 'hsl(' + ((h + x * 26) % 360) + ' 80% ' + (L + 6) + '%)'));
+    } else if (id === 'kaleido') {
+      pad = '10%';
+      const top = this.mirror(6, () => r() < 0.7).slice(0, 3);
+      const g = top.concat([top[2], top[1], top[0]]);
+      cells = flat(g, (v, x, y) => {
+        if (x >= 2 && x <= 3 && y >= 2 && y <= 3) return C('hsl(' + ((h + 110) % 360) + ' 66% 52%)');
+        return C(v && fg);
+      });
+    } else {
+      pad = '9%';
+      const gi = this.mirror(5, () => r() < 0.55);
+      for (let y = 0; y < 7; y++) {
+        for (let x = 0; x < 7; x++) {
+          const edge = x === 0 || x === 6 || y === 0 || y === 6;
+          if (edge) cells.push(C((x + y) % 2 === 0 && r() < 0.85 && 'hsl(' + h + ' 50% 70%)'));
+          else cells.push(C(gi[y - 1][x - 1] && fg));
+        }
+      }
+    }
+    return {
+      n,
+      grid: cells.map((c, i) => ({ c: c.c, x: i % n, y: Math.floor(i / n) })),
+      css: 'container-type: inline-size; aspect-ratio: 1; width: 100%; box-sizing: border-box; grid-template-columns: repeat(' + n + ', minmax(0, 1fr)); grid-template-rows: repeat(' + n + ', minmax(0, 1fr)); padding: ' + pad + '; background: ' + bg + ';',
+      cells: cells.map((c) => ({ css: 'background: ' + (c.c || 'transparent') + ';' + (c.sh ? ' box-shadow: ' + c.sh + ';' : '') }))
+    };
+  }
+
+  renderVals() {
+    const st = this.state;
+    const appearance = this.val('appearance', 'light');
+    const defs = this.defs();
+    const styleId = this.val('styleId', 'classic');
+    const cur = defs.find((s) => s.id === styleId) || defs[0];
+    const bgMode = this.val('bg', 'light');
+    const colourId = this.val('colour', 'auto');
+    const hueObj = this.hues().find((x) => x.id === colourId);
+    const hue = hueObj ? hueObj.h : null;
+    const person = this.val('person', 'hello-world');
+    const base = (person || '').trim() || 'hello-world';
+    const vp0 = this.val('variant', '');
+    const variant = st.variant !== undefined ? st.variant : vp0 === '' ? 0 : Math.max(0, parseInt(vp0, 10) - 1);
+    const noted = st.noted !== undefined ? st.noted : vp0 !== '';
+    const seedAt = (i) => (i === 0 ? base : base + '#' + i);
+    const key = seedAt(variant);
+    const is3dStyle = cur.id === 'critter';
+    const threeD = is3dStyle && this.flag('threeD');
+    const rx = this.val('rx', -22), ry = this.val('ry', 32), zoom = this.val('zoom', 0.9);
+    const toast = this.val('toast', 'none');
+    let tab = this.val('tab', 'style');
+    if (tab === 'background') tab = 'colour';
+    const kbd = this.flag('kbd');
+    const sheetOpen = this.flag('sheet');
+    const main = this.build(cur.id, key, hue, bgMode);
+
+    const ring = (on) => (on ? 'border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent);' : '');
+    const segOn = 'background: var(--surface); border: 1px solid var(--line); color: var(--ink);';
+    const segOff = 'background: transparent; border: 1px solid transparent; color: var(--ink2);';
+    const segDis = 'background: transparent; border: 1px solid transparent; color: var(--ink3);';
+
+    const c = 72 / cur.n, d = c * 1.5;
+    const fx = (v) => Math.round(v * 1000) / 1000;
+    const F = {
+      front: 'inset: 0; transform: translateZ(' + fx(d / 2) + 'cqw);',
+      back: 'inset: 0; transform: rotateY(180deg) translateZ(' + fx(d / 2) + 'cqw);',
+      right: 'top: 0; left: ' + fx((c - d) / 2) + 'cqw; width: ' + fx(d) + 'cqw; height: ' + fx(c) + 'cqw; transform: rotateY(90deg) translateZ(' + fx(c / 2) + 'cqw);',
+      left: 'top: 0; left: ' + fx((c - d) / 2) + 'cqw; width: ' + fx(d) + 'cqw; height: ' + fx(c) + 'cqw; transform: rotateY(-90deg) translateZ(' + fx(c / 2) + 'cqw);',
+      top: 'left: 0; top: ' + fx((c - d) / 2) + 'cqw; width: ' + fx(c) + 'cqw; height: ' + fx(d) + 'cqw; transform: rotateX(90deg) translateZ(' + fx(c / 2) + 'cqw);',
+      bottom: 'left: 0; top: ' + fx((c - d) / 2) + 'cqw; width: ' + fx(c) + 'cqw; height: ' + fx(d) + 'cqw; transform: rotateX(-90deg) translateZ(' + fx(c / 2) + 'cqw);'
+    };
+    const blocks = threeD
+      ? main.grid.filter((g) => g.c).map((g) => ({ c: g.c, css: 'left: ' + fx(g.x * c) + 'cqw; top: ' + fx(g.y * c) + 'cqw; width: ' + fx(c) + 'cqw; height: ' + fx(c) + 'cqw;', ...F }))
+      : [];
+
+    const presetsDef = [
+      { label: 'Front', rx: 0, ry: 0 }, { label: '3/4', rx: -22, ry: 32 },
+      { label: 'Top', rx: -90, ry: 0 }, { label: 'Side', rx: 0, ry: 90 }
+    ];
+    const presets = presetsDef.map((p) => {
+      const on = rx === p.rx && ry === p.ry;
+      return { label: p.label, on, css: on ? 'border: 1px solid var(--accent); box-shadow: 0 0 0 1px var(--accent);' : 'border: 1px solid var(--line2);', set: () => this.setState({ rx: p.rx, ry: p.ry }) };
+    });
+    const clampZoom = (z) => Math.min(2, Math.max(0.6, Math.round(z * 100) / 100));
+
+    const checker = 'background-color: var(--chk2); background-image: conic-gradient(var(--chk1) 25%, transparent 0 50%, var(--chk1) 0 75%, transparent 0); background-size: 20px 20px;';
+    const dots = 'background-color: var(--sunken); background-image: radial-gradient(var(--dot) 1px, transparent 1.5px); background-size: 20px 20px;';
+    let vpCss;
+    if (threeD) vpCss = bgMode === 'transparent' ? checker : 'background: ' + (bgMode === 'dark' ? '#14151A' : '#EFEEEA') + ';';
+    else vpCss = bgMode === 'transparent' ? checker : dots;
+    if (threeD) vpCss += ' touch-action: none;';
+
+    const vp = {
+      css: vpCss,
+      shadow: bgMode === 'transparent' ? '' : 'box-shadow: 0 10px 24px -12px rgba(0,0,0,0.35);',
+      down: (e) => {
+        if (!threeD) return;
+        this._ptr = this._ptr || {};
+        this._ptr[e.pointerId] = { x: e.clientX, y: e.clientY };
+        const ids = Object.keys(this._ptr);
+        if (ids.length === 1) this._d = { x: e.clientX, y: e.clientY, rx, ry };
+        else if (ids.length === 2) { const a = this._ptr[ids[0]], b = this._ptr[ids[1]]; this._pz = { dist: Math.hypot(a.x - b.x, a.y - b.y) || 1, zoom }; this._d = null; }
+        if (e.currentTarget.setPointerCapture) { try { e.currentTarget.setPointerCapture(e.pointerId); } catch (x) {} }
+      },
+      move: (e) => {
+        if (!threeD || !this._ptr || !this._ptr[e.pointerId]) return;
+        this._ptr[e.pointerId] = { x: e.clientX, y: e.clientY };
+        const ids = Object.keys(this._ptr);
+        if (ids.length === 2 && this._pz) {
+          const a = this._ptr[ids[0]], b = this._ptr[ids[1]];
+          this.setState({ zoom: clampZoom(this._pz.zoom * Math.hypot(a.x - b.x, a.y - b.y) / this._pz.dist) });
+        } else if (ids.length === 1 && this._d) {
+          this.setState({ rx: Math.max(-90, Math.min(90, this._d.rx - (e.clientY - this._d.y) * 0.5)), ry: this._d.ry + (e.clientX - this._d.x) * 0.5 });
+        }
+      },
+      up: (e) => {
+        if (this._ptr) delete this._ptr[e.pointerId];
+        this._pz = null;
+        if (!this._ptr || Object.keys(this._ptr).length === 0) this._d = null;
+      },
+      wheel: (e) => { if (!threeD) return; this.setState({ zoom: clampZoom(zoom + (e.deltaY < 0 ? 0.1 : -0.1)) }); },
+      key: (e) => {
+        const k = e.key;
+        if (k === 'ArrowLeft') { e.preventDefault(); this.setState({ ry: ry - 10 }); }
+        else if (k === 'ArrowRight') { e.preventDefault(); this.setState({ ry: ry + 10 }); }
+        else if (k === 'ArrowUp') { e.preventDefault(); this.setState({ rx: Math.min(90, rx + 10) }); }
+        else if (k === 'ArrowDown') { e.preventDefault(); this.setState({ rx: Math.max(-90, rx - 10) }); }
+        else if (k === '+' || k === '=') this.setState({ zoom: clampZoom(zoom + 0.1) });
+        else if (k === '-') this.setState({ zoom: clampZoom(zoom - 0.1) });
+      }
+    };
+
+    const setTab = (t) => () => {
+      try { if (typeof document !== 'undefined' && document.activeElement && document.activeElement.blur) document.activeElement.blur(); } catch (x) {}
+      this.setState({ tab: t, kbd: false });
+    };
+    const tabObj = (t) => ({ on: tab === t, css: tab === t ? 'color: var(--ink); background: var(--sunken); border: 0; border-top: 2px solid var(--accent);' : 'color: var(--ink3); background: transparent; border: 0; border-top: 2px solid transparent;', pick: setTab(t) });
+    const hasToast = toast === 'copied' || toast === 'blocked';
+    const alt = 'Pixel avatar for ' + base + ', ' + cur.name + ' style' + (noted ? ', variation ' + (variant + 1) : '');
+
+    return {
+      appearanceCls: appearance,
+      isDark: appearance === 'dark', notDark: appearance !== 'dark', themeLabel: appearance === 'dark' ? 'Switch app to light mode' : 'Switch app to dark mode', toggleTheme: () => this.setState({ appearance: appearance === 'dark' ? 'light' : 'dark' }),
+      H: this.val('h', '650px'),
+      person,
+      onName: (e) => this.setState({ person: e.target.value, variant: 0, noted: false }),
+      onFocus: () => this.setState({ kbd: true }),
+      onBlur: () => this.setState({ kbd: false }),
+      inputFocus: kbd ? 'outline: 2px solid var(--accent); outline-offset: 2px;' : '',
+      shuffle: () => {
+        const w = ['octocat', 'ada-lovelace', 'pixel-pilot', 'mona', 'hubot', 'nova', 'kernel', 'grace-hopper', 'tiny-robot', 'night-owl', 'ember', 'quiet-fox'];
+        const pool = w.filter((x) => x !== person);
+        this.setState({ person: pool[Math.floor(Math.random() * pool.length)], variant: 0, noted: false });
+      },
+      main,
+      previewAlt: alt,
+      alt3d: '3D view of ' + base + ' in Critter style, built from blocks. Arrow keys rotate, plus and minus zoom.',
+      is2d: !threeD,
+      show2d: !threeD,
+      show3d: threeD,
+      no3d: !is3dStyle,
+      seg2d: !threeD ? segOn : segOff,
+      seg3d: !is3dStyle ? segDis : threeD ? segOn : segOff,
+      set2d: () => this.setState({ threeD: false }),
+      set3d: () => this.setState({ threeD: true }),
+      tryCritter: () => this.setState({ styleId: 'critter', threeD: true }),
+      vp,
+      blocks,
+      scene: { tf: 'scale(' + zoom + ') rotateX(' + rx + 'deg) rotateY(' + ry + 'deg)' },
+      presets,
+      resetView: () => this.setState({ rx: -22, ry: 32, zoom: 0.9 }),
+      showCopied: toast === 'copied',
+      showBlocked: toast === 'blocked',
+      showNote: !is3dStyle,
+      showHint: threeD && !hasToast,
+      copy: () => {
+        this.setState({ toast: 'copied' });
+        clearTimeout(this._t);
+        this._t = setTimeout(() => this.setState({ toast: 'none' }), 3000);
+      },
+      sheetOpen,
+      openSheet: () => this.setState({ sheet: true }),
+      closeSheet: () => this.setState({ sheet: false }),
+      sheetKey: (e) => { if (e.key === 'Escape') this.setState({ sheet: false }); },
+      pngItems: [512, 1024, 2048].map((n) => ({ label: 'PNG ' + n, dim: n + ' × ' + n })),
+      showPanel: !kbd,
+      showActions: !kbd,
+      panelLabel: tab === 'style' ? 'Style' : tab === 'variations' ? 'Variations' : 'Colour',
+      tabIsStyle: tab === 'style',
+      tabIsVariations: tab === 'variations',
+      tabIsColour: tab === 'colour',
+      tabStyle: tabObj('style'),
+      tabVariations: tabObj('variations'),
+      tabColour: tabObj('colour'),
+      styles: defs.map((s) => ({
+        name: s.name,
+        aria: s.name + ' style' + (s.id === 'critter' ? ', 3D available' : ''),
+        has3d: s.id === 'critter',
+        av: this.build(s.id, key, hue, bgMode),
+        pressed: s.id === cur.id,
+        ring: ring(s.id === cur.id),
+        pick: () => this.setState({ styleId: s.id, threeD: s.id === 'critter' ? this.flag('threeD') : false })
+      })),
+      autoOn: hue === null,
+      autoCss: hue === null ? 'border: 2px solid var(--accent);' : 'border: 2px solid transparent;',
+      pickAuto: () => this.setState({ colour: 'auto' }),
+      swatches: this.hues().map((x) => {
+        const on = x.id === colourId;
+        return { name: x.name, on, bg: 'hsl(' + x.h + ' 62% 46%)', ink: x.h > 35 && x.h < 125 ? '#141414' : '#FFFFFF', ring: on ? 'border: 2px solid var(--accent);' : 'border: 2px solid transparent;', pick: () => this.setState({ colour: x.id }) };
+      }),
+      bgs: [['light', 'Light'], ['dark', 'Dark'], ['transparent', 'Transparent']].map((b) => ({ label: b[1], on: bgMode === b[0], css: bgMode === b[0] ? segOn : segOff, pick: () => this.setState({ bg: b[0] }) })),
+      variants: [0, 1, 2, 3, 4, 5].map((i) => ({ label: 'Variation ' + (i + 1), av: this.build(cur.id, seedAt(i), hue, bgMode), pressed: i === variant, ring: ring(i === variant), pick: () => this.setState({ variant: i, noted: true }) })),
+      noted,
+      variantNote: 'Using variation ' + (variant + 1),
+      useOriginal: () => this.setState({ variant: 0, noted: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

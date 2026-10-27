@@ -1,0 +1,88 @@
+# Brickyard: Build Plan
+
+This file is both the plan and the progress record. Work top to bottom without stopping between stages. Tick `[x]` as soon as an item is done and verified. Mark `[!]` if blocked (reason in the log). On resume, start at the first `[ ]` or `[!]` item. Behaviour and copy: `docs/REQUIREMENTS.md`. Look: the Claude Design link in `CLAUDE.md`.
+
+Every stage ends the same way: run `npm test`, `npm run typecheck`, `npm run build` (all must pass), then commit, then start the next stage.
+
+---
+
+## Stage 0: Project setup
+- [x] Create a Vite + React + TypeScript project in this folder. Keep `CLAUDE.md`, `docs/` and `reference/` untouched.
+- [x] Add `three`, `@react-three/fiber`, `@react-three/drei`, Vitest, and Playwright (dev).
+- [x] Scripts: `dev`, `build`, `test`, `typecheck`. Update the Commands list in `CLAUDE.md`.
+- [x] Create `src/engine/`, `src/ui/`, `src/styles/`.
+- [x] `git init` if needed, `.gitignore`, first commit.
+
+## Stage 1: Avatar engine (no UI)
+Port the logic from `reference/prototype.html` (REQUIREMENTS section 6).
+- [ ] `AvatarModel` type and `generateAvatar(seed, options)`.
+- [ ] Port hash, seeded random number generator, mirror and ensure helpers, the shared 5×5 base pattern.
+- [ ] The ten styles (4.2), Light background, default hue (Auto).
+- [ ] Tests: identical output for identical input; every style gives a valid model for sample names, including empty, 40 characters and non-English text.
+- [ ] Parity test: generate the cell patterns for at least five names in the prototype (run its code in Node or Playwright) and assert the engine matches them for the styles that exist in both.
+
+## Stage 2: Colour and Background in the engine
+- [ ] Hue override: Auto plus ten hues (4.3). Hue only; saturation and lightness stay in each style's band.
+- [ ] Backgrounds Light, Dark, Transparent (4.4). Each style has a light and a dark palette (Invader and Aurora need a proper light palette; Quilt shifts tones in Dark).
+- [ ] Tests: changing hue or background never changes which cells are filled; Transparent returns no background.
+- [ ] Write `docs/ARCHITECTURE.md` (one page, what was actually built): folder map, the `AvatarModel` shape, how a name becomes cells (hash, random numbers, style, hue, background), how renderers read the model, how to add a style.
+
+## Stage 3: Desktop app (2D)
+First read the design files (see CLAUDE.md) and save copies to `reference/design/`.
+- [ ] CSS variable tokens for light and dark app appearance, taken from the design's Foundations.
+- [ ] Header: logo, name, tagline, name field (exact label and placeholder), Shuffle, app dark mode toggle (4.9: follows the system first, remembers the choice, no flash on load).
+- [ ] Preview panel: large preview, size previews (56, 48, 20 px), facts (Style, Grid, Name), 2D | 3D switch (disabled except for Critter, with its note).
+- [ ] Styles panel: ten cards in the designed grid; "3D" badge on Critter only.
+- [ ] Variations: six, with heading, line and the "Using variation N" note.
+- [ ] Canvas 2D renderer reading the `AvatarModel`.
+- [ ] Verify: Playwright screenshots at 1440×900 in light and dark app appearance; compare with the desktop design frames; fix differences. Keyboard: every control reachable with a visible focus state.
+
+## Stage 4: Colour, Background, copy and download
+- [ ] Colour control (Auto plus swatches) and Background control (Light, Dark, Transparent), applied everywhere at once.
+- [ ] Checkerboard behind the preview when Transparent.
+- [ ] Copy PNG (460 px) with "Copied" and "Clipboard blocked" messages.
+- [ ] Download menu: PNG at 512, 1024, 2048; SVG and STL disabled with "Soon".
+- [ ] Verify with Playwright: downloaded PNGs have the right pixel size; the Transparent PNG has an alpha channel; changing colour or background leaves the pattern unchanged.
+
+## Stage 5: 3D view for Critter
+- [ ] Critter height rule in the model (body 1 unit, eyes and mouth +0.25, pupils small dark blocks on top).
+- [ ] Three.js scene: plain matte boxes, soft lighting, soft ground shadow; no floor or backdrop when Transparent.
+- [ ] Rotate 360° (drag), zoom (wheel, pinch), no pan. Keyboard rotate and zoom when focused.
+- [ ] Reset view and four presets (Front, 3/4, Top, Side), plus the hint text.
+- [ ] Copy PNG and Download PNG use the current camera angle.
+- [ ] Fallback to 2D with a short message if WebGL is unavailable. Switching to another style returns to 2D.
+- [ ] Verify with Playwright: screenshots of Critter in 3D for each preset, in Light, Dark and Transparent; no console errors.
+
+## Stage 6: Phone layout
+Read the phone design files (see CLAUDE.md). Requirements in 4.10.
+- [ ] Single-screen editor with tabs Style, Variations, Colour (Colour holds swatches and Background).
+- [ ] Fixed height for the area above the tab bar on every tab; no vertical page scrolling.
+- [ ] 3D chips on the preview; Download as a bottom sheet; size previews and facts hidden or behind Details.
+- [ ] Works with the keyboard open and in both app appearances.
+- [ ] Verify: Playwright screenshots at 390×650 and 360×600 for each tab, the Download sheet, light and dark; compare with the phone design frames; check no horizontal or vertical page scroll.
+
+## Stage 7: Finish
+- [ ] Go through the acceptance checklist (REQUIREMENTS section 8) item by item; tick each with the evidence (test name or screenshot path) in the log.
+- [ ] Accessibility pass: keyboard, focus states, text alternatives, contrast in both appearances, reduced motion. Fix what you find.
+- [ ] Update `docs/ARCHITECTURE.md` for 3D and the final structure.
+- [ ] `README.md`: what it is, how to run, build, test.
+- [ ] Final commit. Fill in the final report below.
+
+---
+
+## Decisions and open questions
+(Add a dated line whenever you chose between options or found a disagreement. Example: "Stage 3: design shows X, REQUIREMENTS says Y; followed REQUIREMENTS.")
+
+- 2026-10-27 Stage 0: the prototype was shipped at `docs/prototype.html`, not `reference/prototype.html` as CLAUDE.md says. Copied it to `reference/prototype.html` (the docs copy is left untouched); tests read the `reference/` copy.
+- 2026-10-27 Stage 0: npm resolved TypeScript 7 and Vite 8. Used a single `tsconfig.json` with `tsc --noEmit` for `typecheck` and before `vite build`, instead of project references.
+- 2026-10-27 Stage 0: added `@fontsource/instrument-sans` and `@fontsource/jetbrains-mono` (dependencies not in the stack list). The design uses these fonts; self-hosting them keeps the app free of third-party network requests (Principle 3, Private).
+
+## Log
+(One short line per stage when finished: what was built, checks run, anything skipped or `[!]`.)
+
+- Stage 0: Vite + React 19 + TS strict scaffold, three / R3F / drei, Vitest, Playwright 1.64 (dev), folders, git. Smoke test, typecheck and build pass.
+
+## Final report
+(Fill in at the end: what works, what was skipped or blocked, what the user should look at first, known gaps.)
+
+-
