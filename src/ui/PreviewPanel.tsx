@@ -26,9 +26,10 @@ export function PreviewPanel({ state, exporter, webgl, scene, viewControls }: Pr
   return (
     <section className="panel preview-panel" aria-label="Preview">
       <div className="panel-head">
-        <h2 className="panel-title">Preview</h2>
+        <h2 className="visually-hidden">Preview</h2>
         <ModeSwitch view={state.view} can3d={can3d} onChange={state.setView} noteId="note3d" />
         <div className="preview-tools">
+          <BackgroundControl icons value={state.background} onChange={state.setBackground} />
           <button type="button" className="btn icon-btn" aria-label="Copy PNG" title="Copy PNG" onClick={exporter.copy}>
             <CopyIcon />
           </button>
@@ -54,8 +55,6 @@ export function PreviewPanel({ state, exporter, webgl, scene, viewControls }: Pr
           />
         </Stage>
       </div>
-
-      <BackgroundControl className="preview-bg" value={state.background} onChange={state.setBackground} />
 
       <div className="details">
         <div className="ladder">

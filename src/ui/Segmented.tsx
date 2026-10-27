@@ -6,6 +6,7 @@ export interface SegmentOption<T extends string> {
   disabled?: boolean;
   describedBy?: string;
   ariaLabel?: string;
+  title?: string;
 }
 
 interface Props<T extends string> {
@@ -29,6 +30,7 @@ export function Segmented<T extends string>({ label, labelledBy, value, options,
           aria-pressed={value === o.value}
           aria-describedby={o.describedBy}
           aria-label={o.ariaLabel}
+          title={o.title}
           disabled={o.disabled}
           onClick={() => onChange(o.value)}
         >

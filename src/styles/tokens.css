@@ -17,6 +17,11 @@
   --pop: 0 12px 32px -12px rgba(0, 0, 0, 0.28);
   --pop-up: 0 -12px 32px -12px rgba(0, 0, 0, 0.28);
   --scrim: rgba(0, 0, 0, 0.5);
+  /* Background icons picture the avatar backgrounds, so they keep these colours in both appearances. */
+  --bgicon-light: #f6f5f3;
+  --bgicon-dark: #14151a;
+  --bgicon-chk1: #cfccc5;
+  --bgicon-chk2: #ffffff;
 
   --sans: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;

@@ -12,6 +12,9 @@ function tokens(block: string): Record<string, string> {
   return out;
 }
 
+// The background icons (--bgicon-*) picture avatar backgrounds and stay the same in both appearances.
+const switched = (t: Record<string, string>) => Object.keys(t).filter((k) => !k.startsWith('bgicon-')).sort();
+
 const light = tokens(css.slice(css.indexOf(':root {'), css.indexOf('@media')));
 const dark = tokens(css.slice(css.indexOf(":root[data-theme='dark']")));
 
@@ -37,6 +40,6 @@ describe('app colour contrast', () => {
   }
 
   it('defines the same tokens for both appearances', () => {
-    expect(Object.keys(dark).sort()).toEqual(Object.keys(light).sort());
+    expect(switched(dark)).toEqual(switched(light));
   });
 });

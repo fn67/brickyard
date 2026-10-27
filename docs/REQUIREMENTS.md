@@ -119,7 +119,7 @@ Notes:
 - Large preview of the current avatar.
 - Three small size previews: 56, 48 and 20 px.
 - Facts: Style, Grid, Name. The Name row shows exactly what is in the name field. There is no Colour row; the Colour control itself shows the current choice.
-- Background control and Colour control. Claude Design decides exactly where they sit.
+- Background control and Colour control. Claude Design decides exactly where they sit. On desktop (compact revision), Background is three icon-only swatch buttons in the Preview header, next to the 2D | 3D switch and the icon-only Copy PNG and Download buttons; each has a tooltip and an accessible name. The "Preview" heading is visually hidden but kept for screen readers. The phone keeps the labelled Background control in its Colour tab.
 - **Copy PNG** (primary) and **Download** (menu).
 - **Variations:** six small avatars in the current style, with the heading "Variations" and the line "Not quite right? Try another." (no "seed" wording). They are the name itself, then the name with `:1`, `:2` and so on added. Selecting one puts that text in the name field (for example `hello-world:3`) and shows a small note such as "Using variation 3", so the added `:3` makes sense. If the name already ends in `:number`, that suffix is dropped before making the variations.
 

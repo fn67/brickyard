@@ -80,7 +80,7 @@ The design was revised (single-screen desktop). Re-read the design files and sav
 ## Stage 9: Compact desktop revision
 The desktop design was revised again (phone unchanged). Refresh `reference/design/` first. Where this stage disagrees with REQUIREMENTS, CLAUDE.md or Stage 8, the new design wins: update the docs and log it.
 - [x] 1. Copy PNG and Download become icon-only buttons in the preview header, next to 2D | 3D; the Download menu opens downward from the header; both keep a tooltip and an accessible name.
-- [ ] 2. Background (Light, Dark, Transparent) becomes three icon-only swatch buttons in the preview header, each with a tooltip and accessible name; the "Preview" heading is visually hidden but kept for screen readers.
+- [x] 2. Background (Light, Dark, Transparent) becomes three icon-only swatch buttons in the preview header, each with a tooltip and accessible name; the "Preview" heading is visually hidden but kept for screen readers.
 - [ ] 3. Compact style tiles (12 px name, smaller 3D badge, no grid caption), smaller variation thumbnails, and the Styles card at its natural height at the top.
 - [ ] 4. Tiles fill the width and wrap instead of a fixed 5 × 2 grid.
 - [ ] 5. The visible "Colour" label is removed on desktop; screen readers still get "Colour" as the swatch group's name. The phone keeps its label.
@@ -126,6 +126,7 @@ The desktop design was revised again (phone unchanged). Refresh `reference/desig
 - 2026-10-27 Stage 8: Background (Light, Dark, Transparent) now changes only the large preview, the 3D scene, the size previews and exports. Style tiles and variation thumbnails always render with the Light palette, on desktop and phone (new design). REQUIREMENTS 4.4 and 9 updated. This replaces the Stage 4 behaviour "applied everywhere at once".
 - 2026-10-27 Stage 8: the design stops a 3D drag from starting on a chip by checking the pointer target. In the app the chips already sit outside the 3D view's event area (they are overlays beside the canvas, not inside it), so a touch that starts on a chip never reaches the camera controls. The chips also get `touch-action: manipulation`. A new verify-ui check slides a real touch (CDP touch events) from a chip across the view and asserts the frame and preset are unchanged.
 - 2026-10-27 Stage 9: Copy PNG and Download are icon-only buttons in the desktop preview header (accessible names and tooltips "Copy PNG" and "Download"); the menu opens downward from there. The labelled Download button is gone, so `DownloadMenu` is now icon-only; the phone keeps its labelled buttons and bottom sheet.
+- 2026-10-27 Stage 9: on desktop, Background is three icon-only swatch buttons in the preview header, named and titled "Light background", "Dark background" and "Transparent background" (group name "Background"). The swatch colours picture the avatar backgrounds, so they are fixed tokens (`--bgicon-*`) that do not change with the app appearance. The phone keeps the labelled Light | Dark | Transparent control in its Colour tab. The desktop "Preview" heading is visually hidden (`.visually-hidden`), and the preview card follows the design's wider formula (`100vh − 281px`, 380–640 px).
 
 ## Log
 (One short line per stage when finished: what was built, checks run, anything skipped or `[!]`.)
