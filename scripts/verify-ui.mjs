@@ -85,10 +85,11 @@ sections.desktop = async (browser) => {
   for (const scheme of ['light', 'dark']) {
     const { page, context } = await newPage(browser, { width: 1440, height: 900, scheme });
     check((await page.inputValue('#name')) === 'hello-world', 'name field opens with hello-world');
-    check((await page.getAttribute('#name', 'placeholder')) === 'Username, name…', 'placeholder text');
+    check((await page.getAttribute('#name', 'placeholder')) === 'Username, name or any string', 'placeholder text');
     check((await page.getAttribute('#name', 'maxlength')) === '40', 'max 40 characters');
     check(await page.getByText('Enter anything to see your avatar').isVisible(), 'field label');
-    check(await page.getByText('Pixel avatars for people who hate profile pictures.').isVisible(), 'tagline');
+    check((await page.getByText('Pixel avatars for people who hate profile pictures.').count()) === 0, 'no tagline in the header');
+    check(await page.locator('.bar .theme-toggle').isVisible(), 'header is a top bar with the dark-mode button');
     const text = await page.locator('body').innerText();
     check(!/seed/i.test(text), 'the word "seed" never appears in the interface');
     check((await page.locator('.style-tile').count()) === 10, 'ten style cards');
@@ -96,6 +97,7 @@ sections.desktop = async (browser) => {
     check((await page.locator('.style-tile', { hasText: 'Critter' }).locator('.badge-3d').count()) === 1, '3D badge on Critter');
     check((await page.locator('.variation-tile').count()) === 6, 'six variations');
     check(await page.getByText('3D is available for Critter.').isVisible(), '3D note visible for Classic');
+    check((await page.locator('.preview-stage #note3d').count()) === 1, '3D note is an overlay on the preview');
     check(await page.getByRole('button', { name: '3D', exact: true }).isDisabled(), '3D switch disabled for Classic');
     await shot(page, `desktop-1440-${scheme}`, { full: true });
     await context.close();
@@ -133,6 +135,7 @@ sections.desktop = async (browser) => {
   await page.locator('.variation-tile').nth(3).click();
   check((await page.inputValue('#name')) === 'hello-world:3', 'variation puts name:3 in the field');
   check(await page.getByText('Using variation 3').isVisible(), 'Using variation 3 note');
+  check((await page.locator('.variations-head .variation-note').count()) === 1, 'variation note sits on the Variations heading line');
   const varNames = await page.locator('.variation-tile').evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')));
   check(varNames[0].endsWith('hello-world') && varNames[5].endsWith('hello-world:5'), 'variations drop an existing :number suffix');
   await page.getByRole('button', { name: 'Use original' }).click();
@@ -264,7 +267,13 @@ sections.export = async (browser) => {
   const tileCorners = await page.locator('.style-tile canvas').evaluateAll((cs) =>
     cs.map((c) => Array.from(c.getContext('2d').getImageData(1, 1, 1, 1).data).join()),
   );
-  check(tileCorners.filter((c) => c !== '13,17,23,255').length <= 3, 'cards follow the Dark background (Quilt, Invader, Aurora differ)');
+  check(tileCorners.every((c) => c !== '13,17,23,255' && c.endsWith(',255')), 'style cards stay on the Light background when Background is Dark');
+  const thumbCorners = await page.locator('.variation-tile canvas').evaluateAll((cs) =>
+    cs.map((c) => Array.from(c.getContext('2d').getImageData(1, 1, 1, 1).data).join()),
+  );
+  check(thumbCorners.every((c) => c === '240,240,240,255'), 'variation thumbnails stay on the Light background (got ' + thumbCorners[0] + ')');
+  const ladderCorner = await page.locator('.ladder canvas').first().evaluate((c) => Array.from(c.getContext('2d').getImageData(1, 1, 1, 1).data).join());
+  check(ladderCorner === '13,17,23,255', 'size previews follow the Dark background (got ' + ladderCorner + ')');
   await shot(page, 'desktop-bg-dark-blue', { full: true });
 
   await page.getByRole('button', { name: 'Transparent' }).click();
@@ -272,6 +281,8 @@ sections.export = async (browser) => {
   check(clear.mask === base.mask, 'Transparent leaves the pattern unchanged');
   check(clear.corner[3] === 0, 'Transparent draws no background');
   check(await page.locator('.preview-stage.stage-checker').isVisible(), 'checkerboard behind the preview when Transparent');
+  const clearTiles = await page.locator('.style-tile canvas').evaluateAll((cs) => cs.map((c) => c.getContext('2d').getImageData(1, 1, 1, 1).data[3]));
+  check(clearTiles.every((a) => a === 255), 'style cards stay opaque Light when Background is Transparent');
   await shot(page, 'desktop-bg-transparent', { full: true });
 
   // Download menu.
@@ -314,7 +325,7 @@ sections.export = async (browser) => {
   // Copy PNG.
   await page.getByRole('button', { name: 'Copy PNG' }).click();
   await page.getByText('Copied to clipboard').waitFor({ timeout: 3000 });
-  check(true, 'Copied message');
+  check((await page.locator('.preview-stage').getByText('Copied to clipboard').count()) === 1, 'Copied message is an overlay on the preview');
   const clip = await page.evaluate(async () => {
     const items = await navigator.clipboard.read();
     const blob = await items[0].getType('image/png');
@@ -335,7 +346,7 @@ sections.export = async (browser) => {
   await bp.goto(URL);
   await bp.getByRole('button', { name: 'Copy PNG' }).click();
   await bp.getByText('Clipboard blocked. Use Download instead.').waitFor({ timeout: 3000 });
-  check(true, 'Clipboard blocked message');
+  check((await bp.locator('.preview-stage').getByText('Clipboard blocked. Use Download instead.').count()) === 1, 'Clipboard blocked message is an overlay on the preview');
   await bp.screenshot({ path: join(OUT, 'desktop-clipboard-blocked.png') });
   await blocked.close();
 };
@@ -588,6 +599,25 @@ sections.phone = async (browser) => {
       check(await page.getByText('Drag to rotate, pinch to zoom').isVisible(), `${tag}: touch hint`);
       await chips.getByRole('button', { name: 'Front' }).click();
       await page.waitForTimeout(250);
+      if (scheme === 'light') {
+        // A finger that lands on a chip and slides across the view must not rotate it.
+        const before = await page.locator('.scene3d canvas').screenshot();
+        const box = await chips.getByRole('button', { name: 'Top' }).boundingBox();
+        const cdp = await context.newCDPSession(page);
+        const x = box.x + box.width / 2;
+        const y = box.y + box.height / 2;
+        await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
+        for (let i = 1; i <= 12; i++) await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x - i * 10, y: y - i * 6 }] });
+        await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+        await page.waitForTimeout(300);
+        check(before.equals(await page.locator('.scene3d canvas').screenshot()), `${tag}: a touch drag that starts on a chip does not rotate the view`);
+        check((await chips.getByRole('button', { name: 'Front' }).getAttribute('aria-pressed')) === 'true', `${tag}: the preset stays pressed after a drag from a chip`);
+        await chips.getByRole('button', { name: 'Top' }).tap();
+        await page.waitForTimeout(300);
+        check((await chips.getByRole('button', { name: 'Top' }).getAttribute('aria-pressed')) === 'true', `${tag}: tapping a chip picks its preset`);
+        await chips.getByRole('button', { name: 'Front' }).tap();
+        await page.waitForTimeout(250);
+      }
       const sc3 = await noPageScroll(page);
       check(sc3.v && sc3.h, `${tag} 3D: no page scroll`);
       await shot(page, `phone-${tag}-3d`);
@@ -621,6 +651,17 @@ sections.phone = async (browser) => {
   await page.getByRole('button', { name: 'Teal, hue 190°' }).click();
   await page.getByRole('button', { name: 'Dark', exact: true }).click();
   check((await page.getByRole('button', { name: 'Dark', exact: true }).getAttribute('aria-pressed')) === 'true', 'phone: background control in the Colour tab');
+  await page.getByRole('tab', { name: 'Variations' }).click();
+  const phoneThumbs = await page.locator('.variation-tile canvas').evaluateAll((cs) =>
+    cs.map((c) => Array.from(c.getContext('2d').getImageData(1, 1, 1, 1).data).join()),
+  );
+  check(phoneThumbs.every((c) => c !== '13,17,23,255'), 'phone: variation thumbnails stay Light when Background is Dark');
+  await page.getByRole('tab', { name: 'Style' }).click();
+  const phoneTiles = await page.locator('.style-tile canvas').evaluateAll((cs) =>
+    cs.map((c) => Array.from(c.getContext('2d').getImageData(1, 1, 1, 1).data).join()),
+  );
+  check(phoneTiles.every((c) => c !== '13,17,23,255'), 'phone: style tiles stay Light when Background is Dark');
+  await page.getByRole('tab', { name: 'Colour' }).click();
   await page.getByRole('button', { name: 'Copy PNG' }).click();
   await page.getByText('Copied to clipboard').waitFor({ timeout: 3000 });
   check(true, 'phone: Copied message on the preview');
@@ -636,6 +677,105 @@ sections.phone = async (browser) => {
   const s400 = await noPageScroll(w400.page);
   check(s400.h && s400.v, '400 px wide: no page scroll');
   await w400.context.close();
+};
+
+/** Rectangles of the main desktop parts, and whether any of them is clipped by its card or the window. */
+async function desktopLayout(page) {
+  return page.evaluate(() => {
+    const r = (el) => el.getBoundingClientRect();
+    const inside = (a, b) => a.top >= b.top - 0.5 && a.bottom <= b.bottom + 0.5 && a.left >= b.left - 0.5 && a.right <= b.right + 0.5;
+    const prev = document.querySelector('.preview-panel');
+    const styles = document.querySelector('.styles-panel');
+    const clipped = [];
+    for (const sel of ['.panel-head', '.preview-stage', '.preview-bg', '.details', '.actions']) {
+      const el = prev.querySelector(sel);
+      if (!el || !inside(r(el), r(prev))) clipped.push(sel);
+    }
+    for (const sel of ['.colour-row', '.style-tile:last-child', '.variations-head', '.variation-tile:last-child']) {
+      const el = styles.querySelector(sel);
+      if (!el || !inside(r(el), r(styles))) clipped.push(sel);
+    }
+    for (const el of styles.querySelectorAll('.style-tile')) {
+      const t = el.querySelector('.tile-name');
+      if (!inside(r(t), r(el))) clipped.push('tile text ' + t.textContent);
+    }
+    const tiles = [...styles.querySelectorAll('.style-tile')].map(r);
+    const swatches = [...document.querySelectorAll('.swatch')].map((e) => Math.round(r(e).top));
+    const thumbs = [...document.querySelectorAll('.variation-tile')].map((e) => Math.round(r(e).top));
+    const art = r(styles.querySelector('.tile-art'));
+    return {
+      clipped,
+      stage: Math.round(r(document.querySelector('.preview-stage')).height),
+      art: Math.round(art.width),
+      tileRatio: tiles[0].height / tiles[0].width,
+      rowGap: Math.round(tiles[5].top - tiles[0].bottom),
+      tileCols: new Set(tiles.map((t) => Math.round(t.left))).size,
+      tileRows: new Set(tiles.map((t) => Math.round(t.top))).size,
+      swatchRows: new Set(swatches).size,
+      thumbRows: new Set(thumbs).size,
+      wrapH: Math.round(r(document.querySelector('.desktop-wrap')).height),
+      barBorder: getComputedStyle(document.querySelector('.bar')).borderBottomWidth,
+    };
+  });
+}
+
+sections.layout = async (browser) => {
+  console.log('Single-screen desktop layout');
+  for (const [w, h] of [[1440, 900], [1920, 1080], [1440, 640], [1440, 600]]) {
+    for (const scheme of ['light', 'dark']) {
+      const tag = `${w}x${h}-${scheme}`;
+      const { page, context } = await newPage(browser, { width: w, height: h, scheme });
+      const sc = await noPageScroll(page);
+      if (h >= 640) check(sc.v && sc.h, `${tag}: no page scroll (${sc.sh}/${sc.ih})`);
+      else check(!sc.v && sc.sh === 640 && sc.h, `${tag}: below 640 px the page scrolls to a 640 px layout (${sc.sh})`);
+      const L = await desktopLayout(page);
+      check(L.clipped.length === 0, `${tag}: nothing cut off (${L.clipped.join(', ')})`);
+      check(L.tileCols === 5 && L.tileRows === 2, `${tag}: style tiles in a 5 × 2 grid`);
+      check(L.swatchRows === 1, `${tag}: colour swatches in one row`);
+      check(L.thumbRows === 1, `${tag}: variations in one row of six`);
+      check(L.rowGap === 12, `${tag}: 12 px between the two tile rows (${L.rowGap})`);
+      check(L.stage >= 150, `${tag}: preview has room for the avatar (${L.stage} px)`);
+      check(L.art >= 60, `${tag}: tile art has room (${L.art} px)`);
+      check(L.tileRatio < 1.45, `${tag}: style tiles are not stretched tall (${L.tileRatio.toFixed(2)})`);
+      check(L.wrapH <= 1000, `${tag}: layout capped at 1000 px high (${L.wrapH})`);
+      check(L.barBorder === '1px', `${tag}: hairline under the top bar`);
+      await shot(page, `desktop-${tag}`, { full: h < 640 });
+      if (w === 1440 && h === 900) {
+        await page.locator('.variation-tile').nth(2).click();
+        const head = await page.locator('.variations-head').boundingBox();
+        check(head.height <= 41, `${tag}: variation note keeps the heading to one line (${head.height})`);
+        const sc2 = await noPageScroll(page);
+        check(sc2.v, `${tag}: the variation note adds no height`);
+        await page.getByRole('button', { name: 'Use original' }).click();
+      }
+      // Critter in 3D: chips along the bottom of the preview, the hint along the top.
+      if (h === 900 || h === 640 || (w === 1920 && scheme === 'light')) {
+        await page.getByRole('button', { name: 'Try it' }).click();
+        await page.waitForSelector('.scene3d canvas');
+        await page.waitForTimeout(900);
+        const chips = page.locator('.preview-stage').getByRole('group', { name: 'Viewing angle' });
+        check((await chips.getByRole('button').count()) === 7, `${tag} 3D: four presets, zoom out, zoom in and Reset view as chips on the preview`);
+        const rows = await chips.getByRole('button').evaluateAll((bs) => new Set(bs.map((b) => Math.round(b.getBoundingClientRect().top))).size);
+        check(rows === 1, `${tag} 3D: chips fit on one line`);
+        check(await page.locator('.preview-stage .stage-hint').getByText('Drag to rotate, scroll to zoom').isVisible(), `${tag} 3D: hint is an overlay on the preview`);
+        const sc3 = await noPageScroll(page);
+        if (h >= 640) check(sc3.v, `${tag} 3D: no page scroll`);
+        await shot(page, `desktop-${tag}-critter-3d`);
+      }
+      await context.close();
+    }
+  }
+
+  // Narrow desktop windows keep the stacked layout and scroll.
+  const { page, context } = await newPage(browser, { width: 800, height: 900 });
+  const L = await page.evaluate(() => {
+    const p = document.querySelector('.preview-panel').getBoundingClientRect();
+    const s = document.querySelector('.styles-panel').getBoundingClientRect();
+    return { stacked: s.top >= p.bottom, sh: document.scrollingElement.scrollHeight };
+  });
+  check(L.stacked && L.sh > 900, '800 px wide: the stacked layout scrolls');
+  await shot(page, 'desktop-800x900-light-stacked', { full: true });
+  await context.close();
 };
 
 sections.keyboard = async (browser) => {

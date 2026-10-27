@@ -74,7 +74,7 @@ The design was revised (single-screen desktop). Re-read the design files and sav
 - [x] 3. Large-screen fixes: style tiles capped to roughly square, layout capped at 1000 px high, the same 12 px gap between the two tile rows.
 - [x] 4. Top section: header as its own top bar (hairline under it, page colour with a 3% shift, dark-mode button on the right); name field and Shuffle full width above the cards; no tagline on desktop or phone; placeholder "Username, name or any string".
 - [x] 5. Background changes only the large preview and the 56/48/20 px size previews; style tiles and variation thumbnails always use Light (desktop and phone).
-- [ ] 6. Phone: the 3D chips never start a drag when tapped; the shorter header gives the preview more height.
+- [x] 6. Phone: the 3D chips never start a drag when tapped; the shorter header gives the preview more height.
 - [ ] Verify: screenshots in light and dark at 1440×900, 1920×1080, 1440×640, 1440×600, phone 390×650 and 360×600 (each tab and the Download sheet), Critter 3D on desktop; compare with the design frames and fix differences; no page scroll on desktop at 900 px high and above; nothing cut off at 640 px; chips do not start a drag on touch. Report below.
 
 ---
@@ -114,6 +114,7 @@ The design was revised (single-screen desktop). Re-read the design files and sav
 - 2026-10-27 Stage 8: the new design removes the tagline from the header (desktop and phone) and changes the placeholder to "Username, name or any string". REQUIREMENTS 4.1, 7 and 9 and CLAUDE.md updated; the tagline stays in the README and the page's meta description.
 - 2026-10-27 Stage 8: at 640 px high the design's spacing leaves the avatar about 36 px and the tile art about 5 px (it was calculated, not checked). Windows 640–799 px high therefore get tighter spacing: the Background label sits beside its control, the preview fills the width left (so the 3D note and chips stay on one line), tiles hide the grid line, 3D chips are 30 px, and variation thumbnails are 56 px. From 800 px high the design's numbers are used unchanged. The size previews and facts never wrap in the single-screen layout (they wrapped at the 380 px minimum panel width).
 - 2026-10-27 Stage 8: Background (Light, Dark, Transparent) now changes only the large preview, the 3D scene, the size previews and exports. Style tiles and variation thumbnails always render with the Light palette, on desktop and phone (new design). REQUIREMENTS 4.4 and 9 updated. This replaces the Stage 4 behaviour "applied everywhere at once".
+- 2026-10-27 Stage 8: the design stops a 3D drag from starting on a chip by checking the pointer target. In the app the chips already sit outside the 3D view's event area (they are overlays beside the canvas, not inside it), so a touch that starts on a chip never reaches the camera controls. The chips also get `touch-action: manipulation`. A new verify-ui check slides a real touch (CDP touch events) from a chip across the view and asserts the frame and preset are unchanged.
 
 ## Log
 (One short line per stage when finished: what was built, checks run, anything skipped or `[!]`.)
