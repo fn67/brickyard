@@ -36,13 +36,12 @@ body{margin:0}
 <sc-if value="{{notDark}}" hint-placeholder-val="{{ true }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></sc-if>
 </button>
 </div>
-<p style="margin: 0; font-size: 12px; line-height: 16px; color: var(--ink2); white-space: nowrap">Pixel avatars for people who hate profile pictures.</p>
 </header>
 
 <section aria-label="Name" style="flex: none; padding: 8px 16px 0">
 <label for="name" class="lblname" style="display: block; margin-bottom: 4px; font-size: 12px; line-height: 16px; font-weight: 600; color: var(--ink2)">Enter anything to see your avatar</label>
 <div style="display: flex; gap: 8px">
-<input id="name" type="text" value="{{person}}" onChange="{{onName}}" onFocus="{{onFocus}}" onBlur="{{onBlur}}" placeholder="hello-world" spellcheck="false" autocomplete="off" style="flex: 1; min-width: 0; height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 8px; border: 1px solid var(--line2); background: var(--surface); color: var(--ink); font: 500 16px 'JetBrains Mono', ui-monospace, monospace; {{inputFocus}}">
+<input id="name" type="text" value="{{person}}" onChange="{{onName}}" onFocus="{{onFocus}}" onBlur="{{onBlur}}" placeholder="Username, name or any string" spellcheck="false" autocomplete="off" style="flex: 1; min-width: 0; height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 8px; border: 1px solid var(--line2); background: var(--surface); color: var(--ink); font: 500 16px 'JetBrains Mono', ui-monospace, monospace; {{inputFocus}}">
 <button type="button" class="btn" onClick="{{shuffle}}" style="flex: none; height: 44px; padding: 0 14px; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: 8px; border: 1px solid var(--line2); background: var(--surface); color: var(--ink); font-size: 14px; font-weight: 600">
 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
 Shuffle
@@ -449,6 +448,7 @@ class Component extends DCLogic {
       shadow: bgMode === 'transparent' ? '' : 'box-shadow: 0 10px 24px -12px rgba(0,0,0,0.35);',
       down: (e) => {
         if (!threeD) return;
+        if (e.target && e.target.closest && e.target.closest('button')) return;
         this._ptr = this._ptr || {};
         this._ptr[e.pointerId] = { x: e.clientX, y: e.clientY };
         const ids = Object.keys(this._ptr);
@@ -550,7 +550,7 @@ class Component extends DCLogic {
         name: s.name,
         aria: s.name + ' style' + (s.id === 'critter' ? ', 3D available' : ''),
         has3d: s.id === 'critter',
-        av: this.build(s.id, key, hue, bgMode),
+        av: this.build(s.id, key, hue, 'light'),
         pressed: s.id === cur.id,
         ring: ring(s.id === cur.id),
         pick: () => this.setState({ styleId: s.id, threeD: s.id === 'critter' ? this.flag('threeD') : false })
@@ -563,7 +563,7 @@ class Component extends DCLogic {
         return { name: x.name, on, bg: 'hsl(' + x.h + ' 62% 46%)', ink: x.h > 35 && x.h < 125 ? '#141414' : '#FFFFFF', ring: on ? 'border: 2px solid var(--accent);' : 'border: 2px solid transparent;', pick: () => this.setState({ colour: x.id }) };
       }),
       bgs: [['light', 'Light'], ['dark', 'Dark'], ['transparent', 'Transparent']].map((b) => ({ label: b[1], on: bgMode === b[0], css: bgMode === b[0] ? segOn : segOff, pick: () => this.setState({ bg: b[0] }) })),
-      variants: [0, 1, 2, 3, 4, 5].map((i) => ({ label: 'Variation ' + (i + 1), av: this.build(cur.id, seedAt(i), hue, bgMode), pressed: i === variant, ring: ring(i === variant), pick: () => this.setState({ variant: i, noted: true }) })),
+      variants: [0, 1, 2, 3, 4, 5].map((i) => ({ label: 'Variation ' + (i + 1), av: this.build(cur.id, seedAt(i), hue, 'light'), pressed: i === variant, ring: ring(i === variant), pick: () => this.setState({ variant: i, noted: true }) })),
       noted,
       variantNote: 'Using variation ' + (variant + 1),
       useOriginal: () => this.setState({ variant: 0, noted: false })

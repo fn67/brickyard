@@ -23,14 +23,16 @@ export function StyleGrid({ name, style, hue, background, onPick, compact }: Pro
           aria-label={s.name + ' style, ' + s.grid + (s.has3d ? ', 3D available' : '')}
           onClick={() => onPick(s.id)}
         >
-          <span className="tile-art">
-            <AvatarCanvas className="tile-avatar" model={generateAvatar(name, { style: s.id, hue, background })} />
-            {s.has3d && (
-              <span className="badge-3d" aria-hidden="true">
-                {!compact && <CubeIcon size={12} strokeWidth={2.2} />}
-                3D
-              </span>
-            )}
+          <span className="tile-img">
+            <span className="tile-art">
+              <AvatarCanvas className="tile-avatar" model={generateAvatar(name, { style: s.id, hue, background })} />
+              {s.has3d && (
+                <span className="badge-3d" aria-hidden="true">
+                  {!compact && <CubeIcon size={12} strokeWidth={2.2} />}
+                  3D
+                </span>
+              )}
+            </span>
           </span>
           <span className="tile-text">
             <span className="tile-name">{s.name}</span>

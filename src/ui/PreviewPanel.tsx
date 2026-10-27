@@ -5,10 +5,9 @@ import { avatarAlt } from './avatarText';
 import { BackgroundControl } from './BackgroundControl';
 import { CopyIcon } from './icons';
 import { DownloadMenu } from './DownloadMenu';
-import { tryCritterAndFocus } from './focus';
 import { ModeSwitch } from './ModeSwitch';
+import { PreviewOverlays } from './PreviewOverlays';
 import { Stage } from './Stage';
-import { StatusMessage } from './StatusMessage';
 import type { AvatarState } from './useAvatarState';
 import type { ExportControls } from './useExport';
 
@@ -21,8 +20,6 @@ interface Props {
   viewControls?: ReactNode;
 }
 
-export const NO_WEBGL_NOTE = '3D is not available on this device.';
-
 export function PreviewPanel({ state, exporter, webgl, scene, viewControls }: Props) {
   const info = styleInfo(state.style);
   const can3d = info.has3d && webgl;
@@ -32,30 +29,25 @@ export function PreviewPanel({ state, exporter, webgl, scene, viewControls }: Pr
         <h2 className="panel-title">Preview</h2>
         <ModeSwitch view={state.view} can3d={can3d} onChange={state.setView} noteId="note3d" />
       </div>
-      {!info.has3d && (
-        <p id="note3d" className="note">
-          3D is available for Critter.
-          {webgl && (
-            <button type="button" className="link" onClick={() => tryCritterAndFocus(state.tryCritter)}>
-              Try it
-            </button>
-          )}
-        </p>
-      )}
-      {info.has3d && !webgl && (
-        <p id="note3d" className="note">
-          {NO_WEBGL_NOTE}
-        </p>
-      )}
-
-      <Stage
-        className="preview-stage"
-        model={state.model}
-        background={state.background}
-        alt={avatarAlt(state.name, state.style)}
-        scene={state.view === '3d' ? scene : undefined}
-      />
-      {state.view === '3d' && viewControls}
+      <div className="stage-fit">
+        <Stage
+          className="preview-stage"
+          model={state.model}
+          background={state.background}
+          alt={avatarAlt(state.name, state.style)}
+          scene={state.view === '3d' ? scene : undefined}
+        >
+          <PreviewOverlays
+            toast={exporter.toast}
+            is3d={state.view === '3d'}
+            has3d={info.has3d}
+            webgl={webgl}
+            hint="Drag to rotate, scroll to zoom"
+            onTryCritter={state.tryCritter}
+            controls={viewControls}
+          />
+        </Stage>
+      </div>
 
       <BackgroundControl className="preview-bg" value={state.background} onChange={state.setBackground} />
 
@@ -86,10 +78,6 @@ export function PreviewPanel({ state, exporter, webgl, scene, viewControls }: Pr
           Copy PNG
         </button>
         <DownloadMenu onDownload={exporter.download} />
-      </div>
-
-      <div role="status" aria-live="polite" className="status">
-        <StatusMessage toast={exporter.toast} />
       </div>
     </section>
   );

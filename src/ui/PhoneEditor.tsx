@@ -6,13 +6,11 @@ import { ColourControl } from './ColourControl';
 import { DownloadSheet } from './DownloadSheet';
 import { Header } from './Header';
 import { DownloadIcon } from './icons';
-import { tryCritterAndFocus } from './focus';
 import { ModeSwitch } from './ModeSwitch';
 import { NameField } from './NameField';
-import { NO_WEBGL_NOTE } from './PreviewPanel';
 import { PhoneTabs, type PhoneTab } from './PhoneTabs';
+import { PreviewOverlays } from './PreviewOverlays';
 import { Stage } from './Stage';
-import { StatusMessage } from './StatusMessage';
 import { StyleGrid } from './StyleGrid';
 import type { Appearance } from './useAppearance';
 import type { AvatarState } from './useAvatarState';
@@ -40,7 +38,6 @@ export function PhoneEditor({ state, exporter, view3d, appearance, onToggleAppea
   const info = styleInfo(state.style);
   const can3d = info.has3d && view3d.webgl;
   const is3d = state.view === '3d';
-  const hasToast = exporter.toast !== 'none';
 
   const closeSheet = () => {
     setSheetOpen(false);
@@ -61,28 +58,16 @@ export function PhoneEditor({ state, exporter, view3d, appearance, onToggleAppea
             alt={avatarAlt(state.name, state.style)}
             scene={is3d ? view3d.scene : undefined}
           >
-            <div role="status" aria-live="polite" className="stage-top">
-              <StatusMessage toast={exporter.toast} compact />
-              {is3d && !hasToast && <div className="stage-hint">Drag to rotate, pinch to zoom</div>}
-            </div>
-            <div className="stage-bottom">
-              {!info.has3d && (
-                <div className="stage-note">
-                  <span id="note3d">3D is available for Critter.</span>
-                  {view3d.webgl && (
-                    <button type="button" className="link" onClick={() => tryCritterAndFocus(state.tryCritter)}>
-                      Try it
-                    </button>
-                  )}
-                </div>
-              )}
-              {info.has3d && !view3d.webgl && (
-                <div className="stage-note">
-                  <span id="note3d">{NO_WEBGL_NOTE}</span>
-                </div>
-              )}
-              {is3d && view3d.controls({ compact: true, hint: '' })}
-            </div>
+            <PreviewOverlays
+              compact
+              toast={exporter.toast}
+              is3d={is3d}
+              has3d={info.has3d}
+              webgl={view3d.webgl}
+              hint="Drag to rotate, pinch to zoom"
+              onTryCritter={state.tryCritter}
+              controls={view3d.controls({})}
+            />
           </Stage>
         </div>
 

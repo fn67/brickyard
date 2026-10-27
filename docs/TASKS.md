@@ -68,6 +68,15 @@ Read the phone design files (see CLAUDE.md). Requirements in 4.10.
 - [x] `README.md`: what it is, how to run, build, test.
 - [x] Final commit. Fill in the final report below.
 
+## Stage 8: Layout revision
+The design was revised (single-screen desktop). Re-read the design files and save fresh copies to `reference/design/` first. Where this stage disagrees with REQUIREMENTS or CLAUDE.md, the new design wins: update those docs and log it.
+- [x] 1. Single-screen desktop layout: the page fills the window (640 px high or more; below that it scrolls); the avatar square takes the height left; Styles shows swatches in one row, tiles 5 × 2, Variations as one row of six; 3D controls as chips along the bottom of the preview; Copied, Clipboard blocked, the 3D hint and "3D is available for Critter." as overlays on the preview; the variation note on the Variations heading line; narrow screens keep the stacked layout.
+- [ ] 3. Large-screen fixes: style tiles capped to roughly square, layout capped at 1000 px high, the same 12 px gap between the two tile rows.
+- [ ] 4. Top section: header as its own top bar (hairline under it, page colour with a 3% shift, dark-mode button on the right); name field and Shuffle full width above the cards; no tagline on desktop or phone; placeholder "Username, name or any string".
+- [ ] 5. Background changes only the large preview and the 56/48/20 px size previews; style tiles and variation thumbnails always use Light (desktop and phone).
+- [ ] 6. Phone: the 3D chips never start a drag when tapped; the shorter header gives the preview more height.
+- [ ] Verify: screenshots in light and dark at 1440×900, 1920×1080, 1440×640, 1440×600, phone 390×650 and 360×600 (each tab and the Download sheet), Critter 3D on desktop; compare with the design frames and fix differences; no page scroll on desktop at 900 px high and above; nothing cut off at 640 px; chips do not start a drag on touch. Report below.
+
 ---
 
 ## Decisions and open questions

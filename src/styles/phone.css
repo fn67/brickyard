@@ -129,91 +129,48 @@
   inset: 30px 0 40px 0;
 }
 
-.stage-top {
-  position: absolute;
+.phone .stage-top {
   top: 8px;
   left: 8px;
   right: 8px;
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
 }
 
 .toast-sm {
-  min-height: 0;
   gap: 6px;
   padding: 4px 10px;
-  background: var(--surface);
   font-size: 12px;
   line-height: 16px;
-  color: var(--ink);
 }
 
-.stage-hint {
+.phone .stage-hint {
   padding: 3px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--line);
-  background: var(--surface);
   font-size: 11.5px;
   line-height: 16px;
-  color: var(--ink2);
-  white-space: nowrap;
 }
 
-.stage-bottom {
-  position: absolute;
+.phone .stage-bottom {
   left: 6px;
   right: 6px;
   bottom: 6px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
 }
 
-.stage-note {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 0 6px;
+.phone .stage-note {
   min-height: 32px;
   padding: 0 8px 0 10px;
-  border-radius: 8px;
-  border: 1px solid var(--line);
-  background: var(--surface);
   font-size: 11.5px;
   line-height: 16px;
-  color: var(--ink2);
 }
 
-.stage-note .link {
+.phone .stage-note .link {
   min-height: 32px;
   padding: 0 2px;
   font-size: 11.5px;
 }
 
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.chip {
+.phone .chip {
   height: 30px;
   padding: 0 8px;
-  border-radius: 8px;
-  border: 1px solid var(--line2);
-  background: var(--surface);
-  color: var(--ink);
   font-size: 11px;
-  font-weight: 600;
-}
-
-.chip[aria-pressed='true'] {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent);
 }
 
 .phone-actions {

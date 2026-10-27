@@ -22,6 +22,7 @@ export function App() {
 
   return (
     <div className="app desktop">
+      <div className="desktop-wrap">
       <Header appearance={appearance} onToggleAppearance={toggle} />
       <NameField value={state.field} onChange={state.setField} onShuffle={state.shuffle} />
       <main className="workspace">
@@ -30,10 +31,11 @@ export function App() {
           exporter={exporter}
           webgl={view3d.webgl}
           scene={view3d.scene}
-          viewControls={view3d.controls({ hint: 'Drag to rotate, scroll to zoom', zoomButtons: true })}
+          viewControls={view3d.controls({ zoomButtons: true })}
         />
         <StylesPanel state={state} />
       </main>
+      </div>
     </div>
   );
 }

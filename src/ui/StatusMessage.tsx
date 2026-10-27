@@ -3,7 +3,7 @@ import { CheckIcon, WarningIcon } from './icons';
 export type Toast = 'none' | 'copied' | 'blocked';
 
 export function StatusMessage({ toast, compact }: { toast: Toast; compact?: boolean }) {
-  const size = compact ? 14 : 18;
+  const size = compact ? 14 : 16;
   if (toast === 'copied') {
     return (
       <div className={compact ? 'toast toast-sm' : 'toast'}>

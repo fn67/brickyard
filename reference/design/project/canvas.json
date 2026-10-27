@@ -4,9 +4,9 @@
   "boards": {
     "Brickyard.dc.html": {
       "expand": "fill",
-      "h": 1240,
+      "h": 900,
       "is_interactive": true,
-      "title": "Desktop, default (Classic)",
+      "title": "Desktop, default (Classic), 1440 x 900",
       "w": 1440,
       "x": 2100,
       "y": 0
@@ -20,8 +20,8 @@
       "y": 0
     },
     "DesktopDark.dc.html": {
-      "h": 1240,
-      "title": "Desktop, default (Classic), dark appearance",
+      "h": 900,
+      "title": "Desktop, dark appearance, 1440 x 900",
       "w": 1440,
       "x": 2100,
       "y": 3600
@@ -109,6 +109,35 @@
       "w": 390,
       "x": 4523,
       "y": 2880
+    },
+    "DesktopCritter3D.dc.html": {
+      "h": 900,
+      "title": "Desktop, Critter 3D, chips on the preview",
+      "w": 1440,
+      "x": 3640,
+      "y": 3600,
+      "is_interactive": true
+    },
+    "DesktopCritter3DDark.dc.html": {
+      "h": 900,
+      "title": "Desktop, Critter 3D, dark appearance",
+      "w": 1440,
+      "x": 5180,
+      "y": 3600
+    },
+    "DesktopWide.dc.html": {
+      "h": 1080,
+      "title": "Desktop wide, 1920 x 1080",
+      "w": 1920,
+      "x": 2100,
+      "y": 4600
+    },
+    "DesktopWideDark.dc.html": {
+      "h": 1080,
+      "title": "Desktop wide, dark appearance, 1920 x 1080",
+      "w": 1920,
+      "x": 5700,
+      "y": 4600
     }
   },
   "createdOnFiles": {
@@ -123,7 +152,8 @@
     "t-desktop",
     "t-phone",
     "t-phone-editor",
-    "t-light"
+    "t-light",
+    "t-desktop-dark"
   ],
   "notes": {
     "t-desktop": {
@@ -157,6 +187,14 @@
       "w": 240,
       "x": 4500,
       "y": -300
+    },
+    "t-desktop-dark": {
+      "kind": "title1",
+      "maxW": 3000,
+      "text": "Brickyard, desktop, single screen: dark, 3D, wide",
+      "w": 240,
+      "x": 2100,
+      "y": 3300
     }
   },
   "order": [
@@ -174,7 +212,11 @@
     "PhoneSheetDark.dc.html",
     "PhoneKeyboardDark.dc.html",
     "DesktopDark.dc.html",
-    "PhoneDefaultDark.dc.html"
+    "PhoneDefaultDark.dc.html",
+    "DesktopCritter3D.dc.html",
+    "DesktopCritter3DDark.dc.html",
+    "DesktopWide.dc.html",
+    "DesktopWideDark.dc.html"
   ],
   "pages": [],
   "title": "Identicon Lab"

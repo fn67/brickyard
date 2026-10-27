@@ -14,7 +14,7 @@ const ZOOM_STEP = 0.85;
 export interface View3d {
   webgl: boolean;
   scene: React.ReactNode;
-  controls: (opts: { compact?: boolean; hint: string; zoomButtons?: boolean }) => React.ReactNode;
+  controls: (opts: { zoomButtons?: boolean }) => React.ReactNode;
 }
 
 /** The single 3D scene and its controls. Falls back to 2D when WebGL is missing or fails. */
@@ -53,10 +53,8 @@ export function useView3d(state: AvatarState, captureRef: React.MutableRefObject
   );
 
   const controls = useCallback(
-    ({ compact, hint, zoomButtons }: { compact?: boolean; hint: string; zoomButtons?: boolean }) => (
+    ({ zoomButtons }: { zoomButtons?: boolean }) => (
       <ViewControls
-        compact={compact}
-        hint={hint}
         preset={preset}
         onPreset={(p) => apiRef.current?.setPreset(p)}
         onReset={() => apiRef.current?.reset()}

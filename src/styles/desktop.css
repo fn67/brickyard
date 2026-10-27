@@ -1,12 +1,20 @@
-/* Desktop and tablet layout: header, name field, then Preview beside Styles. */
+/*
+ * Desktop and tablet layout: header, name field, then Preview beside Styles.
+ * Narrow windows stack and scroll; from 1000 px wide it is one screen (see the end of this file).
+ */
 .desktop {
+  display: flex;
+  flex-direction: column;
+}
+
+.desktop-wrap {
   width: 100%;
   max-width: 1360px;
   margin: 0 auto;
-  padding: 32px clamp(16px, 4vw, 40px) 64px;
+  padding: 24px clamp(16px, 4vw, 40px) 64px;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 24px;
 }
 
 .header {
@@ -111,19 +119,20 @@
   gap: 12px;
 }
 
-.note {
-  margin: 8px 0 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0 6px;
-  font-size: 13px;
-  line-height: 1.4;
-  color: var(--ink2);
+.stage-fit {
+  margin-top: 12px;
 }
 
-.preview-stage {
-  margin-top: 12px;
+.preview-stage .stage-center {
+  inset: 0 0 40px 0;
+}
+
+.preview-stage .stage-avatar {
+  width: 72%;
+}
+
+.preview-stage .scene3d {
+  inset: 36px 0 44px 0;
 }
 
 .preview-bg {
@@ -212,6 +221,10 @@
   flex: none;
 }
 
+.actions .btn {
+  height: 44px;
+}
+
 .download {
   position: relative;
   flex: 1;
@@ -234,11 +247,6 @@
   border: 1px solid var(--line2);
   background: var(--surface);
   box-shadow: var(--pop);
-}
-
-.status {
-  margin-top: 12px;
-  min-height: 40px;
 }
 
 .styles-panel {
@@ -280,15 +288,27 @@
   border-top: 1px solid var(--line);
 }
 
+.variations-head {
+  min-height: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 12px;
+}
+
+.variations-head .variation-note {
+  margin: 0 0 0 auto;
+}
+
 .hint {
-  margin: 4px 0 0;
+  margin: 0;
   font-size: 13px;
   line-height: 1.5;
   color: var(--ink3);
 }
 
 .variation-grid {
-  margin-top: 14px;
+  margin-top: 8px;
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 88px));
   gap: 12px;
@@ -311,28 +331,118 @@
   }
 }
 
-.view-controls {
-  margin-top: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+/* One screen: the page fills the window (at least 640 px high) and the avatar square takes the height left. */
+@media (min-width: 1000px) {
+  .desktop {
+    height: max(100vh, 640px);
+    overflow: hidden;
+  }
 
-.view-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px 12px;
-}
+  .desktop-wrap {
+    flex: 1 1 0;
+    min-height: 0;
+    max-width: 1600px;
+    padding: 16px 40px 24px;
+    gap: 16px;
+  }
 
-.view-hint {
-  font-size: 13px;
-  line-height: 1.4;
-  color: var(--ink2);
-}
+  .name-field {
+    flex: none;
+    gap: 6px;
+  }
 
-.view-buttons {
-  display: flex;
-  gap: 6px;
+  .name-input,
+  .shuffle-btn {
+    height: 48px;
+  }
+
+  .workspace {
+    flex: 1;
+    min-height: 0;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 20px;
+  }
+
+  .preview-panel {
+    flex: none;
+    max-width: none;
+    width: clamp(380px, min(calc(100vh - 445px), 46vw), 640px);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .stage-fit {
+    flex: 1 1 0;
+    min-height: 0;
+    margin-top: 0;
+    container-type: size;
+    display: grid;
+    place-items: center;
+  }
+
+  .preview-stage {
+    width: min(100cqw, 100cqh);
+  }
+
+  .preview-bg,
+  .details,
+  .actions {
+    margin-top: 0;
+  }
+
+  .styles-panel {
+    flex: 1 1 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .colour-row {
+    flex: none;
+    margin-top: 12px;
+    padding-bottom: 16px;
+  }
+
+  /* Two rows of five. */
+  .style-grid {
+    flex: 1 1 0;
+    min-height: 0;
+    margin-top: 16px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+  }
+
+  .style-tile {
+    height: 100%;
+    gap: 8px;
+  }
+
+  .style-tile .tile-img {
+    flex: 1 1 0;
+    min-height: 0;
+    container-type: size;
+    display: grid;
+    place-items: center;
+  }
+
+  .style-tile .tile-art {
+    width: min(100cqw, 100cqh);
+  }
+
+  .style-tile .tile-text {
+    flex: none;
+  }
+
+  .variations-section {
+    flex: none;
+    margin-top: 16px;
+    padding-top: 12px;
+  }
+
+  .variation-grid {
+    grid-template-columns: repeat(6, minmax(0, 72px));
+  }
 }

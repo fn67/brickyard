@@ -190,6 +190,10 @@ button:disabled {
   text-align: left;
 }
 
+.tile-img {
+  display: block;
+}
+
 .tile-art {
   position: relative;
   display: block;
@@ -364,17 +368,27 @@ button:disabled {
   font-weight: 600;
 }
 
-/* Copied / blocked message */
+/* Overlays on the preview: messages along the top, the 3D note or chips along the bottom */
+.stage-top {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
 .toast {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 40px;
-  padding: 6px 12px;
+  gap: 8px;
+  padding: 5px 12px;
   border-radius: 8px;
   border: 1px solid var(--line2);
-  background: var(--sunken);
-  font-size: 14px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
   line-height: 1.4;
 }
 
@@ -386,6 +400,76 @@ button:disabled {
   display: flex;
   flex: none;
   color: var(--danger);
+}
+
+.stage-hint {
+  padding: 4px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink2);
+  white-space: nowrap;
+}
+
+.stage-bottom {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.stage-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0 6px;
+  padding: 0 8px 0 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink2);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+/* Taps on a chip must not reach the 3D view as the start of a drag. */
+.chip {
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid var(--line2);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 600;
+  touch-action: manipulation;
+}
+
+.chip-icon {
+  width: 34px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chip[aria-pressed='true'] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
 }
 
 .mono-caption {
