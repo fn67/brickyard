@@ -419,9 +419,10 @@
     flex: 1 1 0;
   }
 
+  /* The Styles card keeps its natural height at the top; it never stretches to the preview's height. */
   .styles-panel {
     flex: 1 1 0;
-    container-type: inline-size;
+    align-self: flex-start;
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -433,56 +434,51 @@
     padding-bottom: 16px;
   }
 
-  /*
-   * Two rows of five, 12 px apart. Each row is capped at a tile's width plus its label (68 px),
-   * so tiles stay roughly square on tall windows instead of stretching. 100cqw is the Styles card
-   * (a grid cannot size its rows from its own container units); 40 px is the card's padding.
-   */
   .style-grid {
-    flex: 1 1 0;
-    min-height: 0;
     margin-top: 16px;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    grid-template-rows: repeat(2, minmax(0, calc((100cqw - 40px - 48px) / 5 + 68px)));
-    align-content: start;
   }
 
+  /* Compact tiles: 12 px name, no grid caption, a small 3D badge without its icon. */
   .style-tile {
-    height: 100%;
-    gap: 8px;
+    padding: 5px 5px 7px;
+    gap: 5px;
   }
 
-  .style-tile .tile-img {
-    flex: 1 1 0;
-    min-height: 0;
-    container-type: size;
-    display: grid;
-    place-items: center;
+  .style-tile .tile-name {
+    font-size: 12px;
   }
 
-  .style-tile .tile-art {
-    width: min(100cqw, 100cqh);
+  .style-tile .tile-meta {
+    display: none;
   }
 
-  .style-tile .tile-text {
-    flex: none;
+  .style-tile .badge-3d {
+    top: 3px;
+    right: 3px;
+    height: 15px;
+    padding: 0 4px;
+    font-size: 9px;
+  }
+
+  .style-tile .badge-3d svg {
+    display: none;
   }
 
   .variations-section {
-    flex: none;
     margin-top: 16px;
     padding-top: 12px;
   }
 
   .variation-grid {
-    grid-template-columns: repeat(6, minmax(0, 72px));
+    grid-template-columns: repeat(6, minmax(0, 48px));
+    gap: 8px;
   }
 }
 
 /*
- * Short windows (640–799 px high): the design's spacing leaves no room for the avatar and tiles
- * at 640 px, so spacing tightens, the Background label sits beside its control, tiles drop
- * their grid line and the variation thumbnails shrink.
+ * Short windows (640–799 px high): spacing tightens and the preview fills the width left, so the
+ * avatar keeps room and the 3D note and chips stay on one line.
  */
 @media (min-width: 1000px) and (max-height: 799px) {
   .desktop-wrap {
@@ -519,46 +515,5 @@
   .preview-stage .chip-icon {
     width: 30px;
     padding: 0;
-  }
-
-  .styles-panel {
-    padding: 16px;
-  }
-
-  .colour-row {
-    margin-top: 8px;
-    padding-bottom: 12px;
-  }
-
-  .style-grid {
-    margin-top: 12px;
-    grid-template-rows: repeat(2, minmax(0, calc((100cqw - 32px - 48px) / 5 + 40px)));
-  }
-
-  .style-tile {
-    padding: 6px 6px 8px;
-    gap: 4px;
-  }
-
-  .style-tile .tile-meta {
-    display: none;
-  }
-
-  .variations-section {
-    margin-top: 12px;
-    padding-top: 8px;
-  }
-
-  .variations-head {
-    min-height: 32px;
-  }
-
-  .variations-head .link {
-    min-height: 32px;
-  }
-
-  .variation-grid {
-    margin-top: 6px;
-    grid-template-columns: repeat(6, minmax(0, 56px));
   }
 }
