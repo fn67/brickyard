@@ -97,8 +97,20 @@ Every renderer reads only the model.
 
 ## Interface
 
-- `App.tsx` picks the layout: the desktop layout (`Header`, `NameField`, `PreviewPanel`,
-  `StylesPanel`) or, below 641 px wide, `PhoneEditor` (single screen, tabs, bottom sheet).
+- `App.tsx` picks the layout: the desktop layout (`Header` as a top bar, then `NameField`,
+  `PreviewPanel` and `StylesPanel`) or, below 641 px wide, `PhoneEditor` (single screen, tabs,
+  bottom sheet).
+- **Desktop sizing** is CSS only (`desktop.css`). From 1000 px wide the page is one screen:
+  `height: max(100vh, 640px)` (shorter windows scroll), the content is capped at 1000 px high, and
+  the preview square and the style tiles take the height left through container queries
+  (`.stage-fit`, and `.styles-panel` as the container for the tile row cap). Windows 640–799 px high
+  get tighter spacing. Narrower windows use the stacked, scrolling layout.
+- **On the preview**, both layouts render `PreviewOverlays` inside `Stage`: the Copied / Clipboard
+  blocked messages and the 3D hint along the top, the "3D is available for Critter." note or the 3D
+  chips (`ViewControls`: presets, zoom on desktop, Reset view) along the bottom. They sit beside
+  the 3D canvas, not inside it, so a press on a chip never starts a drag.
+- **Background** applies to the large preview, the size previews, the 3D scene and exports.
+  `StyleGrid` and `Variations` always draw with the Light palette.
 - State lives in hooks shared by both layouts: `useAvatarState` (name field, style, hue,
   background, view; derives the model and the variation names), `useExport` (Copy / Download,
   messages), `useView3d` (the single 3D scene and its controls), `useAppearance` (app light/dark).

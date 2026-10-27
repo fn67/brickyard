@@ -75,7 +75,7 @@ The design was revised (single-screen desktop). Re-read the design files and sav
 - [x] 4. Top section: header as its own top bar (hairline under it, page colour with a 3% shift, dark-mode button on the right); name field and Shuffle full width above the cards; no tagline on desktop or phone; placeholder "Username, name or any string".
 - [x] 5. Background changes only the large preview and the 56/48/20 px size previews; style tiles and variation thumbnails always use Light (desktop and phone).
 - [x] 6. Phone: the 3D chips never start a drag when tapped; the shorter header gives the preview more height.
-- [ ] Verify: screenshots in light and dark at 1440×900, 1920×1080, 1440×640, 1440×600, phone 390×650 and 360×600 (each tab and the Download sheet), Critter 3D on desktop; compare with the design frames and fix differences; no page scroll on desktop at 900 px high and above; nothing cut off at 640 px; chips do not start a drag on touch. Report below.
+- [x] Verify: screenshots in light and dark at 1440×900, 1920×1080, 1440×640, 1440×600, phone 390×650 and 360×600 (each tab and the Download sheet), Critter 3D on desktop; compare with the design frames and fix differences; no page scroll on desktop at 900 px high and above; nothing cut off at 640 px; chips do not start a drag on touch. Report below.
 
 ---
 
@@ -145,6 +145,7 @@ The design was revised (single-screen desktop). Re-read the design files and sav
   - [x] 400 px wide with no horizontal scroll, and keyboard only: verify-ui `phone` "400 px wide: no page scroll" plus every phone size; `keyboard` and `a11y` sections (every control reached with Tab, visible focus ring, Enter picks a style); `docs/screenshots/desktop-focus-visible.png`.
   - [x] Empty, 40-character and non-English names work: `tests/engine.test.ts` sample names (empty, 40 × "x", José Martí, 山田太郎, مرحبا, emoji); verify-ui `desktop` "empty name uses hello-world", "non-English name", 40-character limit.
 - Stage 7: accessibility pass (verify-ui `a11y`, 26 checks: text alternatives on every avatar, one main landmark per layout, labelled field, named buttons, focus after "Try it", no transitions or animations with reduced motion, phone keyboard reach) and `tests/ui-contrast.test.ts` (all text tokens ≥ 4.5:1 in both appearances). ARCHITECTURE.md updated for 3D and the final structure; README.md written. Final run: 59 unit tests, typecheck and build pass; `npm run verify:ui` 261 checks pass, 0 console errors.
+- Stage 8: layout revision from the updated design (fresh copies in `reference/design/project/`, incl. the new DesktopWide, DesktopCritter3D and dark frames). Single-screen desktop from 1000 px wide, overlays and 3D chips on the preview, top bar header, no tagline, new placeholder, tiles/variations always Light, large-screen caps, short-window spacing. New verify-ui `layout` section (114 checks: no page scroll at 1440×900, 1920×1080 and 1440×640 in light and dark; 1440×600 scrolls to a 640 px layout; nothing clipped; 5 × 2 tiles, one swatch row, one row of six variations; 12 px tile row gap; tiles not stretched; ≤ 1000 px high; 3D chips on one line; 800 px wide stays stacked) plus phone chip touch-drag and Light-tile checks. Final run: 59 unit tests, typecheck, build, `npm run verify:ui` 390 checks, 0 failed, 0 console errors. Screenshots: `docs/screenshots/desktop-{1440x900,1920x1080,1440x640,1440x600}-{light,dark}.png`, `desktop-*-critter-3d.png`, `desktop-800x900-light-stacked.png`, `phone-*`.
 
 ## Final report
 (Fill in at the end: what works, what was skipped or blocked, what the user should look at first, known gaps.)
@@ -165,3 +166,37 @@ The design was revised (single-screen desktop). Re-read the design files and sav
 - On the smallest phone (360 × 600) the 3D view is short (about 130 px tall); pinch or the zoom keys make it bigger.
 - The 3D chunk (three.js + drei) is about 935 kB (250 kB gzip). It only loads when 3D is opened.
 - Console shows warnings (not errors) from libraries in 3D: three.js `Clock` deprecation inside R3F, and SwiftShader "ReadPixels" performance notices in headless Chrome.
+
+### Stage 8 report (layout revision)
+
+**What changed.**
+- Desktop (1000 px wide and up) is one screen. It fills the window from 640 px high (shorter windows scroll) and the content is capped at 1000 px high. The avatar square takes the height that is left, and the Styles card shows one row of swatches, 5 × 2 tiles and one row of six variations.
+- Copied, Clipboard blocked, the 3D hint and "3D is available for Critter. Try it" are now overlays on the preview. The 3D controls (Front, 3/4, Top, Side, −, +, Reset view) are chips along its bottom edge, and "Using variation N · Use original" sits on the Variations heading line. Windows narrower than 1000 px keep the stacked, scrolling layout.
+- The header is a top bar with a hairline and a 3% tinted background, and the dark-mode button sits on the right. The name field and Shuffle span the full width above the cards. The tagline is gone from desktop and phone, and the placeholder reads "Username, name or any string".
+- Background now changes only the large preview, the 3D scene, the 56/48/20 px size previews and exports. Style tiles and variation thumbnails always show Light, on phone too.
+- Phone: removing the tagline gives the preview 18 px more height. 3D chips cannot start a drag (now checked with real touch events).
+- Code: new `PreviewOverlays` is shared by desktop and phone. `ViewControls` is chips only. The `background` props were removed from `StyleGrid` and `Variations`. REQUIREMENTS (4.1, 4.4, 7, 9), CLAUDE.md and ARCHITECTURE.md were updated to match.
+
+**What was checked.** 59 unit tests, typecheck and build. `npm run verify:ui` passes 390 checks with 0 console errors:
+- Light and dark at 1440×900, 1920×1080, 1440×640 and 1440×600.
+- Critter in 3D at 1440×900 and 1440×640 in both themes, and at 1920×1080 in light.
+- Phone at 390×650 and 360×600 on every tab and the Download sheet, in both themes, with the keyboard open.
+- An 800 px wide stacked layout.
+
+I looked at the screenshots against the design's markup and styles (its frames still can't be rendered here).
+
+**Where the app differs from the design** (each is logged under Decisions):
+1. The design's tile-row cap used container units on the grid itself, so it never applied. The app measures from the Styles card instead.
+2. At 640 px high the design's numbers leave a 36 px avatar and 5 px tile art. Windows 640–799 px high get tighter spacing:
+   - the Background label sits beside its control;
+   - the preview fills the width;
+   - tiles hide the grid line;
+   - chips are 30 px and variation thumbnails 56 px.
+   From 800 px high the design's values are used unchanged.
+3. The size previews and facts never wrap in the single-screen layout. They wrapped at the 380 px panel width.
+
+**Please look at.**
+- `desktop-1440x640-light.png`: the compact mode works, but the avatar and tiles are small (preview about 183 px, tile art about 70 px). Decide whether 640 should stay the minimum height.
+- `desktop-1920x1080-*.png`: because the tiles are capped, there is a band of empty space between the tiles and Variations on tall windows. That follows the design (tiles aligned to the top), but you may prefer Variations to sit directly under the tiles.
+- Pinch zoom is still untested by automation.
+
