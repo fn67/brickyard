@@ -100,11 +100,16 @@ Every renderer reads only the model.
 - `App.tsx` picks the layout: the desktop layout (`Header` as a top bar, then `NameField`,
   `PreviewPanel` and `StylesPanel`) or, below 641 px wide, `PhoneEditor` (single screen, tabs,
   bottom sheet).
-- **Desktop sizing** is CSS only (`desktop.css`). From 1000 px wide the page is one screen:
-  `height: max(100vh, 640px)` (shorter windows scroll), the content is capped at 1000 px high, and
-  the preview square and the style tiles take the height left through container queries
-  (`.stage-fit`, and `.styles-panel` as the container for the tile row cap). Windows 640–799 px high
-  get tighter spacing. Narrower windows use the stacked, scrolling layout.
+- **Desktop preview header** (`PreviewPanel`): the 2D | 3D switch, then the Background icons
+  (`BackgroundControl` with `icons`), icon-only Copy PNG and the icon-only `DownloadMenu`, whose menu
+  opens downward. The "Preview" heading and the "Colour" label are `.visually-hidden`. The phone
+  uses the labelled `BackgroundControl` and `ColourControl` in its Colour tab and `DownloadSheet`.
+- **Desktop sizing** is CSS only (`desktop.css`). From 1000 px wide the page is one screen with
+  compact controls (28–36 px; the phone keeps 40 px): `height: max(100vh, 640px)` (shorter windows
+  scroll), content capped at 1000 px high, and the preview square takes the height left through a
+  size container (`.stage-fit`). The Styles card keeps its natural height; its tiles wrap
+  (`repeat(auto-fill, minmax(80px, 88px))`). Under 700 px high the preview fills the card's width so
+  the 3D chips fit on one line. Narrower windows use the stacked, scrolling layout.
 - **On the preview**, both layouts render `PreviewOverlays` inside `Stage`: the Copied / Clipboard
   blocked messages and the 3D hint along the top, the "3D is available for Critter." note or the 3D
   chips (`ViewControls`: presets, zoom on desktop, Reset view) along the bottom. They sit beside

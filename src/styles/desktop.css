@@ -579,6 +579,11 @@
     min-height: 32px;
   }
 
+  /* The note's link is 28 px here, so the note never makes the heading line taller. */
+  .variations-head .variation-note {
+    min-height: 28px;
+  }
+
   .variation-grid {
     grid-template-columns: repeat(6, minmax(0, 48px));
     gap: 8px;

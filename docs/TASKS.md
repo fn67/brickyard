@@ -85,7 +85,7 @@ The desktop design was revised again (phone unchanged). Refresh `reference/desig
 - [x] 4. Tiles fill the width and wrap instead of a fixed 5 × 2 grid.
 - [x] 5. The visible "Colour" label is removed on desktop; screen readers still get "Colour" as the swatch group's name. The phone keeps its label.
 - [x] 6. Everything more compact on desktop (top bar, title, input, Shuffle, switch, icons, chips, swatches, menu rows, card padding, heading and facts type). Desktop controls may go below 40 px; the phone keeps 40 px.
-- [ ] Verify: screenshots in light and dark at 1440×900, 1920×1080, 1280×720, 1440×640 and 1024×768, plus Critter 3D, the Download menu open, Background Dark and Transparent, and a variation selected; compare with the design and fix; no page scroll from 900 px high; nothing cut off at 640 px; the menu stays on screen; tiles wrap; phone at 390×650 and 360×600 unchanged. Report below.
+- [x] Verify: screenshots in light and dark at 1440×900, 1920×1080, 1280×720, 1440×640 and 1024×768, plus Critter 3D, the Download menu open, Background Dark and Transparent, and a variation selected; compare with the design and fix; no page scroll from 900 px high; nothing cut off at 640 px; the menu stays on screen; tiles wrap; phone at 390×650 and 360×600 unchanged. Report below.
 
 ---
 
@@ -132,6 +132,8 @@ The desktop design was revised again (phone unchanged). Refresh `reference/desig
 - 2026-10-27 Stage 9: the desktop "Colour" label is visually hidden (`.visually-hidden`), so the swatch group is still named "Colour" by `aria-labelledby`. The phone's Colour tab keeps the visible label.
 - 2026-10-27 Stage 9: compact desktop sizes from the design (from 1000 px wide): 8 px top bar padding, 22 px logo, 20 px title, 32 px theme button, 36 px name field and Shuffle, 32 px switch, Background icons and Copy / Download, 28 px chips and swatches, 34 px menu rows, 12 px preview card and 16 px Styles card padding, 14 px Styles headings, 13 px facts. These are below the 40 px touch target; REQUIREMENTS 4.9 and 5 now note the desktop exception (the phone keeps 40 px).
 - 2026-10-27 Stage 9: with the compact sizes the Stage 8 short-window mode is no longer needed and was removed (at 1440 × 640 the preview is now about 323 px). One part stays, for windows under 700 px high: the preview fills the card's width, because the square (323 px) is too narrow for the seven 3D chips on one line.
+- 2026-10-27 Stage 9: in the design the variation note keeps a 40 px minimum height, so picking a variation would make the Variations heading line 8 px taller and shift the layout. On compact desktop the note is 28 px high (the height of its link), so the line stays 32 px.
+- 2026-10-27 Stage 9: phone screenshots were compared pixel by pixel with Stage 8. All are identical except a few pixels under the last tap in one shot, which change from run to run (a hover or border transition caught mid-way). The Stage 8 phone screenshots are kept.
 
 ## Log
 (One short line per stage when finished: what was built, checks run, anything skipped or `[!]`.)
@@ -163,6 +165,7 @@ The desktop design was revised again (phone unchanged). Refresh `reference/desig
   - [x] Empty, 40-character and non-English names work: `tests/engine.test.ts` sample names (empty, 40 × "x", José Martí, 山田太郎, مرحبا, emoji); verify-ui `desktop` "empty name uses hello-world", "non-English name", 40-character limit.
 - Stage 7: accessibility pass (verify-ui `a11y`, 26 checks: text alternatives on every avatar, one main landmark per layout, labelled field, named buttons, focus after "Try it", no transitions or animations with reduced motion, phone keyboard reach) and `tests/ui-contrast.test.ts` (all text tokens ≥ 4.5:1 in both appearances). ARCHITECTURE.md updated for 3D and the final structure; README.md written. Final run: 59 unit tests, typecheck and build pass; `npm run verify:ui` 261 checks pass, 0 console errors.
 - Stage 8: layout revision from the updated design (fresh copies in `reference/design/project/`, incl. the new DesktopWide, DesktopCritter3D and dark frames). Single-screen desktop from 1000 px wide, overlays and 3D chips on the preview, top bar header, no tagline, new placeholder, tiles/variations always Light, large-screen caps, short-window spacing. New verify-ui `layout` section (114 checks: no page scroll at 1440×900, 1920×1080 and 1440×640 in light and dark; 1440×600 scrolls to a 640 px layout; nothing clipped; 5 × 2 tiles, one swatch row, one row of six variations; 12 px tile row gap; tiles not stretched; ≤ 1000 px high; 3D chips on one line; 800 px wide stays stacked) plus phone chip touch-drag and Light-tile checks. Final run: 59 unit tests, typecheck, build, `npm run verify:ui` 390 checks, 0 failed, 0 console errors. Screenshots: `docs/screenshots/desktop-{1440x900,1920x1080,1440x640,1440x600}-{light,dark}.png`, `desktop-*-critter-3d.png`, `desktop-800x900-light-stacked.png`, `phone-*`.
+- Stage 9: compact desktop revision (refreshed `reference/design/project/Brickyard.dc.html`; the phone design is unchanged). Copy PNG, Download and Background are icon-only buttons in the preview header; the Preview heading and the Colour label are visually hidden; compact tiles wrap; the Styles card keeps its natural height; desktop controls are 28–36 px. verify-ui `layout` section rewritten (214 checks at 1440×900, 1920×1080, 1280×720, 1440×640, 1024×768 and 1440×600 in light and dark: no page scroll from 640 px high, nothing clipped, the menu opens downward and stays on screen, tiles are 80–88 px and wrap, 7 per row at 1440×900, 8 px row gap, one row of swatches and thumbnails, natural-height Styles card, compact control sizes, 3D chips on one line; icon buttons named and titled; hidden headings exposed; the menu works by keyboard). Final run: 59 unit tests, typecheck, build, `npm run verify:ui` 490 checks, 0 failed, 0 console errors.
 
 ## Final report
 (Fill in at the end: what works, what was skipped or blocked, what the user should look at first, known gaps.)
@@ -216,4 +219,34 @@ I looked at the screenshots against the design's markup and styles (its frames s
 - `desktop-1440x640-light.png`: the compact mode works, but the avatar and tiles are small (preview about 183 px, tile art about 70 px). Decide whether 640 should stay the minimum height.
 - `desktop-1920x1080-*.png`: because the tiles are capped, there is a band of empty space between the tiles and Variations on tall windows. That follows the design (tiles aligned to the top), but you may prefer Variations to sit directly under the tiles.
 - Pinch zoom is still untested by automation.
+
+### Stage 9 report (compact desktop revision)
+
+**What changed (desktop only; the phone is unchanged).**
+- **Preview header:** 2D | 3D on the left. On the right are the Background icons (light, dark and checkerboard swatches), icon-only Copy PNG and icon-only Download. Each icon button has an accessible name and a tooltip, and the Download menu opens downward from the header.
+- **Hidden labels:** the "Preview" heading and the "Colour" label are visually hidden but still read by screen readers.
+- **Styles card:** compact tiles (12 px name, no grid caption, a small 3D badge) that fill the width and wrap: 7 per row at 1440×900 and 8 at 1920×1080. Variation thumbnails are 48 px, and the card keeps its natural height at the top.
+- **Sizes:** the top bar, title, field, Shuffle, switch, icon buttons, chips, swatches, menu rows, padding and headings are all smaller. Desktop controls are 28–36 px, below the 40 px touch target. That is accepted for desktop; the phone keeps 40 px.
+- **Docs:** REQUIREMENTS (4.5, 4.9, 5 and 7), ARCHITECTURE and the Decisions log were updated. The Stage 8 tile-row cap and most of the short-window mode were removed because the compact sizes no longer need them.
+
+**What was checked.**
+- 59 unit tests, the typecheck and the build.
+- `npm run verify:ui`: 490 checks with 0 console errors, covering:
+  - 1440×900, 1920×1080, 1280×720, 1440×640, 1024×768 and 1440×600 in light and dark;
+  - Critter in 3D, the Download menu open, Background Dark and Transparent, and a variation selected;
+  - the menu by keyboard;
+  - accessible names, tooltips and hidden headings;
+  - the stacked 800 px layout.
+- Phone screenshots at 390×650 and 360×600 are pixel-identical to Stage 8, apart from a few pixels caught mid-transition in one shot.
+
+**Where the app differs from the design** (each logged under Decisions):
+- The variation note is 28 px high instead of 40, so selecting a variation doesn't make the heading line taller.
+- Under 700 px high the preview fills the card's width, so the seven 3D chips stay on one line. The design's square is only 323 px wide at 1440×640, which made Reset view wrap over the critter.
+- Tiles per row come from the design's `minmax(80px, 88px)` rule: about 7 at 1440×900 as requested, but 9 at 1440×640, because the preview card is narrower there.
+
+**Please look at.**
+- `desktop-1920x1080-dark.png`: the preview card's width stops at 640 px, so on tall windows there are empty bands above and below the avatar square. The Styles card also ends at about 585 px, leaving the lower right empty. Both follow the design.
+- `desktop-1440x640-light.png`: at 9 tiles per row, the tenth tile (Frame) sits alone on a second row.
+- In dark appearance the "Dark background" icon is a near-black swatch on a near-black header, so only its border shows (`desktop-1440x900-dark.png`). It still works and has a tooltip, but it may need a lighter border in dark mode.
+- Desktop controls are now 28–36 px, which suits a mouse but is small on a touch laptop.
 

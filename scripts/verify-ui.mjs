@@ -260,7 +260,7 @@ sections.export = async (browser) => {
   const blue = await previewMask(page, 7);
   check(blue.mask === base.mask, 'changing colour leaves the pattern unchanged');
 
-  await page.getByRole('button', { name: 'Dark', exact: true }).click();
+  await page.getByRole('button', { name: 'Dark background' }).click();
   const dark = await previewMask(page, 7);
   check(dark.mask === base.mask, 'changing background leaves the pattern unchanged');
   check(dark.corner.join() === '13,17,23,255', 'Dark background is #0d1117 (got ' + dark.corner + ')');
@@ -276,7 +276,7 @@ sections.export = async (browser) => {
   check(ladderCorner === '13,17,23,255', 'size previews follow the Dark background (got ' + ladderCorner + ')');
   await shot(page, 'desktop-bg-dark-blue', { full: true });
 
-  await page.getByRole('button', { name: 'Transparent' }).click();
+  await page.getByRole('button', { name: 'Transparent background' }).click();
   const clear = await previewMask(page, 7);
   check(clear.mask === base.mask, 'Transparent leaves the pattern unchanged');
   check(clear.corner[3] === 0, 'Transparent draws no background');
@@ -304,7 +304,7 @@ sections.export = async (browser) => {
   check((await pngPixel(page, t.path, 2, 2))[3] === 0, 'Transparent PNG corner is transparent');
   rmSync(t.path);
 
-  await page.getByRole('button', { name: 'Light', exact: true }).click();
+  await page.getByRole('button', { name: 'Light background' }).click();
   await page.getByRole('button', { name: 'Auto, colour from the name' }).click();
   let lightAppPng = null;
   for (const size of [512, 2048]) {
@@ -318,7 +318,7 @@ sections.export = async (browser) => {
   await page.getByRole('button', { name: 'Switch app to dark mode' }).click();
   const darkApp = await downloadVia(page, 512);
   check(pngInfo(darkApp.path).bytes.equals(lightAppPng), 'app dark mode never changes the exported PNG');
-  check((await page.getByRole('button', { name: 'Light', exact: true }).getAttribute('aria-pressed')) === 'true', 'app dark mode never changes the avatar Background setting');
+  check((await page.getByRole('button', { name: 'Light background' }).getAttribute('aria-pressed')) === 'true', 'app dark mode never changes the avatar Background setting');
   rmSync(darkApp.path);
   await page.getByRole('button', { name: 'Switch app to light mode' }).click();
 
@@ -399,7 +399,7 @@ sections.three = async (browser) => {
   // Presets, in each background.
   const urls = {};
   for (const bg of ['Light', 'Dark', 'Transparent']) {
-    await page.getByRole('button', { name: bg, exact: true }).click();
+    await page.getByRole('button', { name: bg + ' background' }).click();
     await page.waitForTimeout(400);
     for (const [label, file] of [['Front', 'front'], ['Three-quarter', 'three-quarter'], ['Top', 'top'], ['Side', 'side']]) {
       await presetBtn(label).click();
@@ -416,7 +416,7 @@ sections.three = async (browser) => {
   check(await page.locator('.preview-stage.stage-checker').isVisible(), 'checkerboard behind the 3D view when Transparent');
 
   // Drag rotates, wheel zooms, no pan.
-  await page.getByRole('button', { name: 'Light', exact: true }).click();
+  await page.getByRole('button', { name: 'Light background' }).click();
   await page.getByRole('button', { name: 'Reset view' }).click();
   await settle(page);
   const reset1 = await sceneStats(page);
@@ -490,7 +490,7 @@ sections.three = async (browser) => {
   check(frontCentre[3] === 255, '3D download has content in the middle');
   rmSync(front.path);
   rmSync(side.path);
-  await page.getByRole('button', { name: 'Transparent' }).click();
+  await page.getByRole('button', { name: 'Transparent background' }).click();
   await page.waitForTimeout(300);
   const tr = await downloadVia(page, 512);
   check((await pngPixel(page, tr.path, 3, 3))[3] === 0, 'Transparent 3D download has a transparent background');
@@ -506,7 +506,7 @@ sections.three = async (browser) => {
   check(clip[0] === 460 && clip[1] === 460, '3D Copy PNG is 460 px');
 
   // The app appearance never changes the 3D scene.
-  await page.getByRole('button', { name: 'Light', exact: true }).click();
+  await page.getByRole('button', { name: 'Light background' }).click();
   await presetBtn('Front').click();
   await page.waitForTimeout(400);
   const sceneLightApp = await sceneStats(page);
@@ -686,8 +686,9 @@ async function desktopLayout(page) {
     const inside = (a, b) => a.top >= b.top - 0.5 && a.bottom <= b.bottom + 0.5 && a.left >= b.left - 0.5 && a.right <= b.right + 0.5;
     const prev = document.querySelector('.preview-panel');
     const styles = document.querySelector('.styles-panel');
+    const page = { top: 0, left: 0, right: innerWidth, bottom: Math.max(innerHeight, 640) };
     const clipped = [];
-    for (const sel of ['.panel-head', '.preview-stage', '.preview-bg', '.details', '.actions']) {
+    for (const sel of ['.panel-head', '.preview-stage', '.details']) {
       const el = prev.querySelector(sel);
       if (!el || !inside(r(el), r(prev))) clipped.push(sel);
     }
@@ -695,33 +696,41 @@ async function desktopLayout(page) {
       const el = styles.querySelector(sel);
       if (!el || !inside(r(el), r(styles))) clipped.push(sel);
     }
+    for (const el of [prev, styles]) if (!inside(r(el), page)) clipped.push(el.className + ' outside the window');
     for (const el of styles.querySelectorAll('.style-tile')) {
       const t = el.querySelector('.tile-name');
       if (!inside(r(t), r(el))) clipped.push('tile text ' + t.textContent);
     }
     const tiles = [...styles.querySelectorAll('.style-tile')].map(r);
+    const rowTops = [...new Set(tiles.map((t) => Math.round(t.top)))];
     const swatches = [...document.querySelectorAll('.swatch')].map((e) => Math.round(r(e).top));
     const thumbs = [...document.querySelectorAll('.variation-tile')].map((e) => Math.round(r(e).top));
-    const art = r(styles.querySelector('.tile-art'));
+    const firstRowEnd = tiles.findIndex((t) => Math.round(t.top) !== rowTops[0]);
     return {
       clipped,
       stage: Math.round(r(document.querySelector('.preview-stage')).height),
-      art: Math.round(art.width),
-      tileRatio: tiles[0].height / tiles[0].width,
-      rowGap: Math.round(tiles[5].top - tiles[0].bottom),
-      tileCols: new Set(tiles.map((t) => Math.round(t.left))).size,
-      tileRows: new Set(tiles.map((t) => Math.round(t.top))).size,
+      art: Math.round(r(styles.querySelector('.tile-art')).width),
+      tileW: [Math.round(Math.min(...tiles.map((t) => t.width))), Math.round(Math.max(...tiles.map((t) => t.width)))],
+      perRow: firstRowEnd === -1 ? tiles.length : firstRowEnd,
+      rows: rowTops.length,
+      rowGap: rowTops.length > 1 ? Math.round(tiles[firstRowEnd].top - tiles[0].bottom) : null,
       swatchRows: new Set(swatches).size,
       thumbRows: new Set(thumbs).size,
+      stylesNatural: r(styles).bottom < r(prev).bottom - 1 || r(styles).height <= r(prev).height,
       wrapH: Math.round(r(document.querySelector('.desktop-wrap')).height),
       barBorder: getComputedStyle(document.querySelector('.bar')).borderBottomWidth,
+      sizes: {
+        input: Math.round(r(document.querySelector('#name')).height),
+        copy: Math.round(r(document.querySelector('.preview-tools [aria-label="Copy PNG"]')).height),
+        swatch: Math.round(r(document.querySelector('.swatch')).height),
+      },
     };
   });
 }
 
 sections.layout = async (browser) => {
-  console.log('Single-screen desktop layout');
-  for (const [w, h] of [[1440, 900], [1920, 1080], [1440, 640], [1440, 600]]) {
+  console.log('Compact single-screen desktop layout');
+  for (const [w, h] of [[1440, 900], [1920, 1080], [1280, 720], [1440, 640], [1024, 768], [1440, 600]]) {
     for (const scheme of ['light', 'dark']) {
       const tag = `${w}x${h}-${scheme}`;
       const { page, context } = await newPage(browser, { width: w, height: h, scheme });
@@ -730,26 +739,44 @@ sections.layout = async (browser) => {
       else check(!sc.v && sc.sh === 640 && sc.h, `${tag}: below 640 px the page scrolls to a 640 px layout (${sc.sh})`);
       const L = await desktopLayout(page);
       check(L.clipped.length === 0, `${tag}: nothing cut off (${L.clipped.join(', ')})`);
-      check(L.tileCols === 5 && L.tileRows === 2, `${tag}: style tiles in a 5 × 2 grid`);
+      check(L.tileW[0] >= 80 && L.tileW[1] <= 88, `${tag}: tiles are 80–88 px wide (${L.tileW})`);
+      check(L.rows === Math.ceil(10 / L.perRow), `${tag}: tiles wrap into rows of ${L.perRow}`);
+      if (w === 1440 && h === 900) check(L.perRow === 7, `${tag}: about 7 tiles per row at 1440 px (${L.perRow})`);
+      if (L.rowGap !== null) check(L.rowGap === 8, `${tag}: 8 px between tile rows (${L.rowGap})`);
       check(L.swatchRows === 1, `${tag}: colour swatches in one row`);
       check(L.thumbRows === 1, `${tag}: variations in one row of six`);
-      check(L.rowGap === 12, `${tag}: 12 px between the two tile rows (${L.rowGap})`);
-      check(L.stage >= 150, `${tag}: preview has room for the avatar (${L.stage} px)`);
+      check(L.stylesNatural, `${tag}: Styles card keeps its natural height`);
+      check(L.stage >= 300, `${tag}: preview has room for the avatar (${L.stage} px)`);
       check(L.art >= 60, `${tag}: tile art has room (${L.art} px)`);
-      check(L.tileRatio < 1.45, `${tag}: style tiles are not stretched tall (${L.tileRatio.toFixed(2)})`);
       check(L.wrapH <= 1000, `${tag}: layout capped at 1000 px high (${L.wrapH})`);
       check(L.barBorder === '1px', `${tag}: hairline under the top bar`);
+      check(L.sizes.input === 36 && L.sizes.copy === 32 && L.sizes.swatch === 28, `${tag}: compact control sizes (${JSON.stringify(L.sizes)})`);
       await shot(page, `desktop-${tag}`, { full: h < 640 });
-      if (w === 1440 && h === 900) {
+
+      // The menu opens downward from the header and stays fully on screen.
+      await page.getByRole('button', { name: 'Download' }).click();
+      const menu = await page.getByRole('menu', { name: 'Download options' }).boundingBox();
+      const trigger = await page.getByRole('button', { name: 'Download' }).boundingBox();
+      check(menu.y >= trigger.y + trigger.height && menu.y + menu.height <= h && menu.x >= 0 && menu.x + menu.width <= w, `${tag}: Download menu opens downward and stays on screen`);
+      if (h === 900 || h === 640) await shot(page, `desktop-${tag}-download-menu`);
+      await page.keyboard.press('Escape');
+
+      if (h === 900) {
+        for (const bg of ['Dark', 'Transparent']) {
+          await page.getByRole('button', { name: bg + ' background' }).click();
+          await shot(page, `desktop-${tag}-bg-${bg.toLowerCase()}`);
+        }
+        await page.getByRole('button', { name: 'Light background' }).click();
         await page.locator('.variation-tile').nth(2).click();
         const head = await page.locator('.variations-head').boundingBox();
-        check(head.height <= 41, `${tag}: variation note keeps the heading to one line (${head.height})`);
-        const sc2 = await noPageScroll(page);
-        check(sc2.v, `${tag}: the variation note adds no height`);
+        check(head.height <= 33, `${tag}: variation note keeps the heading to one line (${head.height})`);
+        check((await noPageScroll(page)).v, `${tag}: the variation note adds no height`);
+        await shot(page, `desktop-${tag}-variation`);
         await page.getByRole('button', { name: 'Use original' }).click();
       }
+
       // Critter in 3D: chips along the bottom of the preview, the hint along the top.
-      if (h === 900 || h === 640 || (w === 1920 && scheme === 'light')) {
+      if (h !== 600 && (scheme === 'light' || h === 900)) {
         await page.getByRole('button', { name: 'Try it' }).click();
         await page.waitForSelector('.scene3d canvas');
         await page.waitForTimeout(900);
@@ -758,12 +785,39 @@ sections.layout = async (browser) => {
         const rows = await chips.getByRole('button').evaluateAll((bs) => new Set(bs.map((b) => Math.round(b.getBoundingClientRect().top))).size);
         check(rows === 1, `${tag} 3D: chips fit on one line`);
         check(await page.locator('.preview-stage .stage-hint').getByText('Drag to rotate, scroll to zoom').isVisible(), `${tag} 3D: hint is an overlay on the preview`);
-        const sc3 = await noPageScroll(page);
-        if (h >= 640) check(sc3.v, `${tag} 3D: no page scroll`);
+        check((await noPageScroll(page)).v, `${tag} 3D: no page scroll`);
         await shot(page, `desktop-${tag}-critter-3d`);
       }
       await context.close();
     }
+  }
+
+  // Header controls: icon-only with names and tooltips; hidden headings stay in the accessibility tree.
+  {
+    const { page, context } = await newPage(browser, { width: 1440, height: 900 });
+    for (const name of ['Copy PNG', 'Download', 'Light background', 'Dark background', 'Transparent background']) {
+      const b = page.locator('.preview-tools').getByRole('button', { name, exact: true });
+      check((await b.count()) === 1 && (await b.getAttribute('title')) === name && !(await b.innerText()).trim(), `icon-only "${name}" in the preview header with a tooltip`);
+    }
+    check(await page.locator('.preview-tools').getByRole('group', { name: 'Background' }).isVisible(), 'Background icons form a group named Background');
+    const heading = page.getByRole('heading', { name: 'Preview', level: 2 });
+    check((await heading.count()) === 1 && (await heading.boundingBox()).width <= 1, 'Preview heading is visually hidden but exposed');
+    const colour = page.getByRole('group', { name: 'Colour' });
+    check(await colour.isVisible(), 'swatch group is named Colour');
+    check((await page.locator('#lbl-colour').boundingBox()).width <= 1, 'Colour label is visually hidden');
+    check((await page.locator('.style-tile .tile-meta').first().isVisible()) === false, 'tiles show no grid caption');
+
+    // Menu by keyboard: open, arrows, Escape, focus back on the button.
+    const dl = page.getByRole('button', { name: 'Download' });
+    await dl.focus();
+    await page.keyboard.press('Enter');
+    check(await page.getByRole('menuitem', { name: /PNG 512/ }).evaluate((el) => el === document.activeElement), 'Enter opens the menu on its first item');
+    await page.keyboard.press('ArrowDown');
+    check(await page.getByRole('menuitem', { name: /PNG 1024/ }).evaluate((el) => el === document.activeElement), 'ArrowDown moves through the menu');
+    await page.keyboard.press('Escape');
+    check(!(await page.getByRole('menu').isVisible().catch(() => false)), 'Escape closes the menu');
+    check(await dl.evaluate((el) => el === document.activeElement), 'focus returns to the Download button');
+    await context.close();
   }
 
   // Narrow desktop windows keep the stacked layout and scroll.
