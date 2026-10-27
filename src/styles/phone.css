@@ -11,7 +11,6 @@
 .phone .header {
   flex: none;
   padding: 10px 16px 0;
-  gap: 2px;
 }
 
 .phone .header-row {
@@ -25,14 +24,6 @@
 
 .phone .theme-toggle {
   margin: -8px -8px -8px auto;
-}
-
-.phone .tagline {
-  font-size: 12px;
-  line-height: 16px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .phone .name-field {

@@ -1,6 +1,6 @@
 # Brickyard: Product Requirements (MVP)
 
-**Tagline:** Pixel avatars for people who hate profile pictures.
+**Tagline:** Pixel avatars for people who hate profile pictures. (Used in the README and the page description; since the layout revision it is not shown in the app header.)
 
 This document is the single source of truth for the MVP. It is written to be handed to Claude Design (for the UI) and Claude Code (for the build). Anything marked **Later** is out of scope for the MVP.
 
@@ -67,7 +67,7 @@ Brickyard turns any name or username into a pixel avatar in the style of GitHub'
 ## 4. Functional requirements
 
 ### 4.1 Name input
-- A text field labelled **"Enter anything to see your avatar"**. Placeholder, shown only when the field is empty: "Username, name…". The field opens with `hello-world` already typed in. Maximum 40 characters. Leading and trailing spaces are ignored.
+- A text field labelled **"Enter anything to see your avatar"**. Placeholder, shown only when the field is empty: "Username, name or any string". The field opens with `hello-world` already typed in. Maximum 40 characters. Leading and trailing spaces are ignored.
 - The interface never uses the word "seed". That is an internal engine term. In the UI the text is always called the name.
 - If the field is empty, the app uses the default seed `hello-world`.
 - **Shuffle** fills the field with a random two-word, git-flavoured name (for example `quiet-fork`, `sleepy-rebase`). Word lists are in the prototype.
@@ -198,10 +198,10 @@ Notes:
 
 ## 7. Design brief for Claude Design
 
-- Start from the attached Desktop mockup: header with name, tagline and the name field; a Preview panel on the left; a Styles panel on the right.
+- Start from the attached Desktop mockup: header with name and the name field; a Preview panel on the left; a Styles panel on the right.
 - Tone: calm, minimal, professional. Neutral surfaces, thin borders, one accent colour (the indigo of the mockup), small corner radii. The avatars are the colourful part.
 - Changes from the mockup:
-  1. Replace "Identicon Lab" and its subtitle with **Brickyard** and the tagline. No second line and no helper text.
+  1. Replace "Identicon Lab" and its subtitle with **Brickyard**. No tagline (removed in the layout revision), no second line and no helper text.
   2. Remove the old moon icon and the Circle crop checkbox. (The moon returns as the app dark mode toggle in item 11.)
   3. Add the **Colour** control and the **Background** control (Light, Dark, Transparent).
   4. Ten styles instead of twelve. Claude Design chooses the grid. Suggestion: 5 columns × 2 rows on desktop, 2 columns on phones.
@@ -210,7 +210,7 @@ Notes:
   7. Show a checkerboard behind the preview when Background is Transparent.
   8. **Download** becomes a menu: PNG sizes, then SVG and STL shown as disabled "Soon" items.
   9. Six variations, as in the mockup, with the plain wording described in section 4.5.
-  10. The name field is labelled "Enter anything to see your avatar", with the placeholder "Username, name…". The word "seed" appears nowhere in the interface; the facts list shows "Name".
+  10. The name field is labelled "Enter anything to see your avatar", with the placeholder "Username, name or any string". The word "seed" appears nowhere in the interface; the facts list shows "Name".
   11. Add the app dark mode toggle (section 4.9) at the top right of the header, on desktop and phone.
 - Make 3D easy to find, since it only works for one style. For example, Critter could be the style shown when the app first opens, or the note near the switch could be visible from the start. Claude Design decides.
 - Claude Design decides placement, spacing and the visual treatment of every new control.
@@ -244,7 +244,7 @@ Notes:
 | Topic | Decision |
 |---|---|
 | Name | Brickyard |
-| Tagline | Pixel avatars for people who hate profile pictures. |
+| Tagline | Pixel avatars for people who hate profile pictures. Not shown in the app header (layout revision); kept for the README and page description |
 | Platform | New local web app built with Claude Code |
 | Styles | Ten: Classic, Duotone, Sticker, Invader, Critter, Quilt, Dither, Aurora, Kaleido, Frame |
 | Removed styles | Midnight (now the Dark background), Dots |
@@ -266,5 +266,5 @@ Notes:
 | Primary button | None (intentional) |
 | Style card notes | Cards show the name and grid only |
 | Colour and Background controls | Kept in separate places (intentional) |
-| Name field label | "Enter anything to see your avatar"; placeholder "Username, name…"; starting value "hello-world" |
+| Name field label | "Enter anything to see your avatar"; placeholder "Username, name or any string"; starting value "hello-world" |
 | Word "seed" | Never shown in the interface; the UI says "Name" |

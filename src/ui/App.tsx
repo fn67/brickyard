@@ -22,8 +22,8 @@ export function App() {
 
   return (
     <div className="app desktop">
-      <div className="desktop-wrap">
       <Header appearance={appearance} onToggleAppearance={toggle} />
+      <div className="desktop-wrap">
       <NameField value={state.field} onChange={state.setField} onShuffle={state.shuffle} />
       <main className="workspace">
         <PreviewPanel

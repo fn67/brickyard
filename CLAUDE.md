@@ -1,6 +1,6 @@
 # Brickyard
 
-Brickyard turns any name into a pixel avatar in the style of GitHub's identicons. Tagline: "Pixel avatars for people who hate profile pictures."
+Brickyard turns any name into a pixel avatar in the style of GitHub's identicons. Tagline: "Pixel avatars for people who hate profile pictures." (README and page description only; the app header no longer shows it.)
 
 ## How to work (autonomous, resumable)
 You are building this app in one unattended run. Nobody is watching, so do not stop to ask questions.

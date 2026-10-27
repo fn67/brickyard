@@ -7,20 +7,34 @@ interface Props {
   compact?: boolean;
 }
 
-export const TAGLINE = 'Pixel avatars for people who hate profile pictures.';
-
 export function Header({ appearance, onToggleAppearance, compact }: Props) {
   const label = appearance === 'dark' ? 'Switch app to light mode' : 'Switch app to dark mode';
+  const toggle = (
+    <button type="button" className="btn icon-btn theme-toggle" aria-label={label} title={label} onClick={onToggleAppearance}>
+      {appearance === 'dark' ? <SunIcon /> : <MoonIcon />}
+    </button>
+  );
+  if (compact) {
+    return (
+      <header className="header">
+        <div className="header-row">
+          <LogoMark size={24} />
+          <h1 className="title">Brickyard</h1>
+          {toggle}
+        </div>
+      </header>
+    );
+  }
+  // Desktop: a top bar of its own, with the dark-mode button on the right.
   return (
-    <header className="header">
-      <div className="header-row">
-        <LogoMark size={compact ? 24 : 30} />
-        <h1 className="title">Brickyard</h1>
-        <button type="button" className="btn icon-btn theme-toggle" aria-label={label} title={label} onClick={onToggleAppearance}>
-          {appearance === 'dark' ? <SunIcon /> : <MoonIcon />}
-        </button>
+    <div className="bar">
+      <div className="bar-in">
+        <header className="header-row">
+          <LogoMark size={30} />
+          <h1 className="title">Brickyard</h1>
+        </header>
+        {toggle}
       </div>
-      <p className="tagline">{TAGLINE}</p>
-    </header>
+    </div>
   );
 }

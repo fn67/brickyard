@@ -21,7 +21,7 @@ export function NameField({ value, onChange, onShuffle, onFocusChange }: Props) 
           type="text"
           value={value}
           maxLength={MAX_NAME_LENGTH}
-          placeholder="Username, name…"
+          placeholder="Username, name or any string"
           spellCheck={false}
           autoComplete="off"
           autoCapitalize="off"
