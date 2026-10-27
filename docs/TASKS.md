@@ -84,7 +84,7 @@ The desktop design was revised again (phone unchanged). Refresh `reference/desig
 - [x] 3. Compact style tiles (12 px name, smaller 3D badge, no grid caption), smaller variation thumbnails, and the Styles card at its natural height at the top.
 - [x] 4. Tiles fill the width and wrap instead of a fixed 5 × 2 grid.
 - [x] 5. The visible "Colour" label is removed on desktop; screen readers still get "Colour" as the swatch group's name. The phone keeps its label.
-- [ ] 6. Everything more compact on desktop (top bar, title, input, Shuffle, switch, icons, chips, swatches, menu rows, card padding, heading and facts type). Desktop controls may go below 40 px; the phone keeps 40 px.
+- [x] 6. Everything more compact on desktop (top bar, title, input, Shuffle, switch, icons, chips, swatches, menu rows, card padding, heading and facts type). Desktop controls may go below 40 px; the phone keeps 40 px.
 - [ ] Verify: screenshots in light and dark at 1440×900, 1920×1080, 1280×720, 1440×640 and 1024×768, plus Critter 3D, the Download menu open, Background Dark and Transparent, and a variation selected; compare with the design and fix; no page scroll from 900 px high; nothing cut off at 640 px; the menu stays on screen; tiles wrap; phone at 390×650 and 360×600 unchanged. Report below.
 
 ---
@@ -130,6 +130,8 @@ The desktop design was revised again (phone unchanged). Refresh `reference/desig
 - 2026-10-27 Stage 9: the single-screen Styles card now keeps its natural height at the top (it no longer stretches to the preview's height), with compact tiles (12 px name, no grid caption, a 15 px "3D" badge without the cube icon) and 48 px variation thumbnails. This replaces the Stage 8 tile-row cap and the short-window tile overrides, which are no longer needed. REQUIREMENTS 4.2 says cards show the name and grid; on desktop the grid now appears only in the facts list and the tile's accessible name (as on the phone).
 - 2026-10-27 Stage 9: desktop style tiles use the design's `repeat(auto-fill, minmax(80px, 88px))` with an 8 px gap, replacing the Stage 8 "5 × 2 grid". Measured: 7 per row at 1440 × 900 (7 + 3), 8 at 1920 × 1080, 7 at 1280 × 720 and 4 at 1024 × 768. Tiles keep the left edge and do not stretch past 88 px, so the row ends short of the card's right edge, as in the design.
 - 2026-10-27 Stage 9: the desktop "Colour" label is visually hidden (`.visually-hidden`), so the swatch group is still named "Colour" by `aria-labelledby`. The phone's Colour tab keeps the visible label.
+- 2026-10-27 Stage 9: compact desktop sizes from the design (from 1000 px wide): 8 px top bar padding, 22 px logo, 20 px title, 32 px theme button, 36 px name field and Shuffle, 32 px switch, Background icons and Copy / Download, 28 px chips and swatches, 34 px menu rows, 12 px preview card and 16 px Styles card padding, 14 px Styles headings, 13 px facts. These are below the 40 px touch target; REQUIREMENTS 4.9 and 5 now note the desktop exception (the phone keeps 40 px).
+- 2026-10-27 Stage 9: with the compact sizes the Stage 8 short-window mode is no longer needed and was removed (at 1440 × 640 the preview is now about 323 px). One part stays, for windows under 700 px high: the preview fills the card's width, because the square (323 px) is too narrow for the seven 3D chips on one line.
 
 ## Log
 (One short line per stage when finished: what was built, checks run, anything skipped or `[!]`.)
