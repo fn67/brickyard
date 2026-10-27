@@ -506,6 +506,115 @@ sections.three = async (browser) => {
   await ctx.close();
 };
 
+async function noPageScroll(page) {
+  return page.evaluate(() => {
+    const el = document.scrollingElement;
+    return { v: el.scrollHeight <= window.innerHeight + 1, h: el.scrollWidth <= window.innerWidth + 1, sh: el.scrollHeight, ih: window.innerHeight };
+  });
+}
+
+async function dockTop(page) {
+  return page.evaluate(() => Math.round(document.querySelector('.dock').getBoundingClientRect().top));
+}
+
+sections.phone = async (browser) => {
+  console.log('Phone');
+  for (const [w, h] of [[390, 650], [360, 600]]) {
+    for (const scheme of ['light', 'dark']) {
+      const tag = `${w}x${h}-${scheme}`;
+      const { page, context } = await newPage(browser, { width: w, height: h, scheme, touch: true });
+      check(await page.locator('.phone').isVisible(), `${tag}: phone editor shown`);
+      check(await page.getByRole('button', { name: scheme === 'dark' ? 'Switch app to light mode' : 'Switch app to dark mode' }).isVisible(), `${tag}: app dark mode toggle in the header`);
+      check((await page.locator('.ladder, .facts').count()) === 0, `${tag}: size previews and facts hidden`);
+      const tops = [];
+      for (const [tab, label] of [['style', 'Style'], ['variations', 'Variations'], ['colour', 'Colour']]) {
+        await page.getByRole('tab', { name: label }).click();
+        check((await page.getByRole('tab', { name: label }).getAttribute('aria-selected')) === 'true', `${tag}: ${label} tab selected`);
+        tops.push(await dockTop(page));
+        const sc = await noPageScroll(page);
+        check(sc.v && sc.h, `${tag} ${label}: no vertical or horizontal page scroll (${sc.sh}/${sc.ih})`);
+        await shot(page, `phone-${tag}-${tab}`);
+      }
+      check(new Set(tops).size === 1, `${tag}: area above the tab bar keeps one height on every tab (${tops})`);
+
+      // Download sheet.
+      await page.getByRole('button', { name: 'Download' }).click();
+      const sheet = page.getByRole('dialog', { name: 'Download' });
+      check(await sheet.isVisible(), `${tag}: Download opens a bottom sheet`);
+      for (const label of ['Download as SVG', 'Download as STL']) {
+        const b = sheet.getByRole('button', { name: label });
+        check((await b.isDisabled()) && (await b.innerText()).includes('Soon'), `${tag}: ${label} disabled with Soon`);
+      }
+      await shot(page, `phone-${tag}-download-sheet`);
+      if (w === 390 && scheme === 'light') {
+        const [dl] = await Promise.all([page.waitForEvent('download'), sheet.getByRole('button', { name: /PNG 512/ }).click()]);
+        check(dl.suggestedFilename() === 'hello-world-classic-512.png', 'phone: sheet downloads a PNG');
+        check(!(await sheet.isVisible().catch(() => false)), 'phone: sheet closes after picking');
+      } else {
+        await page.keyboard.press('Escape');
+        check(!(await sheet.isVisible().catch(() => false)), `${tag}: Escape closes the sheet`);
+      }
+
+      // 3D chips on the preview.
+      await page.getByRole('tab', { name: 'Style' }).click();
+      await page.getByRole('button', { name: 'Try it' }).click();
+      await page.waitForSelector('.scene3d canvas');
+      await page.waitForTimeout(900);
+      const chips = page.getByRole('group', { name: 'Viewing angle' });
+      check((await chips.getByRole('button').count()) === 5, `${tag}: angle chips and Reset view on the preview`);
+      check(await page.getByText('Drag to rotate, pinch to zoom').isVisible(), `${tag}: touch hint`);
+      await chips.getByRole('button', { name: 'Front' }).click();
+      await page.waitForTimeout(250);
+      const sc3 = await noPageScroll(page);
+      check(sc3.v && sc3.h, `${tag} 3D: no page scroll`);
+      await shot(page, `phone-${tag}-3d`);
+      await page.getByRole('button', { name: '2D', exact: true }).click();
+
+      // Keyboard open: the panel and actions step aside so the field and preview stay visible.
+      await page.locator('#name').focus();
+      await page.setViewportSize({ width: w, height: 380 });
+      await page.waitForTimeout(200);
+      check(!(await page.locator('.dock-panel').isVisible().catch(() => false)), `${tag}: tab panel hidden while typing`);
+      check(await page.locator('#name').isVisible(), `${tag}: name field visible while typing`);
+      const kb = await noPageScroll(page);
+      check(kb.v && kb.h, `${tag} keyboard open: no page scroll`);
+      await page.keyboard.type('-2');
+      check((await page.locator('.phone-stage [role="img"]').getAttribute('aria-label')).includes('hello-world-2'), `${tag}: preview updates while typing`);
+      await shot(page, `phone-${w}-keyboard-${scheme}`);
+      await context.close();
+    }
+  }
+
+  // Flows on the phone.
+  const { page, context } = await newPage(browser, { width: 390, height: 650, touch: true });
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: URL });
+  await page.locator('.style-tile', { hasText: 'Frame' }).click();
+  check((await page.locator('.phone-stage [role="img"]').getAttribute('aria-label')).includes('Frame'), 'phone: pick a style');
+  await page.getByRole('tab', { name: 'Variations' }).click();
+  await page.locator('.variation-tile').nth(2).click();
+  check((await page.inputValue('#name')) === 'hello-world:2', 'phone: pick a variation');
+  check(await page.getByText('Using variation 2').isVisible(), 'phone: variation note');
+  await page.getByRole('tab', { name: 'Colour' }).click();
+  await page.getByRole('button', { name: 'Teal, hue 190°' }).click();
+  await page.getByRole('button', { name: 'Dark', exact: true }).click();
+  check((await page.getByRole('button', { name: 'Dark', exact: true }).getAttribute('aria-pressed')) === 'true', 'phone: background control in the Colour tab');
+  await page.getByRole('button', { name: 'Copy PNG' }).click();
+  await page.getByText('Copied to clipboard').waitFor({ timeout: 3000 });
+  check(true, 'phone: Copied message on the preview');
+  await shot(page, 'phone-390x650-light-colour-copied');
+  // Tabs work with arrow keys.
+  await page.getByRole('tab', { name: 'Colour' }).focus();
+  await page.keyboard.press('ArrowLeft');
+  check((await page.getByRole('tab', { name: 'Variations' }).getAttribute('aria-selected')) === 'true', 'phone: arrow keys move between tabs');
+  await context.close();
+
+  // 400 px wide (REQUIREMENTS 5): no horizontal scroll.
+  const w400 = await newPage(browser, { width: 400, height: 760 });
+  const s400 = await noPageScroll(w400.page);
+  check(s400.h && s400.v, '400 px wide: no page scroll');
+  await w400.context.close();
+};
+
 sections.keyboard = async (browser) => {
   console.log('Keyboard');
   const { page, context } = await newPage(browser, { width: 1440, height: 900 });

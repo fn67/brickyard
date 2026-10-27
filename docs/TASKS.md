@@ -55,11 +55,11 @@ First read the design files (see CLAUDE.md) and save copies to `reference/design
 
 ## Stage 6: Phone layout
 Read the phone design files (see CLAUDE.md). Requirements in 4.10.
-- [ ] Single-screen editor with tabs Style, Variations, Colour (Colour holds swatches and Background).
-- [ ] Fixed height for the area above the tab bar on every tab; no vertical page scrolling.
-- [ ] 3D chips on the preview; Download as a bottom sheet; size previews and facts hidden or behind Details.
-- [ ] Works with the keyboard open and in both app appearances.
-- [ ] Verify: Playwright screenshots at 390×650 and 360×600 for each tab, the Download sheet, light and dark; compare with the phone design frames; check no horizontal or vertical page scroll.
+- [x] Single-screen editor with tabs Style, Variations, Colour (Colour holds swatches and Background).
+- [x] Fixed height for the area above the tab bar on every tab; no vertical page scrolling.
+- [x] 3D chips on the preview; Download as a bottom sheet; size previews and facts hidden or behind Details.
+- [x] Works with the keyboard open and in both app appearances.
+- [x] Verify: Playwright screenshots at 390×650 and 360×600 for each tab, the Download sheet, light and dark; compare with the phone design frames; check no horizontal or vertical page scroll.
 
 ## Stage 7: Finish
 - [ ] Go through the acceptance checklist (REQUIREMENTS section 8) item by item; tick each with the evidence (test name or screenshot path) in the log.
@@ -94,6 +94,10 @@ Read the phone design files (see CLAUDE.md). Requirements in 4.10.
 - 2026-10-27 Stage 5: Copy PNG and Download PNG in 3D re-render the current camera at the export size (460, 512, 1024 or 2048 px) by resizing the WebGL drawing buffer for one frame, so exports are sharp and match the on-screen angle.
 - 2026-10-27 Stage 5: if the device has no WebGL, or the 3D view throws, the switch stays on 2D and the note under it reads "3D is not available on this device." (copy not given in REQUIREMENTS).
 - 2026-10-27 Stage 5: three.js, R3F and drei load in a separate chunk only when 3D is opened (main bundle ~250 kB, 3D chunk ~935 kB); `chunkSizeWarningLimit` raised to 1000 kB for that chunk. The 3D view renders on demand (no render loop), so nothing animates.
+- 2026-10-27 Stage 6: the phone editor is used below 641 px wide (`(max-width: 640px)`); wider screens get the desktop layout, which wraps the Styles panel under the Preview on tablets. The design's long-scroll "Phone, default" frames (400 × 2640) were treated as the stacked desktop layout; REQUIREMENTS 4.10 asks for the single-screen editor on phones, so that is what phones get.
+- 2026-10-27 Stage 6: on the phone the preview is the design's square, except (a) in 3D and (b) on short screens (stage area under 230 px tall, e.g. 360 × 600), where it takes the full width so the "3D is available for Critter. Try it" note and the five angle chips fit on one line instead of covering the avatar. The avatar keeps the same size.
+- 2026-10-27 Stage 6: "keyboard open" is detected from the name field's focus (the design's `kbd` state hides the tab panel and the action row) and the editor sizes itself to `visualViewport.height`, so it fits above an on-screen keyboard. Playwright cannot open a real keyboard; it was simulated with focus plus a 380 px tall viewport (the design's keyboard frame).
+- 2026-10-27 Stage 6: on short phones the "Enter anything to see your avatar" label is visually hidden but kept for screen readers (design rule `max-height: 700px`).
 
 ## Log
 (One short line per stage when finished: what was built, checks run, anything skipped or `[!]`.)
@@ -104,6 +108,7 @@ Read the phone design files (see CLAUDE.md). Requirements in 4.10.
 - Stage 3: desktop UI from the design (tokens for light and dark, header with theme toggle and no-flash inline script, name field, Preview panel, Styles panel, Variations, canvas renderer). `scripts/verify-ui.mjs` (desktop + keyboard sections): 64 checks pass incl. no console errors; screenshots `docs/screenshots/desktop-1440-light.png`, `desktop-1440-dark.png`, `desktop-focus-visible.png`.
 - Stage 4: verify-ui `export` section, 26 checks: pattern mask unchanged across hue/Dark/Transparent, cards follow Background, checkerboard, Download menu with disabled SVG/STL "Soon", PNG 512/1024/2048 real pixel sizes, RGBA with transparent corner, file name `hello-world-classic-1024.png`, Copy PNG reads back as 460×460 from the clipboard, blocked-clipboard message. Screenshots `desktop-bg-dark-blue.png`, `desktop-bg-transparent.png`, `desktop-download-menu.png`, `desktop-copied.png`, `desktop-clipboard-blocked.png`.
 - Stage 5: Critter height rule (`src/engine/heights.ts`, 4 new tests, 56 total), instanced matte boxes with contact shadow (`src/ui/Scene3D.tsx`, layout in `src/render/scene3d.ts`), orbit rotate/zoom with pan off, keyboard, presets, Reset view, 3D capture for Copy/Download, WebGL fallback. verify-ui `three` section: 51 checks (presets × Light/Dark/Transparent, drag, wheel, pan attempts keep it centred, Reset restores the exact frame, keys, downloads follow the angle, transparent 3D PNG, 460 px copy, no-WebGL fallback). Screenshots `docs/screenshots/critter-3d-{light,dark,transparent}-{front,three-quarter,top,side}.png`. Only console warnings (three.js `Clock` deprecation from R3F, SwiftShader ReadPixels notices), no errors.
+- Stage 6: phone editor (`src/ui/PhoneEditor.tsx`, `PhoneTabs`, `DownloadSheet`, `src/styles/phone.css`). verify-ui `phone` section, 93 checks at 390×650 and 360×600 in light and dark: every tab, fixed dock position across tabs, no vertical or horizontal page scroll (also in 3D and with the keyboard open), bottom sheet with disabled SVG/STL, sheet download, 3D chips, touch hint, style/variation/colour/background/copy flows, arrow keys on tabs, 400 px wide desktop has no scroll. Fixed during review: Download icon squeezed at 360 px, 3D note and chips wrapping over the avatar. Screenshots `docs/screenshots/phone-*.png`.
 
 ## Final report
 (Fill in at the end: what works, what was skipped or blocked, what the user should look at first, known gaps.)

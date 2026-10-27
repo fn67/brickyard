@@ -8,13 +8,14 @@ interface Props {
   onChange: (view: View) => void;
   /** id of the note that explains why 3D is off. */
   noteId: string;
+  compact?: boolean;
 }
 
-export function ModeSwitch({ view, can3d, onChange, noteId }: Props) {
+export function ModeSwitch({ view, can3d, onChange, noteId, compact }: Props) {
   return (
     <Segmented
       label="Preview mode"
-      className="mode-switch"
+      className={compact ? 'mode-switch mode-switch-compact' : 'mode-switch'}
       value={view}
       onChange={onChange}
       options={[
@@ -23,7 +24,7 @@ export function ModeSwitch({ view, can3d, onChange, noteId }: Props) {
           value: '3d',
           label: (
             <>
-              <CubeIcon />
+              <CubeIcon size={compact ? 14 : 15} strokeWidth={compact ? 2 : 1.9} />
               3D
             </>
           ),

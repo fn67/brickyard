@@ -62,6 +62,12 @@ button:disabled {
   border-color: var(--ink3);
 }
 
+.btn svg,
+.seg svg,
+.tab svg {
+  flex: none;
+}
+
 .btn-lg {
   height: 48px;
   padding: 0 18px;

@@ -1,10 +1,12 @@
 import { Header } from './Header';
 import { NameField } from './NameField';
+import { PhoneEditor } from './PhoneEditor';
 import { PreviewPanel } from './PreviewPanel';
 import { StylesPanel } from './StylesPanel';
 import { useAppearance } from './useAppearance';
 import { useAvatarState } from './useAvatarState';
 import { useExport } from './useExport';
+import { PHONE_QUERY, useMediaQuery } from './useMediaQuery';
 import { useView3d } from './useView3d';
 
 export function App() {
@@ -12,6 +14,11 @@ export function App() {
   const state = useAvatarState();
   const exporter = useExport(state.model, state.name, state.style, state.view);
   const view3d = useView3d(state, exporter.capture3d);
+  const phone = useMediaQuery(PHONE_QUERY);
+
+  if (phone) {
+    return <PhoneEditor state={state} exporter={exporter} view3d={view3d} appearance={appearance} onToggleAppearance={toggle} />;
+  }
 
   return (
     <div className="app desktop">

@@ -9,6 +9,7 @@ import '@fontsource/jetbrains-mono/500.css';
 import './styles/tokens.css';
 import './styles/base.css';
 import './styles/desktop.css';
+import './styles/phone.css';
 import { App } from './ui/App';
 
 createRoot(document.getElementById('root')!).render(

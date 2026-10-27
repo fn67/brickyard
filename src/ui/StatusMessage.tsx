@@ -6,7 +6,7 @@ export function StatusMessage({ toast, compact }: { toast: Toast; compact?: bool
   const size = compact ? 14 : 18;
   if (toast === 'copied') {
     return (
-      <div className="toast">
+      <div className={compact ? 'toast toast-sm' : 'toast'}>
         <CheckIcon size={size} />
         Copied to clipboard
       </div>
@@ -14,7 +14,7 @@ export function StatusMessage({ toast, compact }: { toast: Toast; compact?: bool
   }
   if (toast === 'blocked') {
     return (
-      <div className="toast toast-danger">
+      <div className={compact ? 'toast toast-sm toast-danger' : 'toast toast-danger'}>
         <span className="toast-icon">
           <WarningIcon size={size} />
         </span>

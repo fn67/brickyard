@@ -1,0 +1,448 @@
+/* Phone editor: one screen, no page scroll. Preview on top, actions, then a fixed-height tab panel. */
+.phone {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.phone .header {
+  flex: none;
+  padding: 10px 16px 0;
+  gap: 2px;
+}
+
+.phone .header-row {
+  gap: 10px;
+}
+
+.phone .title {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.phone .theme-toggle {
+  margin: -8px -8px -8px auto;
+}
+
+.phone .tagline {
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.phone .name-field {
+  flex: none;
+  padding: 8px 16px 0;
+  gap: 0;
+}
+
+.phone .name-label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+/* Short screens keep the label for assistive tech only, as in the design. */
+@media (max-height: 700px) {
+  .phone .name-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+.phone .name-row {
+  gap: 8px;
+}
+
+.phone .name-input {
+  height: 44px;
+  padding: 0 12px;
+  font-size: 16px;
+}
+
+.phone .shuffle-btn {
+  height: 44px;
+  padding: 0 14px;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.phone-stage-area {
+  flex: 1 1 0;
+  min-height: 0;
+  container-type: size;
+  display: grid;
+  place-items: center;
+  padding: 8px 16px;
+}
+
+.phone-stage {
+  width: min(100cqw, 100cqh);
+  container-type: size;
+}
+
+/* In 3D, and on short screens where the square leaves no room for the note, the viewport takes the full width. */
+.phone-stage-wide {
+  width: 100cqw;
+  height: 100cqh;
+  aspect-ratio: auto;
+}
+
+@container (max-height: 230px) {
+  .phone-stage {
+    width: 100cqw;
+    height: 100cqh;
+    aspect-ratio: auto;
+  }
+}
+
+.phone-stage .stage-center {
+  inset: 0 0 40px 0;
+}
+
+.phone-stage .stage-avatar {
+  width: min(74cqw, calc(100cqh - 52px));
+}
+
+.phone-stage .stage-avatar-shadow {
+  box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.35);
+}
+
+.phone-stage .scene3d {
+  inset: 30px 0 40px 0;
+}
+
+.stage-top {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.toast-sm {
+  min-height: 0;
+  gap: 6px;
+  padding: 4px 10px;
+  background: var(--surface);
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ink);
+}
+
+.stage-hint {
+  padding: 3px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 11.5px;
+  line-height: 16px;
+  color: var(--ink2);
+  white-space: nowrap;
+}
+
+.stage-bottom {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.stage-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0 6px;
+  min-height: 32px;
+  padding: 0 8px 0 10px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 11.5px;
+  line-height: 16px;
+  color: var(--ink2);
+}
+
+.stage-note .link {
+  min-height: 32px;
+  padding: 0 2px;
+  font-size: 11.5px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.chip {
+  height: 30px;
+  padding: 0 8px;
+  border-radius: 8px;
+  border: 1px solid var(--line2);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.chip[aria-pressed='true'] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.phone-actions {
+  flex: none;
+  padding: 0 16px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mode-switch-compact {
+  flex: none;
+}
+
+.mode-switch-compact .seg {
+  min-width: 44px;
+  padding: 0 10px;
+  gap: 5px;
+}
+
+.mode-switch-compact .seg + .seg {
+  min-width: 52px;
+}
+
+.phone-btn {
+  flex: none;
+  height: 46px;
+  padding: 0 14px;
+  border-radius: 10px;
+}
+
+.phone-download {
+  flex: 1;
+  min-width: 0;
+  gap: 6px;
+  padding: 0 12px;
+}
+
+.dock {
+  flex: none;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* One fixed height for every tab, so nothing above it moves when switching. */
+.dock-panel {
+  height: 172px;
+  padding: 8px 16px 0;
+  overflow: hidden;
+}
+
+.style-grid-compact {
+  margin-top: 0;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px 8px;
+}
+
+.style-grid-compact .style-tile {
+  align-items: center;
+  gap: 3px;
+  padding: 4px 0;
+}
+
+.style-grid-compact .tile-art {
+  width: 46px;
+}
+
+.style-grid-compact .tile-text {
+  padding: 0;
+}
+
+.style-grid-compact .tile-name {
+  font-size: 11px;
+  line-height: 13px;
+  text-align: center;
+}
+
+.style-grid-compact .badge-3d {
+  top: 2px;
+  right: 2px;
+  height: 14px;
+  padding: 0 3px;
+  border-radius: 3px;
+  font-size: 9px;
+}
+
+.phone .variations .hint {
+  margin: 0 0 8px;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--ink2);
+}
+
+.phone .variation-grid {
+  margin-top: 0;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.phone .variation-note {
+  margin-top: 0;
+}
+
+.colour-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.colour-tab .colour-control {
+  display: block;
+}
+
+.colour-tab .field-label {
+  display: block;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.colour-tab .colour-control .field-label {
+  margin-bottom: 4px;
+}
+
+.colour-tab .swatches {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px 8px;
+}
+
+.colour-tab .swatch {
+  width: auto;
+}
+
+.colour-tab .background-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.colour-tab .background-control .field-label {
+  flex: none;
+  width: 76px;
+}
+
+.colour-tab .background-control .segmented {
+  flex: 1;
+  min-width: 0;
+}
+
+.colour-tab .background-control .seg {
+  padding: 0 2px;
+  font-size: 12.5px;
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+  padding: 2px 8px 6px;
+}
+
+.tab {
+  height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: 0;
+  border-top: 2px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink3);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.tab[aria-selected='true'] {
+  color: var(--ink);
+  background: var(--sunken);
+  border-top-color: var(--accent);
+}
+
+.tab:focus-visible {
+  outline-offset: -2px;
+}
+
+/* Download bottom sheet */
+.sheet-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: var(--scrim);
+}
+
+.sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 8px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+  border-radius: 16px 16px 0 0;
+  border-top: 1px solid var(--line2);
+  background: var(--surface);
+  box-shadow: var(--pop-up);
+}
+
+.sheet-handle {
+  width: 36px;
+  height: 4px;
+  margin: 0 auto 8px;
+  border-radius: 2px;
+  background: var(--line2);
+}
+
+.sheet-title {
+  margin: 0 4px 4px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.sheet .item {
+  height: 48px;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+.sheet .item-sep {
+  margin: 4px 12px;
+}
