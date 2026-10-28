@@ -57,8 +57,17 @@
   letter-spacing: -0.02em;
 }
 
+/* The theme switch is a plain icon: no border or background until hovered. */
 .theme-toggle {
   flex: none;
+  border: 0;
+  background: transparent;
+  color: var(--ink2);
+}
+
+.theme-toggle:hover {
+  color: var(--ink);
+  background: var(--sunken);
 }
 
 .name-field {

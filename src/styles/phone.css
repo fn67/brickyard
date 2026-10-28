@@ -10,25 +10,35 @@
 
 .phone .header {
   flex: none;
-  padding: 10px 16px 0;
+  padding: 8px 16px 0;
 }
 
 .phone .header-row {
   gap: 10px;
 }
 
+.phone .logo {
+  width: 22px;
+  height: 22px;
+}
+
 .phone .title {
-  font-size: 20px;
-  line-height: 24px;
+  font-size: 18px;
+  line-height: 22px;
 }
 
 .phone .theme-toggle {
-  margin: -8px -8px -8px auto;
+  margin: -9px -10px -9px auto;
+}
+
+.phone .theme-toggle svg {
+  width: 18px;
+  height: 18px;
 }
 
 .phone .name-field {
   flex: none;
-  padding: 8px 16px 0;
+  padding: 6px 16px 0;
   gap: 0;
 }
 
@@ -37,16 +47,16 @@
 }
 
 .phone .name-input {
-  height: 44px;
+  height: 38px;
   padding: 0 12px;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .phone .shuffle-btn {
-  height: 44px;
-  padding: 0 14px;
+  height: 38px;
+  padding: 0 12px;
   gap: 6px;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .phone-main {
@@ -62,7 +72,7 @@
   container-type: size;
   display: grid;
   place-items: center;
-  padding: 8px 16px;
+  padding: 6px 16px;
 }
 
 .phone-stage {
@@ -147,7 +157,7 @@
 
 .phone-actions {
   flex: none;
-  padding: 0 16px 8px;
+  padding: 0 16px 6px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -155,16 +165,19 @@
 
 .mode-switch-compact {
   flex: none;
+  padding: 2px;
 }
 
 .mode-switch-compact .seg {
-  min-width: 44px;
+  height: 32px;
+  min-width: 40px;
   padding: 0 10px;
   gap: 5px;
+  font-size: 13px;
 }
 
 .mode-switch-compact .seg + .seg {
-  min-width: 52px;
+  min-width: 48px;
 }
 
 .phone-icon-btn {
@@ -186,7 +199,7 @@
 
 /* One fixed height for every tab, so nothing above it moves when switching. */
 .dock-panel {
-  height: 172px;
+  height: 150px;
   padding: 8px 16px 0;
   overflow: hidden;
 }
@@ -194,17 +207,17 @@
 .style-grid-compact {
   margin-top: 0;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 6px 8px;
+  gap: 5px 8px;
 }
 
 .style-grid-compact .style-tile {
   align-items: center;
-  gap: 3px;
-  padding: 4px 0;
+  gap: 2px;
+  padding: 3px 0;
 }
 
 .style-grid-compact .tile-art {
-  width: 46px;
+  width: 40px;
 }
 
 .style-grid-compact .tile-text {
@@ -227,7 +240,7 @@
 }
 
 .phone .variations .hint {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   font-size: 13px;
   line-height: 18px;
   color: var(--ink2);
@@ -241,12 +254,17 @@
 
 .phone .variation-note {
   margin-top: 0;
+  min-height: 32px;
+}
+
+.phone .variation-note .link {
+  min-height: 32px;
 }
 
 .colour-tab {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .colour-tab .colour-control {
@@ -266,10 +284,11 @@
 .colour-tab .swatches {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 6px 8px;
+  gap: 5px 8px;
 }
 
 .colour-tab .swatch {
+  height: 34px;
   width: auto;
 }
 
@@ -307,11 +326,11 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 2px;
-  padding: 2px 8px 6px;
+  padding: 2px 8px 4px;
 }
 
 .tab {
-  height: 48px;
+  height: 44px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -323,6 +342,11 @@
   color: var(--ink3);
   font-size: 11px;
   font-weight: 600;
+}
+
+.tab svg {
+  width: 18px;
+  height: 18px;
 }
 
 .tab[aria-selected='true'] {

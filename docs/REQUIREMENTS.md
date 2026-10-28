@@ -150,7 +150,7 @@ Notes:
 - If the clipboard is blocked, show a short message with the alternative (use Download).
 
 ### 4.9 App dark mode toggle
-- A single icon button in the header, top right, about 40 px square on phones (32 px on the compact desktop layout), on desktop and on phones. It shows a moon when the app is light and a sun when the app is dark.
+- A single icon-only button in the header, top right, on desktop and on phones: a plain moon or sun icon with no border or background (a light background shows on hover). Its hit area is 40 px square on phones and 32 px on the compact layout. It shows a moon when the app is light and a sun when the app is dark.
 - Tapping it switches the whole app between light and dark appearance immediately, with no reload.
 - On the first visit the app follows the person's system setting. After the person taps the toggle, their choice is saved in the browser and used on later visits.
 - The correct appearance is applied before the first paint, so there is no flash of the wrong theme when the page loads.
@@ -176,7 +176,7 @@ Notes:
 - **Runs locally** as a normal web app in the browser. No backend.
 - **Responsive:** desktop and phone widths (about 400 px). No horizontal page scroll. On phones the panels stack.
 - **App appearance:** follows the system light or dark setting on the first visit, and can be switched with the header toggle (section 4.9). This is separate from the avatar Background control.
-- **Accessibility:** every control is reachable by keyboard with a visible focus state; avatar images have text alternatives (for example "Avatar for hello-world in the Classic style"); text meets contrast requirements in both appearances; respect "reduce motion". Touch targets are at least 40 px on phones; the compact two-column layout (700 px wide and up) uses smaller controls (28–36 px), which is accepted for a mouse. Icon-only buttons always have an accessible name and a tooltip.
+- **Accessibility:** every control is reachable by keyboard with a visible focus state; avatar images have text alternatives (for example "Avatar for hello-world in the Classic style"); text meets contrast requirements in both appearances; respect "reduce motion". Since the 28 Oct revision the 40 px touch minimum is relaxed on purpose: the compact phone editor uses 32–38 px controls (tabs 44 px, theme switch 40 px) and the compact two-column layout (700 px wide and up) uses 28–36 px controls. Icon-only buttons always have an accessible name and a tooltip.
 - **Performance:** the preview and ten cards update within one frame or two while typing. Only one 3D scene exists at a time, in the preview panel. The cards are always flat.
 - **Browser support:** current Chrome, Edge, Firefox and Safari.
 
