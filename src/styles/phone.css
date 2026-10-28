@@ -32,25 +32,6 @@
   gap: 0;
 }
 
-.phone .name-label {
-  display: block;
-  margin-bottom: 4px;
-  font-size: 12px;
-  line-height: 16px;
-}
-
-/* Short screens keep the label for assistive tech only, as in the design. */
-@media (max-height: 700px) {
-  .phone .name-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-  }
-}
-
 .phone .name-row {
   gap: 8px;
 }

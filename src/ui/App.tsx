@@ -24,7 +24,12 @@ export function App() {
     <div className="app desktop">
       <Header appearance={appearance} onToggleAppearance={toggle} />
       <div className="desktop-wrap">
-      <NameField value={state.field} onChange={state.setField} onShuffle={state.shuffle} />
+        <NameField
+          placeholder="Enter anything to see your avatar: a username, name or any string"
+          value={state.field}
+          onChange={state.setField}
+          onShuffle={state.shuffle}
+        />
       <main className="workspace">
         <PreviewPanel
           state={state}

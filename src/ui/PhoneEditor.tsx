@@ -47,7 +47,7 @@ export function PhoneEditor({ state, exporter, view3d, appearance, onToggleAppea
   return (
     <div className="app phone" style={height ? { height } : undefined}>
       <Header compact appearance={appearance} onToggleAppearance={onToggleAppearance} />
-      <NameField value={state.field} onChange={state.setField} onShuffle={state.shuffle} onFocusChange={setTyping} />
+      <NameField placeholder="Username, name or any string" value={state.field} onChange={state.setField} onShuffle={state.shuffle} onFocusChange={setTyping} />
 
       <main className="phone-main">
         <div className="phone-stage-area">

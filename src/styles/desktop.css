@@ -86,7 +86,10 @@
 }
 
 .name-input::placeholder {
+  font-family: var(--sans);
+  font-size: 14px;
   color: var(--ink3);
+  opacity: 1;
 }
 
 .shuffle-btn {
@@ -588,7 +591,7 @@
   }
 
   .preview-panel {
-    width: clamp(380px, min(calc(100vh - 281px), 46vw), 640px);
+    width: clamp(380px, min(calc(100vh - 259px), 46vw), 640px);
   }
 
   .stage-fit {

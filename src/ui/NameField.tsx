@@ -3,15 +3,17 @@ import { ShuffleIcon } from './icons';
 
 interface Props {
   value: string;
+  /** The placeholder carries the instruction; the label is kept for screen readers only. */
+  placeholder: string;
   onChange: (value: string) => void;
   onShuffle: () => void;
   onFocusChange?: (focused: boolean) => void;
 }
 
-export function NameField({ value, onChange, onShuffle, onFocusChange }: Props) {
+export function NameField({ value, placeholder, onChange, onShuffle, onFocusChange }: Props) {
   return (
     <section className="name-field" aria-label="Name">
-      <label htmlFor="name" className="field-label name-label">
+      <label htmlFor="name" className="visually-hidden">
         Enter anything to see your avatar
       </label>
       <div className="name-row">
@@ -21,7 +23,7 @@ export function NameField({ value, onChange, onShuffle, onFocusChange }: Props) 
           type="text"
           value={value}
           maxLength={MAX_NAME_LENGTH}
-          placeholder="Username, name or any string"
+          placeholder={placeholder}
           spellCheck={false}
           autoComplete="off"
           autoCapitalize="off"

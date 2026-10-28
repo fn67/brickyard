@@ -67,7 +67,7 @@ Brickyard turns any name or username into a pixel avatar in the style of GitHub'
 ## 4. Functional requirements
 
 ### 4.1 Name input
-- A text field labelled **"Enter anything to see your avatar"**. Placeholder, shown only when the field is empty: "Username, name or any string". The field opens with `hello-world` already typed in. Maximum 40 characters. Leading and trailing spaces are ignored.
+- A text field whose accessible name (a visually hidden label) is **"Enter anything to see your avatar"**. There is no visible label: the placeholder, shown only when the field is empty, carries the instruction: "Enter anything to see your avatar: a username, name or any string" on desktop and tablet, "Username, name or any string" on the phone. The placeholder is lighter 14 px text. The field opens with `hello-world` already typed in. Maximum 40 characters. Leading and trailing spaces are ignored.
 - The interface never uses the word "seed". That is an internal engine term. In the UI the text is always called the name.
 - If the field is empty, the app uses the default seed `hello-world`.
 - **Shuffle** fills the field with a random two-word, git-flavoured name (for example `quiet-fork`, `sleepy-rebase`). Word lists are in the prototype.
@@ -211,7 +211,7 @@ Notes:
   7. Show a checkerboard behind the preview when Background is Transparent.
   8. **Download** becomes a menu: PNG sizes, then SVG and STL shown as disabled "Soon" items.
   9. Six variations, as in the mockup, with the plain wording described in section 4.5.
-  10. The name field is labelled "Enter anything to see your avatar", with the placeholder "Username, name or any string". The word "seed" appears nowhere in the interface; the facts list shows "Name".
+  10. The name field's accessible name is "Enter anything to see your avatar" (visually hidden label); the placeholder is "Enter anything to see your avatar: a username, name or any string" (desktop) or "Username, name or any string" (phone). The word "seed" appears nowhere in the interface; the facts list shows "Name".
   11. Add the app dark mode toggle (section 4.9) at the top right of the header, on desktop and phone.
 - Make 3D easy to find, since it only works for one style. For example, Critter could be the style shown when the app first opens, or the note near the switch could be visible from the start. Claude Design decides.
 - Claude Design decides placement, spacing and the visual treatment of every new control.
@@ -267,5 +267,5 @@ Notes:
 | Primary button | None (intentional) |
 | Style card notes | Cards show the name and grid only |
 | Colour and Background controls | Kept in separate places (intentional) |
-| Name field label | "Enter anything to see your avatar"; placeholder "Username, name or any string"; starting value "hello-world" |
+| Name field label | "Enter anything to see your avatar" (visually hidden); placeholder "Enter anything to see your avatar: a username, name or any string" on desktop, "Username, name or any string" on phone; starting value "hello-world" |
 | Word "seed" | Never shown in the interface; the UI says "Name" |
