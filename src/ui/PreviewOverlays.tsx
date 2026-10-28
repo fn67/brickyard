@@ -21,9 +21,13 @@ export const NO_WEBGL_NOTE = '3D is not available on this device.';
 export function PreviewOverlays({ toast, is3d, has3d, webgl, hint, onTryCritter, controls, compact }: Props) {
   return (
     <>
-      <div role="status" aria-live="polite" className="stage-top">
-        <StatusMessage toast={toast} compact={compact} />
-        {is3d && toast === 'none' && <div className="stage-hint">{hint}</div>}
+      <div className="stage-top">
+        <div role="status" aria-live="polite">
+          {toast === 'copied' && <StatusMessage toast={toast} compact={compact} />}
+          {is3d && toast === 'none' && <div className="stage-hint">{hint}</div>}
+        </div>
+        {/* The error has its own alert region, an icon and plain wording, so it never relies on its red alone. */}
+        <div role="alert">{toast === 'blocked' && <StatusMessage toast={toast} compact={compact} />}</div>
       </div>
       <div className="stage-bottom">
         {!has3d && (

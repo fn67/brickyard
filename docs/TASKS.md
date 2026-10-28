@@ -96,7 +96,7 @@ The design was revised again (phone, tablet, palette). Refresh `reference/design
 - [x] 5. Phone Background as three icon buttons; selected tab keeps its raised background and dot; warm palette surfaces in both themes, and the backdrops behind avatars match.
 - [x] 6. Borderless icon-only theme switch on both layouts; compact phone (field, switches, icon buttons, swatches, tab bar, tiles, 150 px options panel).
 - [x] 7. Softer text colours (#2B2A27, #57554F, #726F68 light; #ECEAE2 dark).
-- [ ] Verify: light and dark screenshots for phone 390×650 and 360×600 (each tab, Download sheet, keyboard open), tablet 768×1024, 699 / 700 / 999 / 1000 px, desktop 1440×900 and 1920×1080; compare with the design; no horizontal scroll; tablet scrolls; 1000 px and up unchanged; contrast ≥ 4.5:1 for body text; the error message distinguishable without colour. Report below.
+- [x] Verify: light and dark screenshots for phone 390×650 and 360×600 (each tab, Download sheet, keyboard open), tablet 768×1024, 699 / 700 / 999 / 1000 px, desktop 1440×900 and 1920×1080; compare with the design; no horizontal scroll; tablet scrolls; 1000 px and up unchanged; contrast ≥ 4.5:1 for body text; the error message distinguishable without colour. Report below.
 
 ---
 
@@ -155,6 +155,7 @@ The design was revised again (phone, tablet, palette). Refresh `reference/design
 - 2026-10-28 Stage 10: "the avatar backdrops match" was read as the UI surfaces behind avatars (the dotted preview, checkerboard, tile and size-preview wells and variation wells), which all come from these tokens and so turned warm. The avatar's own Light and Dark background colours were not changed: they are the prototype's palettes (and the Stage 2 Dark palettes, about #0d1117), they appear in every exported PNG, the pixel-parity test checks them, and CLAUDE.md says they follow the Background control, not the app appearance. The design's mock avatars now use #F0EEE6 / #1F1E1D; switching the engine to those would change existing avatars and exports, so it is flagged in the report instead.
 - 2026-10-28 Stage 10: the theme switch has no border or background on both layouts (`--ink2` icon; `--sunken` background and `--ink` icon on hover; the focus ring is unchanged). Compact phone from the design: 8 px header padding, 22 px logo, 18 px title, 18 px theme icon; 38 px name field and Shuffle (15 px / 13 px text); 6 px gaps around the preview; 32 px 2D | 3D switch; 36 px Copy and Download; 150 px options panel (was 172); 40 px tile art; 34 px swatches; 32 px Background icons; 44 px tabs with 18 px icons. The preview at 390 × 650 grows from about 291 to 319 px (+28 px). The written note said about 45 px, but the design's own heights add up to 320 px, so the app matches the design files. These phone controls are below the 40 px touch minimum, which the revision accepts; REQUIREMENTS 4.9 and 5 updated.
 - 2026-10-28 Stage 10: light text levels are `--ink` #2B2A27 and `--ink2` #57554F (design). The design's `--ink3` #726F68 fails body-text contrast on the warm `--sunken` (#F0EEE6): 4.32:1. The app uses #6F6C65, the nearest passing value (same hue, about 2% darker), which gives 4.51:1 on sunken, 4.97:1 on bg and 5.24:1 on surface. Every other design text colour passes in both appearances; the closest are dark `--ink3` on surface (4.53:1) and dark accent on surface (4.57:1). `tests/ui-contrast.test.ts` checks all of them.
+- 2026-10-28 Stage 10: the brick red accent (#BE312D) and the error red (`--danger` #B42318) are close, so "Clipboard blocked" does not rely on colour. It keeps its warning-triangle icon and plain wording ("Clipboard blocked. Use Download instead."), and it now appears in its own `role="alert"` region on the preview, separate from the polite `role="status"` region used for "Copied to clipboard" and the 3D hint. Both colours are as designed.
 
 ## Log
 (One short line per stage when finished: what was built, checks run, anything skipped or `[!]`.)
@@ -187,6 +188,7 @@ The design was revised again (phone, tablet, palette). Refresh `reference/design
 - Stage 7: accessibility pass (verify-ui `a11y`, 26 checks: text alternatives on every avatar, one main landmark per layout, labelled field, named buttons, focus after "Try it", no transitions or animations with reduced motion, phone keyboard reach) and `tests/ui-contrast.test.ts` (all text tokens ≥ 4.5:1 in both appearances). ARCHITECTURE.md updated for 3D and the final structure; README.md written. Final run: 59 unit tests, typecheck and build pass; `npm run verify:ui` 261 checks pass, 0 console errors.
 - Stage 8: layout revision from the updated design (fresh copies in `reference/design/project/`, incl. the new DesktopWide, DesktopCritter3D and dark frames). Single-screen desktop from 1000 px wide, overlays and 3D chips on the preview, top bar header, no tagline, new placeholder, tiles/variations always Light, large-screen caps, short-window spacing. New verify-ui `layout` section (114 checks: no page scroll at 1440×900, 1920×1080 and 1440×640 in light and dark; 1440×600 scrolls to a 640 px layout; nothing clipped; 5 × 2 tiles, one swatch row, one row of six variations; 12 px tile row gap; tiles not stretched; ≤ 1000 px high; 3D chips on one line; 800 px wide stays stacked) plus phone chip touch-drag and Light-tile checks. Final run: 59 unit tests, typecheck, build, `npm run verify:ui` 390 checks, 0 failed, 0 console errors. Screenshots: `docs/screenshots/desktop-{1440x900,1920x1080,1440x640,1440x600}-{light,dark}.png`, `desktop-*-critter-3d.png`, `desktop-800x900-light-stacked.png`, `phone-*`.
 - Stage 9: compact desktop revision (refreshed `reference/design/project/Brickyard.dc.html`; the phone design is unchanged). Copy PNG, Download and Background are icon-only buttons in the preview header; the Preview heading and the Colour label are visually hidden; compact tiles wrap; the Styles card keeps its natural height; desktop controls are 28–36 px. verify-ui `layout` section rewritten (214 checks at 1440×900, 1920×1080, 1280×720, 1440×640, 1024×768 and 1440×600 in light and dark: no page scroll from 640 px high, nothing clipped, the menu opens downward and stays on screen, tiles are 80–88 px and wrap, 7 per row at 1440×900, 8 px row gap, one row of swatches and thumbnails, natural-height Styles card, compact control sizes, 3D chips on one line; icon buttons named and titled; hidden headings exposed; the menu works by keyboard). Final run: 59 unit tests, typecheck, build, `npm run verify:ui` 490 checks, 0 failed, 0 console errors.
+- Stage 10: phone, tablet and palette revision (refreshed `reference/design/`, incl. the new tablet frames and `favicon.svg`). Icon-only Copy / Download on the phone; compact two-column tablet layout from 700 px; brick red accent, red logo and favicon; tab dot; placeholder-led name field with a hidden label; icon Background on the phone; warm surfaces and softer text; borderless theme switch; compact phone; Clipboard blocked as an alert. New verify-ui `tablet` section (768×1024 and 768×600, and 699, 700, 999 and 1000 px in light and dark) and new phone checks (placeholder, hidden label, icon buttons with tooltips, borderless switch, one tab dot and no top stroke, Background icons); desktop checks for the placeholder, its 14 px size and the alert. Final run: 59 unit tests (incl. contrast for every text colour in both appearances), typecheck, build, `npm run verify:ui` 566 checks, 0 failed, 0 console errors.
 
 ## Final report
 (Fill in at the end: what works, what was skipped or blocked, what the user should look at first, known gaps.)
@@ -270,4 +272,43 @@ I looked at the screenshots against the design's markup and styles (its frames s
 - `desktop-1440x640-light.png`: at 9 tiles per row, the tenth tile (Frame) sits alone on a second row.
 - In dark appearance the "Dark background" icon is a near-black swatch on a near-black header, so only its border shows (`desktop-1440x900-dark.png`). It still works and has a tooltip, but it may need a lighter border in dark mode.
 - Desktop controls are now 28–36 px, which suits a mouse but is small on a touch laptop.
+
+### Stage 10 report (phone, tablet, palette revision)
+
+**What changed.**
+- **Phone:**
+  - Copy PNG and Download are icon-only buttons with tooltips; Download still opens the bottom sheet.
+  - Background is the same three swatch icons as desktop, beside its visible label.
+  - The selected tab keeps its raised background, loses its top stroke and gains an accent dot.
+  - The editor is more compact: 150 px options panel, 32–38 px controls. The preview at 390×650 grows from about 291 to 319 px.
+- **Tablet (700–999 px):** the compact two-column layout, with a page that scrolls. 641–699 px stays stacked with the preview centred; 1000 px and wider keeps one screen.
+- **Name field:** no visible label (the hidden label is still its accessible name). The placeholder carries the instruction in 14 px `--ink3`. The desktop preview square grows from 583 to 605 px.
+- **Palette:** brick red accent (#BE312D / #F2705F), red logo and favicon, warm surfaces, softer text. The theme switch is a plain icon with no border on both layouts. All of these are CSS variables in both appearances.
+- **Clipboard blocked:** now announced in its own `role="alert"` region, with its icon and wording, so it doesn't depend on its red.
+- **Docs:** REQUIREMENTS (4.1, 4.9, 4.10, 5, 7, 9) and ARCHITECTURE updated; each change logged under Decisions.
+
+**What was checked.**
+- 59 unit tests, including contrast for every text colour in both appearances.
+- Typecheck and build.
+- `npm run verify:ui`: 566 checks with 0 console errors, covering:
+  - phone at 390×650 and 360×600 on every tab, the Download sheet and the keyboard open;
+  - tablet at 768×1024 (and 768×600, to check it scrolls);
+  - 699, 700, 999 and 1000 px;
+  - desktop at 1440×900, 1920×1080, 1280×720, 1440×640, 1024×768 and 1440×600, plus 3D, the menu, the backgrounds and a selected variation;
+  - all of these in light and dark.
+- No horizontal scroll anywhere. The tablet page scrolls, and 1000 px and up is still one screen.
+
+**Contrast.** One design colour fails 4.5:1. Light `--ink3` #726F68 reaches only 4.32:1 on the warm `--sunken` #F0EEE6. The app uses #6F6C65, the nearest passing value: 4.51:1 on sunken, 4.97:1 on the page and 5.24:1 on white. Everything else passes. The closest are dark `--ink3` on surface (4.53:1) and dark accent on surface (4.57:1). The placeholder is `--ink3` on white at 5.24:1.
+
+**Where the app differs from the design.**
+1. The light `--ink3` value above.
+2. On the tablet, the preview header's tool gap is 6 px instead of 8. With 8 px, the row is 0.3 px wider than the 340 px card at 768 px and wraps.
+3. The phone preview gains 28 px, not about 45 px. The design's own heights add up to the same 320 px, so the app matches the design files.
+4. The design's mock avatars now sit on #F0EEE6 / #1F1E1D. The app's avatar background colours were **not** changed: they come from the prototype's palettes, appear in every exported PNG and are covered by the parity test. Only the wells behind the avatars and the Background icons turned warm.
+
+**Please look at.**
+- **Avatar backgrounds (item 4 above):** do you want the exported avatar backgrounds warmed too? That would change the Light and Dark palettes in the engine, so existing names would export with new background colours and the prototype parity test would need updating. Say if you want it.
+- **Dark appearance:** Dark-background avatars are still about #0d1117 (cool near-black) inside a warm charcoal UI, so they look slightly blue next to the page (`docs/screenshots/desktop-1440x900-dark-bg-dark.png`).
+- **Focus vs selection:** the focus ring and the selected-tile ring are now the same red. Focus adds an outer outline, so it is still visible (`docs/screenshots/desktop-focus-visible.png`), but it is less distinct than before.
+- **Touch targets:** phone controls are now 32–38 px, below the old 40 px minimum, as the revision accepts.
 

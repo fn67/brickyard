@@ -85,9 +85,11 @@ sections.desktop = async (browser) => {
   for (const scheme of ['light', 'dark']) {
     const { page, context } = await newPage(browser, { width: 1440, height: 900, scheme });
     check((await page.inputValue('#name')) === 'hello-world', 'name field opens with hello-world');
-    check((await page.getAttribute('#name', 'placeholder')) === 'Username, name or any string', 'placeholder text');
+    check((await page.getAttribute('#name', 'placeholder')) === 'Enter anything to see your avatar: a username, name or any string', 'placeholder carries the instruction');
     check((await page.getAttribute('#name', 'maxlength')) === '40', 'max 40 characters');
-    check(await page.getByText('Enter anything to see your avatar').isVisible(), 'field label');
+    check((await page.getByLabel('Enter anything to see your avatar', { exact: true }).count()) === 1, 'field keeps its accessible name');
+    check((await page.locator('label[for="name"]').boundingBox()).width <= 1, 'field label is visually hidden');
+    check((await page.locator('#name').evaluate((el) => getComputedStyle(el, '::placeholder').fontSize)) === '14px', 'placeholder is 14 px');
     check((await page.getByText('Pixel avatars for people who hate profile pictures.').count()) === 0, 'no tagline in the header');
     check(await page.locator('.bar .theme-toggle').isVisible(), 'header is a top bar with the dark-mode button');
     const text = await page.locator('body').innerText();
@@ -184,7 +186,7 @@ sections.desktop = async (browser) => {
       appMounted: !!document.querySelector('#root')?.children.length,
     }));
     check(early.theme === 'dark' && !early.appMounted, 'dark theme applied before the app script runs');
-    check(early.bg === 'rgb(14, 14, 16)', 'page background is dark before first app paint (got ' + early.bg + ')');
+    check(early.bg === 'rgb(38, 38, 36)', 'page background is dark before first app paint (got ' + early.bg + ')');
     await ctx.close();
   }
 
@@ -347,6 +349,8 @@ sections.export = async (browser) => {
   await bp.getByRole('button', { name: 'Copy PNG' }).click();
   await bp.getByText('Clipboard blocked. Use Download instead.').waitFor({ timeout: 3000 });
   check((await bp.locator('.preview-stage').getByText('Clipboard blocked. Use Download instead.').count()) === 1, 'Clipboard blocked message is an overlay on the preview');
+  check((await bp.getByRole('alert').getByText('Clipboard blocked. Use Download instead.').count()) === 1, 'Clipboard blocked is announced as an alert');
+  check((await bp.getByRole('alert').locator('svg').count()) === 1, 'Clipboard blocked has a warning icon, not colour alone');
   await bp.screenshot({ path: join(OUT, 'desktop-clipboard-blocked.png') });
   await blocked.close();
 };
@@ -560,10 +564,27 @@ sections.phone = async (browser) => {
       check(await page.locator('.phone').isVisible(), `${tag}: phone editor shown`);
       check(await page.getByRole('button', { name: scheme === 'dark' ? 'Switch app to light mode' : 'Switch app to dark mode' }).isVisible(), `${tag}: app dark mode toggle in the header`);
       check((await page.locator('.ladder, .facts').count()) === 0, `${tag}: size previews and facts hidden`);
+      check((await page.getAttribute('#name', 'placeholder')) === 'Username, name or any string', `${tag}: phone placeholder`);
+      check((await page.locator('label[for="name"]').boundingBox()).width <= 1, `${tag}: name label visually hidden`);
+      for (const name of ['Copy PNG', 'Download']) {
+        const b = page.locator('.phone-actions').getByRole('button', { name, exact: true });
+        check((await b.getAttribute('title')) === name && !(await b.innerText()).trim(), `${tag}: icon-only ${name} with a tooltip`);
+      }
+      const toggleStyle = await page.locator('.theme-toggle').evaluate((el) => [getComputedStyle(el).borderTopWidth, getComputedStyle(el).backgroundColor]);
+      check(toggleStyle[0] === '0px' && toggleStyle[1] === 'rgba(0, 0, 0, 0)', `${tag}: theme switch has no border or background`);
       const tops = [];
       for (const [tab, label] of [['style', 'Style'], ['variations', 'Variations'], ['colour', 'Colour']]) {
         await page.getByRole('tab', { name: label }).click();
         check((await page.getByRole('tab', { name: label }).getAttribute('aria-selected')) === 'true', `${tag}: ${label} tab selected`);
+        const dots = await page.locator('.tab .tab-dot').evaluateAll((ds) => ds.map((d) => getComputedStyle(d).backgroundColor !== 'rgba(0, 0, 0, 0)'));
+        check(dots.filter(Boolean).length === 1 && dots[['style', 'variations', 'colour'].indexOf(tab)], `${tag}: dot under the selected tab only`);
+        check((await page.getByRole('tab', { name: label }).evaluate((el) => getComputedStyle(el).borderTopWidth)) === '0px', `${tag}: no top stroke on the selected tab`);
+        if (tab === 'colour') {
+          for (const name of ['Light background', 'Dark background', 'Transparent background']) {
+            const b = page.getByRole('button', { name });
+            check((await b.getAttribute('title')) === name && !(await b.innerText()).trim(), `${tag}: Background icon "${name}" with a tooltip`);
+          }
+        }
         tops.push(await dockTop(page));
         const sc = await noPageScroll(page);
         check(sc.v && sc.h, `${tag} ${label}: no vertical or horizontal page scroll (${sc.sh}/${sc.ih})`);
@@ -649,8 +670,8 @@ sections.phone = async (browser) => {
   check(await page.getByText('Using variation 2').isVisible(), 'phone: variation note');
   await page.getByRole('tab', { name: 'Colour' }).click();
   await page.getByRole('button', { name: 'Teal, hue 190°' }).click();
-  await page.getByRole('button', { name: 'Dark', exact: true }).click();
-  check((await page.getByRole('button', { name: 'Dark', exact: true }).getAttribute('aria-pressed')) === 'true', 'phone: background control in the Colour tab');
+  await page.getByRole('button', { name: 'Dark background' }).click();
+  check((await page.getByRole('button', { name: 'Dark background' }).getAttribute('aria-pressed')) === 'true', 'phone: background control in the Colour tab');
   await page.getByRole('tab', { name: 'Variations' }).click();
   const phoneThumbs = await page.locator('.variation-tile canvas').evaluateAll((cs) =>
     cs.map((c) => Array.from(c.getContext('2d').getImageData(1, 1, 1, 1).data).join()),
@@ -820,16 +841,63 @@ sections.layout = async (browser) => {
     await context.close();
   }
 
-  // Narrow desktop windows keep the stacked layout and scroll.
+  // 800 px wide is in the tablet band: two columns and a page that scrolls instead of one screen.
   const { page, context } = await newPage(browser, { width: 800, height: 900 });
   const L = await page.evaluate(() => {
     const p = document.querySelector('.preview-panel').getBoundingClientRect();
     const s = document.querySelector('.styles-panel').getBoundingClientRect();
-    return { stacked: s.top >= p.bottom, sh: document.scrollingElement.scrollHeight };
+    return { sideBySide: s.left >= p.right, oneScreen: getComputedStyle(document.querySelector('.desktop')).overflow === 'hidden' };
   });
-  check(L.stacked && L.sh > 900, '800 px wide: the stacked layout scrolls');
-  await shot(page, 'desktop-800x900-light-stacked', { full: true });
+  check(L.sideBySide && !L.oneScreen, '800 px wide: two columns, page scrolls');
   await context.close();
+};
+
+sections.tablet = async (browser) => {
+  console.log('Tablet and breakpoints');
+  const shape = (page) =>
+    page.evaluate(() => {
+      const r = (s) => document.querySelector(s).getBoundingClientRect();
+      const p = r('.preview-panel');
+      const st = r('.styles-panel');
+      const el = document.scrollingElement;
+      return {
+        sideBySide: Math.abs(st.top - p.top) < 2 && st.left >= p.right,
+        stacked: st.top >= p.bottom,
+        centred: Math.abs((p.left + p.right) / 2 - innerWidth / 2) < 2,
+        oneScreen: getComputedStyle(document.querySelector('.desktop')).overflow === 'hidden',
+        hScroll: el.scrollWidth > innerWidth + 1,
+        sh: el.scrollHeight,
+        copy: Math.round(document.querySelector('.preview-tools [aria-label="Copy PNG"]').getBoundingClientRect().height),
+        headRows: new Set([...document.querySelectorAll('.panel-head > *:not(h2)')].map((e) => Math.round(e.getBoundingClientRect().top))).size,
+      };
+    });
+  for (const scheme of ['light', 'dark']) {
+    const { page, context } = await newPage(browser, { width: 768, height: 1024, scheme });
+    const t = await shape(page);
+    check(t.sideBySide && !t.oneScreen && !t.hScroll, `768x1024-${scheme}: two columns, scrolling page, no horizontal scroll`);
+    check(t.copy === 32 && t.headRows === 1, `768x1024-${scheme}: compact controls, preview header on one line`);
+    await shot(page, `tablet-768x1024-${scheme}`, { full: true });
+    await page.setViewportSize({ width: 768, height: 600 });
+    await page.waitForTimeout(150);
+    const short = await shape(page);
+    check(short.sh > 600, `768x600-${scheme}: the tablet page scrolls (${short.sh})`);
+    await context.close();
+  }
+  const cases = [
+    [699, 900, (t) => t.stacked && t.centred && !t.oneScreen, 'stacked, preview centred'],
+    [700, 900, (t) => t.sideBySide && !t.oneScreen && t.copy === 32, 'compact two columns, scrolling'],
+    [999, 800, (t) => t.sideBySide && !t.oneScreen, 'compact two columns, scrolling'],
+    [1000, 800, (t) => t.sideBySide && t.oneScreen && t.sh === 800, 'one screen'],
+  ];
+  for (const [w, h, ok, what] of cases) {
+    for (const scheme of ['light', 'dark']) {
+      const { page, context } = await newPage(browser, { width: w, height: h, scheme });
+      const t = await shape(page);
+      check(ok(t) && !t.hScroll && t.headRows === 1, `${w}x${h}-${scheme}: ${what}, no horizontal scroll`);
+      await shot(page, `breakpoint-${w}-${scheme}`, { full: true });
+      await context.close();
+    }
+  }
 };
 
 sections.keyboard = async (browser) => {
