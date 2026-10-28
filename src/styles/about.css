@@ -219,3 +219,31 @@
   margin-top: 16px;
   padding-top: 16px;
 }
+
+/* A short fade and rise on open, only when reduced motion is not requested. Closing is instant. */
+@media (prefers-reduced-motion: no-preference) {
+  .about-scrim {
+    animation: about-fade 140ms ease-out;
+  }
+
+  .about {
+    animation: about-rise 160ms ease-out;
+  }
+
+  .about-sheet .about {
+    animation: about-fade 140ms ease-out;
+  }
+}
+
+@keyframes about-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes about-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}

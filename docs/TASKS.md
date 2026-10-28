@@ -104,7 +104,7 @@ The design adds an About feature. Refresh `reference/design/` first. All About t
 - [x] 2. Desktop About dialog: centred, about 680 px wide, over a dimmed background; header with "What is Brickyard?" and a close button; content scrolls inside; Escape or a click on the dimmed area closes it.
 - [x] 3. Phone About sheet: full screen, header with the title and a 40 px close button, content scrolls under the header; Escape closes it.
 - [x] 4. Content in the design's order and wording, with thin dividers, numbered steps, the `hello-world:3` chip and the step 3 drawing as inline SVG; the "How unique is it?" number checked against the engine.
-- [ ] 5. Theming: existing light and dark tokens and the brick red accent; follows the app appearance; reduced motion respected.
+- [x] 5. Theming: existing light and dark tokens and the brick red accent; follows the app appearance; reduced motion respected.
 - [ ] 6. Keyboard: focus moves into the dialog, Tab and Shift+Tab stay inside, Escape closes, focus returns to the "i" button; page scroll locked behind it.
 - [ ] Verify: Playwright tests (open, Escape, backdrop, Tab trap, focus return) and light/dark screenshots at 1440×900, 1440×640, 768×1024, 390×650 and 360×600, scrolled to the top and the bottom; large text; no horizontal scroll. Report below.
 
@@ -172,6 +172,7 @@ The design adds an About feature. Refresh `reference/design/` first. All About t
 - 2026-10-28 Stage 11: there is deliberately no "Private by design" section in About, and the text makes no claim that data is private, never uploaded or not stored (the user removed it on purpose). `tests/about.test.ts` fails if words like "private", "privacy", "upload" or "server" appear in the About content.
 - 2026-10-28 Stage 11: "How unique is it?" said "about 32,000" possible shapes (2^15). The real engine gives fewer: `ensure()` fills the whole centre column of any 5×5 pattern with fewer than 7 filled cells, so many sparse halves collapse into the same few shapes. Counting all 2^15 halves through the engine's own `ensure()` gives 30,537 distinct shapes, and 400,000 sample names through `generateAvatar` (Classic) reached all 30,537. The text now says "about 30,500"; `tests/about.test.ts` recomputes the count and checks the wording.
 - 2026-10-28 Stage 11: the written brief says the step numbers are "red circles"; the design files draw a small `--sunken` circle with a `--line2` border and a red (`--accent`) numeral. Followed the design files. The step 3 drawing is one inline SVG (`MirrorDiagram`) with the design's example pattern and captions, coloured by CSS classes on theme tokens (accent cells, sunken empty cells, dashed `--line2` outlines for the missing half, the mirrored half at 55 % opacity).
+- 2026-10-28 Stage 11: About uses only the app's tokens (surface, bg, lines, text levels, accent, `--pop`, plus the new `--dialog-scrim`), so it follows the light/dark switch. It opens with a 140–160 ms fade and slight rise only under `prefers-reduced-motion: no-preference`; with reduced motion it simply appears. Closing is instant in both cases.
 
 ## Log
 (One short line per stage when finished: what was built, checks run, anything skipped or `[!]`.)
