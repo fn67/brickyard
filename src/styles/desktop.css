@@ -1,6 +1,7 @@
 /*
  * Desktop and tablet layout: header, name field, then Preview beside Styles.
- * Narrow windows stack and scroll; from 1000 px wide it is one screen (see the end of this file).
+ * Below 700 px wide the cards stack (preview centred) and scroll; from 700 px they sit side by side
+ * and still scroll; from 1000 px it is one screen (see the end of this file).
  */
 .desktop {
   display: flex;
@@ -117,6 +118,7 @@
 .preview-panel {
   flex: 1 1 440px;
   max-width: 440px;
+  margin: 0 auto;
   padding: 20px;
 }
 
@@ -350,16 +352,12 @@
 }
 
 /* One screen: the page fills the window (at least 640 px high) and the avatar square takes the height left. */
-@media (min-width: 1000px) {
-  .desktop {
-    height: max(100vh, 640px);
-    overflow: hidden;
-  }
-
-  /*
-   * Compact desktop sizes (Stage 9). Controls here go below the 40 px touch target, which is
-   * accepted for a mouse; the phone layout keeps 40 px.
-   */
+/*
+ * Compact two-column layout from 700 px wide (tablet and desktop). Controls here go below the
+ * 40 px touch target, which is accepted for this layout; the phone editor has its own sizes.
+ * Below 1000 px the page scrolls.
+ */
+@media (min-width: 700px) {
   .bar-in {
     padding: 8px 32px;
   }
@@ -379,11 +377,8 @@
   }
 
   .desktop-wrap {
-    flex: 1 1 0;
-    min-height: 0;
-    max-height: 1000px;
     max-width: 1600px;
-    padding: 12px 32px 20px;
+    padding: 12px clamp(16px, 3vw, 32px) 24px;
     gap: 12px;
   }
 
@@ -432,6 +427,11 @@
     height: 32px;
   }
 
+  /* 6 px (design: 8) so the header stays on one line in the 340 px tablet card. */
+  .preview-tools {
+    gap: 6px;
+  }
+
   .preview-tools .icon-btn svg {
     width: 16px;
     height: 16px;
@@ -478,48 +478,25 @@
   }
 
   .workspace {
-    flex: 1;
-    min-height: 0;
     flex-wrap: nowrap;
-    align-items: stretch;
+    align-items: flex-start;
     gap: 20px;
   }
 
   .preview-panel {
     flex: none;
     max-width: none;
-    width: clamp(380px, min(calc(100vh - 281px), 46vw), 640px);
+    width: clamp(340px, 44vw, 640px);
+    margin: 0;
     padding: 12px;
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
 
-  .stage-fit {
-    flex: 1 1 0;
-    min-height: 0;
-    margin-top: 0;
-    container-type: size;
-    display: grid;
-    place-items: center;
-  }
-
-  .preview-stage {
-    width: min(100cqw, 100cqh);
-  }
-
+  .stage-fit,
   .details {
     margin-top: 0;
-  }
-
-  /* The size previews and facts stay on one line so they never steal height from the avatar. */
-  .details {
-    flex: none;
-    flex-wrap: nowrap;
-  }
-
-  .facts {
-    flex: 1 1 0;
   }
 
   /* The Styles card keeps its natural height at the top; it never stretches to the preview's height. */
@@ -587,6 +564,53 @@
   .variation-grid {
     grid-template-columns: repeat(6, minmax(0, 48px));
     gap: 8px;
+  }
+}
+
+/* One screen from 1000 px wide: the page fills the window and the avatar square takes the height left. */
+@media (min-width: 1000px) {
+  .desktop {
+    height: max(100vh, 640px);
+    overflow: hidden;
+  }
+
+  .desktop-wrap {
+    flex: 1 1 0;
+    min-height: 0;
+    max-height: 1000px;
+    padding: 12px 32px 20px;
+  }
+
+  .workspace {
+    flex: 1;
+    min-height: 0;
+    align-items: stretch;
+  }
+
+  .preview-panel {
+    width: clamp(380px, min(calc(100vh - 281px), 46vw), 640px);
+  }
+
+  .stage-fit {
+    flex: 1 1 0;
+    min-height: 0;
+    container-type: size;
+    display: grid;
+    place-items: center;
+  }
+
+  .preview-stage {
+    width: min(100cqw, 100cqh);
+  }
+
+  /* The size previews and facts stay on one line so they never steal height from the avatar. */
+  .details {
+    flex: none;
+    flex-wrap: nowrap;
+  }
+
+  .facts {
+    flex: 1 1 0;
   }
 }
 

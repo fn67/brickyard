@@ -90,7 +90,7 @@ The desktop design was revised again (phone unchanged). Refresh `reference/desig
 ## Stage 10: Phone, tablet, palette revision
 The design was revised again (phone, tablet, palette). Refresh `reference/design/` first. Where this stage disagrees with REQUIREMENTS, CLAUDE.md or earlier stages, the new design wins: update the docs and log it. Every colour stays behind CSS variables for both appearances.
 - [x] 1. Phone: Copy PNG and Download become icon-only buttons with tooltips and accessible names; Download still opens the bottom sheet.
-- [ ] 2. Tablet (700–999 px): the compact two-column layout, page scrolls; 1000 px and up unchanged; below 700 px stacked with the preview centred.
+- [x] 2. Tablet (700–999 px): the compact two-column layout, page scrolls; 1000 px and up unchanged; below 700 px stacked with the preview centred.
 - [ ] 3. Phone tab indicator is a dot under the label (no top stroke); brick red accent (#BE312D light, #F2705F dark); red logo mark; new favicon.svg.
 - [ ] 4. Name field: label visually hidden, placeholder carries the instruction (desktop "Enter anything to see your avatar: a username, name or any string", phone "Username, name or any string"), lighter 14 px placeholder; desktop preview gains the height.
 - [ ] 5. Phone Background as three icon buttons; selected tab keeps its raised background and dot; warm palette surfaces in both themes, and the backdrops behind avatars match.
@@ -146,6 +146,8 @@ The design was revised again (phone, tablet, palette). Refresh `reference/design
 - 2026-10-27 Stage 9: in the design the variation note keeps a 40 px minimum height, so picking a variation would make the Variations heading line 8 px taller and shift the layout. On compact desktop the note is 28 px high (the height of its link), so the line stays 32 px.
 - 2026-10-27 Stage 9: phone screenshots were compared pixel by pixel with Stage 8. All are identical except a few pixels under the last tap in one shot, which change from run to run (a hover or border transition caught mid-way). The Stage 8 phone screenshots are kept.
 - 2026-10-28 Stage 10: on the phone, Copy PNG and Download are icon-only 36 px buttons on the right of the action row, named and titled "Copy PNG" and "Download"; Download still opens the bottom sheet (`aria-haspopup="dialog"`).
+- 2026-10-28 Stage 10: layout bands are now: phone editor up to 640 px (unchanged), stacked desktop layout 641–699 px with the preview card centred, the compact two-column layout from 700 px (scrolls below 1000 px), and the one-screen layout from 1000 px (unchanged). In `desktop.css` the compact sizes moved from the 1000 px block to a 700 px block; the 1000 px block keeps only the one-screen sizing. The preview card is `clamp(340px, 44vw, 640px)` below 1000 px, as in the design. This replaces the Stage 6 note that tablets get the wrapped desktop layout.
+- 2026-10-28 Stage 10: two small changes from the design for the tablet band. The preview header's tool gap is 6 px instead of 8, because at 768 px the design's row is 0.3 px wider than the 340 px card and the tools wrapped onto a second line. The size previews and facts may wrap below 1000 px (as in the design); the no-wrap rule now applies only to the one-screen layout, where it keeps the avatar's height.
 
 ## Log
 (One short line per stage when finished: what was built, checks run, anything skipped or `[!]`.)
