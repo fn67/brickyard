@@ -18,6 +18,8 @@
   --pop: 0 12px 32px -12px rgba(0, 0, 0, 0.28);
   --pop-up: 0 -12px 32px -12px rgba(0, 0, 0, 0.28);
   --scrim: rgba(0, 0, 0, 0.5);
+  /* Dims the page behind the About dialog (design value, the same in both appearances). */
+  --dialog-scrim: rgba(20, 19, 18, 0.55);
   /* Background icons (light, dark, checkerboard swatches) use the design's colours in both appearances. */
   --bgicon-light: #f0eee6;
   --bgicon-dark: #1f1e1d;
