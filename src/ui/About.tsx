@@ -1,4 +1,5 @@
-import { useEffect, useRef, type KeyboardEvent } from 'react';
+import { useEffect, useRef, type KeyboardEvent, type RefObject } from 'react';
+import { createPortal } from 'react-dom';
 import { ABOUT, type Inline } from '../content/about';
 import { CloseIcon } from './icons';
 import { MirrorDiagram } from './MirrorDiagram';
@@ -7,7 +8,11 @@ interface Props {
   /** Full-screen sheet (phone widths) instead of the centred dialog. */
   sheet: boolean;
   onClose: () => void;
+  /** Gets focus back when About closes (the "i" button). */
+  returnFocus: RefObject<HTMLElement | null>;
 }
+
+const FOCUSABLE = 'button:not(:disabled), [href], input:not(:disabled), [tabindex]:not([tabindex="-1"])';
 
 function renderInline(parts: Inline[]) {
   return parts.map((p, i) =>
@@ -22,24 +27,50 @@ function renderInline(parts: Inline[]) {
 }
 
 /** "What is Brickyard?": a centred dialog on wide screens, a full-screen sheet on phones. */
-export function About({ sheet, onClose }: Props) {
+export function About({ sheet, onClose, returnFocus }: Props) {
   const closeBtn = useRef<HTMLButtonElement>(null);
+  const dialog = useRef<HTMLDivElement>(null);
 
+  // While open: the page behind is inert and does not scroll; on close, focus goes back to the "i" button.
   useEffect(() => {
+    const root = document.getElementById('root');
+    const opener = returnFocus.current;
+    root?.setAttribute('inert', '');
+    document.documentElement.classList.add('about-open');
     closeBtn.current?.focus();
-  }, []);
+    return () => {
+      root?.removeAttribute('inert');
+      document.documentElement.classList.remove('about-open');
+      (returnFocus.current ?? opener)?.focus();
+    };
+  }, [returnFocus]);
 
   const onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       e.stopPropagation();
       onClose();
+      return;
+    }
+    if (e.key !== 'Tab' || !dialog.current) return;
+    // Keep Tab and Shift+Tab inside the dialog: wrap from the last control to the first and back.
+    const items = Array.from(dialog.current.querySelectorAll<HTMLElement>(FOCUSABLE));
+    const first = items[0];
+    const last = items[items.length - 1];
+    const active = document.activeElement;
+    const inside = !!active && dialog.current.contains(active);
+    if (e.shiftKey && (active === first || !inside)) {
+      e.preventDefault();
+      last?.focus();
+    } else if (!e.shiftKey && (active === last || !inside)) {
+      e.preventDefault();
+      first?.focus();
     }
   };
 
-  return (
+  return createPortal(
     <div className={sheet ? 'about-layer about-sheet' : 'about-layer'} onKeyDown={onKeyDown}>
       {!sheet && <div className="about-scrim" aria-hidden="true" onClick={onClose} />}
-      <div role="dialog" aria-modal="true" aria-labelledby="about-title" className="about">
+      <div ref={dialog} role="dialog" aria-modal="true" aria-labelledby="about-title" className="about">
         <div className="about-head">
           <h2 id="about-title" className="about-title">
             {ABOUT.title}
@@ -86,6 +117,7 @@ export function About({ sheet, onClose }: Props) {
           ))}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

@@ -24,7 +24,7 @@ export function App() {
     <Header compact={phone} appearance={appearance} onToggleAppearance={toggle} onAbout={() => setAboutOpen(true)} aboutRef={aboutBtn} />
   );
 
-  const about = aboutOpen && <About sheet={phone} onClose={() => setAboutOpen(false)} />;
+  const about = aboutOpen && <About sheet={phone} onClose={() => setAboutOpen(false)} returnFocus={aboutBtn} />;
 
   if (phone) {
     return (

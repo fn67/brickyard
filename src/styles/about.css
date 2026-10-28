@@ -1,4 +1,11 @@
 /* About: a centred dialog over a dimmed page; a full-screen sheet on phones (.about-sheet). */
+
+/* The page behind does not scroll while About is open. */
+.about-open,
+.about-open body {
+  overflow: hidden;
+}
+
 .about-layer {
   position: fixed;
   inset: 0;
