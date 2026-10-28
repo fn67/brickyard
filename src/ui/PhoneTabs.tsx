@@ -46,6 +46,7 @@ export function PhoneTabs({ tab, onChange }: Props) {
         >
           {t.icon}
           {t.label}
+          <span className="tab-dot" aria-hidden="true" />
         </button>
       ))}
     </div>

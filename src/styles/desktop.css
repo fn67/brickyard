@@ -46,7 +46,7 @@
 
 .logo {
   flex: none;
-  color: var(--ink);
+  color: var(--accent);
 }
 
 .title {

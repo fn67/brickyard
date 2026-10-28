@@ -200,7 +200,7 @@ Notes:
 ## 7. Design brief for Claude Design
 
 - Start from the attached Desktop mockup: header with name and the name field; a Preview panel on the left; a Styles panel on the right.
-- Tone: calm, minimal, professional. Neutral surfaces, thin borders, one accent colour (the indigo of the mockup), small corner radii. The avatars are the colourful part.
+- Tone: calm, minimal, professional. Warm neutral surfaces, thin borders, one accent colour (brick red since the 28 Oct revision: #BE312D in light, #F2705F in dark; it was the mockup's indigo), small corner radii. The logo mark and favicon use the accent. The avatars are the colourful part.
 - Changes from the mockup:
   1. Replace "Identicon Lab" and its subtitle with **Brickyard**. No tagline (removed in the layout revision), no second line and no helper text.
   2. Remove the old moon icon and the Circle crop checkbox. (The moon returns as the app dark mode toggle in item 11.)

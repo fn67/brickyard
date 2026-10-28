@@ -328,7 +328,6 @@
   justify-content: center;
   gap: 2px;
   border: 0;
-  border-top: 2px solid transparent;
   border-radius: 8px;
   background: transparent;
   color: var(--ink3);
@@ -339,7 +338,17 @@
 .tab[aria-selected='true'] {
   color: var(--ink);
   background: var(--sunken);
-  border-top-color: var(--accent);
+}
+
+/* The selected tab is marked by a dot under its label (with the raised background and aria-selected). */
+.tab-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+
+.tab[aria-selected='true'] .tab-dot {
+  background: var(--accent);
 }
 
 .tab:focus-visible {
