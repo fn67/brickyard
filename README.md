@@ -2,6 +2,8 @@
 
 Pixel avatars from any name, in ten styles, with a 3D Critter view. Same name, same face.
 
+**Live demo:** https://brickyard.surge.sh
+
 ![Brickyard on desktop: the hello-world avatar in the Classic style, with the ten style tiles and six variations](docs/readme-screenshot.png)
 
 ## Features
@@ -38,6 +40,14 @@ npm test           # unit tests
 ```
 
 `npm run typecheck` runs the TypeScript check. For the end-to-end checks, run `npx playwright install chromium` once, then `npm run build` and `npm run verify:ui`; it saves screenshots to `docs/screenshots/`.
+
+## Deploy
+
+```sh
+npm run deploy     # builds, then publishes dist/ to brickyard.surge.sh
+```
+
+Needs `npx surge login` once on the machine. `public/CNAME` holds the domain, so every deploy goes to the same address.
 
 ## Docs
 
