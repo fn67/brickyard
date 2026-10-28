@@ -19,6 +19,7 @@ One page on what was actually built. Behaviour and copy live in `REQUIREMENTS.md
 | `src/render/scene3d.ts` | 3D layout: model cells → box matrices and colours, ground height, camera offsets. |
 | `src/render/presets.ts` | Angle presets and zoom limits (no three.js, so the main bundle stays small). |
 | `src/ui/` | React components and hooks (see "Interface" below). |
+| `src/content/about.ts` | All About text, in display order (the only place to edit it). |
 | `src/styles/` | `tokens.css` (light and dark CSS variables), `base.css`, `desktop.css`, `phone.css`. |
 | `tests/` | Vitest tests, including pixel parity with `reference/prototype.html` and UI token contrast. |
 | `scripts/verify-ui.mjs` | Playwright checks and screenshots (`npm run verify:ui`). |
@@ -122,6 +123,13 @@ Every renderer reads only the model.
   beside the 3D canvas, not inside it, so a press on a chip never starts a drag.
 - **Background** applies to the large preview, the size previews, the 3D scene and exports.
   `StyleGrid` and `Variations` always draw with the Light palette.
+- **About** (`About.tsx`, `MirrorDiagram.tsx`, `about.css`): App owns the open state and the "i"
+  button's ref and builds the `Header` once for both layouts. About renders through a portal on
+  `<body>`: a centred dialog, or a full-screen sheet when the phone layout is active. While it is
+  open the app root is `inert` and `<html>` has `.about-open` (no page scroll); Tab wraps inside,
+  Escape closes, and focus returns to the "i" button. Its text comes only from
+  `src/content/about.ts`; `tests/about.test.ts` checks the section order, the absence of privacy
+  claims and the 5×5 shape count against the engine.
 - State lives in hooks shared by both layouts: `useAvatarState` (name field, style, hue,
   background, view; derives the model and the variation names), `useExport` (Copy / Download,
   messages), `useView3d` (the single 3D scene and its controls), `useAppearance` (app light/dark).

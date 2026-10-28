@@ -106,7 +106,7 @@ The design adds an About feature. Refresh `reference/design/` first. All About t
 - [x] 4. Content in the design's order and wording, with thin dividers, numbered steps, the `hello-world:3` chip and the step 3 drawing as inline SVG; the "How unique is it?" number checked against the engine.
 - [x] 5. Theming: existing light and dark tokens and the brick red accent; follows the app appearance; reduced motion respected.
 - [x] 6. Keyboard: focus moves into the dialog, Tab and Shift+Tab stay inside, Escape closes, focus returns to the "i" button; page scroll locked behind it.
-- [ ] Verify: Playwright tests (open, Escape, backdrop, Tab trap, focus return) and light/dark screenshots at 1440×900, 1440×640, 768×1024, 390×650 and 360×600, scrolled to the top and the bottom; large text; no horizontal scroll. Report below.
+- [x] Verify: Playwright tests (open, Escape, backdrop, Tab trap, focus return) and light/dark screenshots at 1440×900, 1440×640, 768×1024, 390×650 and 360×600, scrolled to the top and the bottom; large text; no horizontal scroll. Report below.
 
 ---
 
@@ -207,6 +207,7 @@ The design adds an About feature. Refresh `reference/design/` first. All About t
 - Stage 8: layout revision from the updated design (fresh copies in `reference/design/project/`, incl. the new DesktopWide, DesktopCritter3D and dark frames). Single-screen desktop from 1000 px wide, overlays and 3D chips on the preview, top bar header, no tagline, new placeholder, tiles/variations always Light, large-screen caps, short-window spacing. New verify-ui `layout` section (114 checks: no page scroll at 1440×900, 1920×1080 and 1440×640 in light and dark; 1440×600 scrolls to a 640 px layout; nothing clipped; 5 × 2 tiles, one swatch row, one row of six variations; 12 px tile row gap; tiles not stretched; ≤ 1000 px high; 3D chips on one line; 800 px wide stays stacked) plus phone chip touch-drag and Light-tile checks. Final run: 59 unit tests, typecheck, build, `npm run verify:ui` 390 checks, 0 failed, 0 console errors. Screenshots: `docs/screenshots/desktop-{1440x900,1920x1080,1440x640,1440x600}-{light,dark}.png`, `desktop-*-critter-3d.png`, `desktop-800x900-light-stacked.png`, `phone-*`.
 - Stage 9: compact desktop revision (refreshed `reference/design/project/Brickyard.dc.html`; the phone design is unchanged). Copy PNG, Download and Background are icon-only buttons in the preview header; the Preview heading and the Colour label are visually hidden; compact tiles wrap; the Styles card keeps its natural height; desktop controls are 28–36 px. verify-ui `layout` section rewritten (214 checks at 1440×900, 1920×1080, 1280×720, 1440×640, 1024×768 and 1440×600 in light and dark: no page scroll from 640 px high, nothing clipped, the menu opens downward and stays on screen, tiles are 80–88 px and wrap, 7 per row at 1440×900, 8 px row gap, one row of swatches and thumbnails, natural-height Styles card, compact control sizes, 3D chips on one line; icon buttons named and titled; hidden headings exposed; the menu works by keyboard). Final run: 59 unit tests, typecheck, build, `npm run verify:ui` 490 checks, 0 failed, 0 console errors.
 - Stage 10: phone, tablet and palette revision (refreshed `reference/design/`, incl. the new tablet frames and `favicon.svg`). Icon-only Copy / Download on the phone; compact two-column tablet layout from 700 px; brick red accent, red logo and favicon; tab dot; placeholder-led name field with a hidden label; icon Background on the phone; warm surfaces and softer text; borderless theme switch; compact phone; Clipboard blocked as an alert. New verify-ui `tablet` section (768×1024 and 768×600, and 699, 700, 999 and 1000 px in light and dark) and new phone checks (placeholder, hidden label, icon buttons with tooltips, borderless switch, one tab dot and no top stroke, Background icons); desktop checks for the placeholder, its 14 px size and the alert. Final run: 59 unit tests (incl. contrast for every text colour in both appearances), typecheck, build, `npm run verify:ui` 566 checks, 0 failed, 0 console errors.
+- Stage 11: About dialog (refreshed `reference/design/`, incl. the new About frames). "i" button in the top bar, About as a centred dialog or a full-screen phone sheet, all text in `src/content/about.ts`, numbered steps, mono chip, SVG mirror drawing, focus trap with an inert page, scroll lock, focus return, reduced-motion-aware opening. `tests/about.test.ts` (3 tests: section order, no privacy claims, 30,537 shapes). New verify-ui `about` section (170 checks at 1440×900, 1440×640, 768×1024, 390×650 and 360×600 in light and dark: opens, modal, focus on close, sheet vs dialog geometry, no horizontal scroll, text scrolls under a fixed header, page does not scroll, last section reachable, Tab/Shift+Tab stay inside, page inert, Escape closes, focus returns, backdrop click closes on desktop, close button on phone; 200 % text at 1440×640 and 360×600; no animation with reduced motion). Final run: 62 unit tests, typecheck, build, `npm run verify:ui` 735 checks, 0 failed, 0 console errors.
 
 ## Final report
 (Fill in at the end: what works, what was skipped or blocked, what the user should look at first, known gaps.)
@@ -329,4 +330,50 @@ I looked at the screenshots against the design's markup and styles (its frames s
 - **Dark appearance:** Dark-background avatars are still about #0d1117 (cool near-black) inside a warm charcoal UI, so they look slightly blue next to the page (`docs/screenshots/desktop-1440x900-dark-bg-dark.png`).
 - **Focus vs selection:** the focus ring and the selected-tile ring are now the same red. Focus adds an outer outline, so it is still visible (`docs/screenshots/desktop-focus-visible.png`), but it is less distinct than before.
 - **Touch targets:** phone controls are now 32–38 px, below the old 40 px minimum, as the revision accepts.
+
+### Stage 11 report (About dialog)
+
+**What changed.**
+- **"i" button:** "About Brickyard" sits in the top bar left of the theme switch, on desktop and phone, with a tooltip and `aria-haspopup="dialog"`.
+- **One About component in two forms:**
+  - from 641 px wide, a centred dialog (up to 680 × 820 px) over a dimmed page;
+  - on phone widths, a full-screen sheet with a 40 px close button.
+
+  The text scrolls under a fixed header with the title "What is Brickyard?".
+- **Text:** all of it is in `src/content/about.ts`, in the design's order and wording. The one change is the shape count (below). There is no "Private by design" section and no privacy claim, and a unit test guards that.
+- **Steps:** numbered with a red numeral in a small circle and the lead word in bold. `hello-world:3` is a mono chip. Step 3 has an inline SVG drawing coloured by theme tokens.
+- **Behaviour:**
+  - `role="dialog"`, `aria-modal="true"`, `aria-labelledby` pointing at the title.
+  - Focus moves to the close button on open, and Tab and Shift+Tab stay inside.
+  - The page behind is `inert` and doesn't scroll.
+  - Escape closes it on both layouts; a click on the dimmed area closes it on desktop. Focus returns to the "i" button.
+  - It opens with a short fade only when reduced motion is not requested.
+- **Docs:** REQUIREMENTS has a new section 4.11 (About). ARCHITECTURE and the Decisions log are updated.
+
+**Pattern-count check.** The design said "about 32,000" (2^15). The engine makes **30,537** distinct 5×5 shapes. Any half-pattern with fewer than 7 filled cells gets its centre column filled by `ensure()`, so many sparse patterns collapse into the same few shapes. I confirmed this two ways:
+- exactly, by running all 2^15 left halves through the engine's own `ensure()`;
+- by experiment: 400,000 sample names through `generateAvatar` produced all 30,537 and no others.
+
+The text now says "about 30,500". `tests/about.test.ts` recomputes the count and checks the wording.
+
+**What was checked.**
+- 62 unit tests, the typecheck and the build.
+- `npm run verify:ui`: 735 checks with 0 console errors. The new About section has 170 of them:
+  - opening with the button, Escape, backdrop click, the close button on phone;
+  - Tab and Shift+Tab never leaving the dialog, focus returning to the "i" button, the inert page, and no page scroll behind;
+  - no horizontal scroll, and the last section reachable;
+  - 200% text at 1440×640 and 360×600;
+  - no animation with reduced motion.
+- Screenshots in light and dark, scrolled to the top and the bottom, at 1440×900, 1440×640, 768×1024, 390×650 and 360×600: `docs/screenshots/about-*.png`.
+
+**Where the app differs from the design** (each logged under Decisions):
+1. "About 30,500" instead of "about 32,000".
+2. The step numbers follow the design files (a sunken circle with a red numeral), not "red circles" as written in the brief.
+3. The dimmed backdrop is a plain layer that closes on click, not a focusable full-screen "Close about" button, so Tab only reaches the dialog's own controls.
+4. The scrolling text area is focusable so it can be scrolled with the keyboard. That makes it the second stop in the Tab loop.
+5. About text sizes are in rem, so they grow with the browser's text-size setting. The design used px.
+
+**Please look at.**
+- `docs/screenshots/about-360x600-large-text.png`: at 200% text the phone sheet still works, but only a few lines fit on screen. That's expected; check it reads as you'd like.
+- The dimmed backdrop is the same colour in light and dark (as designed); in dark mode the page behind is barely darker than the dialog's edge.
 

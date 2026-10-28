@@ -900,6 +900,116 @@ sections.tablet = async (browser) => {
   }
 };
 
+sections.about = async (browser) => {
+  console.log('About dialog');
+  const sizes = [
+    [1440, 900, false],
+    [1440, 640, false],
+    [768, 1024, false],
+    [390, 650, true],
+    [360, 600, true],
+  ];
+  const inDialog = (page) => page.evaluate(() => !!document.activeElement?.closest('[role="dialog"]'));
+  for (const [w, h, touch] of sizes) {
+    for (const scheme of ['light', 'dark']) {
+      const tag = `${w}x${h}-${scheme}`;
+      const { page, context } = await newPage(browser, { width: w, height: h, scheme, touch });
+      const btn = page.getByRole('button', { name: 'About Brickyard' });
+      check((await btn.getAttribute('aria-haspopup')) === 'dialog' && (await btn.getAttribute('title')) === 'About Brickyard', `${tag}: "i" button named, titled and marked as opening a dialog`);
+      await btn.click();
+      const dialog = page.getByRole('dialog', { name: 'What is Brickyard?' });
+      check(await dialog.isVisible(), `${tag}: the button opens the About dialog`);
+      check((await dialog.getAttribute('aria-modal')) === 'true', `${tag}: dialog is modal`);
+      check(await page.getByRole('button', { name: 'Close', exact: true }).evaluate((el) => el === document.activeElement), `${tag}: focus moves to the close button`);
+      check((await page.getByText('Private by design').count()) === 0, `${tag}: no "Private by design" section`);
+      const box = await dialog.boundingBox();
+      if (touch) check(box.x === 0 && box.y === 0 && box.width === w && box.height === h, `${tag}: full-screen sheet`);
+      else check(box.width <= 680 && box.x >= 0 && box.y >= 0 && box.x + box.width <= w && box.y + box.height <= h, `${tag}: centred dialog inside the window (${box.width}×${box.height})`);
+      const geo = await page.evaluate(() => {
+        const body = document.querySelector('.about-body');
+        window.scrollTo(0, 400);
+        return {
+          pageH: document.scrollingElement.scrollWidth <= innerWidth + 1,
+          bodyH: body.scrollWidth <= body.clientWidth + 1,
+          scrolls: body.scrollHeight > body.clientHeight,
+          pageScrollY: window.scrollY,
+          headInside: document.querySelector('.about-head').getBoundingClientRect().top >= 0,
+        };
+      });
+      check(geo.pageH && geo.bodyH, `${tag}: no horizontal scroll`);
+      check(geo.scrolls && geo.headInside, `${tag}: the text scrolls inside under a fixed header`);
+      check(geo.pageScrollY === 0, `${tag}: the page behind does not scroll`);
+      await shot(page, `about-${tag}-top`);
+      await page.locator('.about-body').evaluate((el) => (el.scrollTop = el.scrollHeight));
+      await page.waitForTimeout(100);
+      const lastVisible = await page.getByRole('heading', { name: 'Why blocks?' }).evaluate((el) => {
+        const r = el.getBoundingClientRect();
+        const b = document.querySelector('.about-body').getBoundingClientRect();
+        return r.top >= b.top && r.bottom <= b.bottom;
+      });
+      check(lastVisible, `${tag}: scrolls to the last section`);
+      await shot(page, `about-${tag}-bottom`);
+
+      // Tab and Shift+Tab never leave the dialog.
+      let stayed = true;
+      for (const key of ['Tab', 'Tab', 'Tab', 'Tab', 'Shift+Tab', 'Shift+Tab', 'Shift+Tab', 'Shift+Tab', 'Shift+Tab']) {
+        await page.keyboard.press(key);
+        stayed &&= await inDialog(page);
+      }
+      check(stayed, `${tag}: Tab and Shift+Tab stay inside the dialog`);
+      check(await page.locator('#root').evaluate((el) => el.hasAttribute('inert')), `${tag}: the page behind is inert`);
+
+      await page.keyboard.press('Escape');
+      check((await page.getByRole('dialog').count()) === 0, `${tag}: Escape closes it`);
+      check(await btn.evaluate((el) => el === document.activeElement), `${tag}: focus returns to the "i" button`);
+      check(!(await page.locator('#root').evaluate((el) => el.hasAttribute('inert'))), `${tag}: the page is usable again`);
+
+      if (!touch) {
+        await btn.click();
+        await page.mouse.click(8, h - 8);
+        check((await page.getByRole('dialog').count()) === 0, `${tag}: a click on the dimmed area closes it`);
+        check(await btn.evaluate((el) => el === document.activeElement), `${tag}: focus returns after a backdrop click`);
+      } else {
+        await btn.click();
+        await page.getByRole('button', { name: 'Close', exact: true }).tap();
+        check((await page.getByRole('dialog').count()) === 0, `${tag}: the close button closes the sheet`);
+      }
+      await context.close();
+    }
+  }
+
+  // Large text: twice the default size still fits, with no horizontal scroll.
+  for (const [w, h, touch] of [[1440, 640, false], [360, 600, true]]) {
+    const { page, context } = await newPage(browser, { width: w, height: h, touch });
+    await page.addStyleTag({ content: 'html { font-size: 200%; }' });
+    await page.getByRole('button', { name: 'About Brickyard' }).click();
+    const big = await page.evaluate(() => {
+      const body = document.querySelector('.about-body');
+      const d = document.querySelector('[role="dialog"]').getBoundingClientRect();
+      const close = document.querySelector('.about-close').getBoundingClientRect();
+      return {
+        noH: body.scrollWidth <= body.clientWidth + 1 && document.scrollingElement.scrollWidth <= innerWidth + 1,
+        closeInside: close.right <= d.right && close.top >= d.top,
+        textPx: parseFloat(getComputedStyle(body.querySelector('p')).fontSize),
+      };
+    });
+    check(big.noH && big.closeInside && big.textPx >= 26, `${w}x${h} large text: text grows (${big.textPx} px), no horizontal scroll, close button visible`);
+    await shot(page, `about-${w}x${h}-large-text`);
+    await context.close();
+  }
+
+  // Reduced motion: no opening animation.
+  {
+    const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
+    const page = await context.newPage();
+    await page.goto(URL);
+    await page.getByRole('button', { name: 'About Brickyard' }).click();
+    const anims = await page.evaluate(() => document.getAnimations().length);
+    check(anims === 0, `reduced motion: About opens without animation (${anims})`);
+    await context.close();
+  }
+};
+
 sections.keyboard = async (browser) => {
   console.log('Keyboard');
   const { page, context } = await newPage(browser, { width: 1440, height: 900 });
