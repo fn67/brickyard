@@ -1,6 +1,26 @@
+# Dependencies and build output
 node_modules/
 dist/
-.DS_Store
-*.log
-test-results/
 .vite/
+
+# Test output
+test-results/
+playwright-report/
+
+# Environment files (keep an example if one is added)
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS and editor junk
+.DS_Store
+._*
+Thumbs.db
+desktop.ini
+*.swp
+.idea/
+.vscode/

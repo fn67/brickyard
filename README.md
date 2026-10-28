@@ -1,14 +1,30 @@
 # Brickyard
 
-Pixel avatars for people who hate profile pictures.
+Pixel avatars from any name, in ten styles, with a 3D Critter view. Same name, same face.
 
-Brickyard turns any name into a pixel avatar in the style of GitHub's identicons. Type a name, pick
-one of ten styles, choose a colour and a background, and copy or download a PNG. The Critter style
-also has a 3D view built from blocks that you can rotate and zoom.
+![Brickyard on desktop: the hello-world avatar in the Classic style, with the ten style tiles and six variations](docs/readme-screenshot.png)
 
-- The same name always gives the same avatar, on every machine.
-- Everything runs in your browser. No accounts, no uploads, no backend.
-- Light and dark app appearance, with a toggle in the header.
+## Features
+
+- Ten styles: Classic, Duotone, Sticker, Invader, Critter, Quilt, Dither, Aurora, Kaleido and Frame.
+- Colour (Auto or one of ten hues) and Background (Light, Dark or Transparent).
+- Copy PNG to the clipboard, or download a PNG at 512, 1024 or 2048 px.
+- A 3D view for Critter, built from blocks: rotate, zoom, four angle presets and Reset view.
+- Light and dark app appearance, with a toggle in the top bar.
+- A single-screen phone layout with Style, Variations and Colour tabs.
+- An About dialog that explains how it works.
+
+## How it works
+
+The name is hashed into one 32-bit number, which seeds a random number generator. Because the generator is seeded, it gives the same sequence every time, so the same name always gives the same avatar. Each style adds its own salt, then uses the sequence to fill the left half of its grid; the right half mirrors it, which is what makes the blocks read as a face or a creature. The colour comes from the same numbers, within fixed brightness and saturation ranges, and a chosen colour overrides the hue only. Changing the colour, background or view never changes which cells are filled. The full picture is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## Tech stack
+
+- Vite, React and TypeScript (strict)
+- three.js through @react-three/fiber and @react-three/drei, for the 3D view only
+- Plain CSS with CSS variables for light and dark
+- Vitest for unit tests, Playwright for end-to-end checks and screenshots
+- No backend: it is a static site
 
 ## Run it
 
@@ -16,37 +32,23 @@ Needs Node 20 or newer.
 
 ```sh
 npm install
-npm run dev        # http://localhost:5173
-```
-
-## Build, test, check
-
-```sh
+npm run dev        # start the dev server
 npm run build      # production build into dist/
-npm test           # unit tests (Vitest)
-npm run typecheck  # TypeScript, strict
+npm test           # unit tests
 ```
 
-End-to-end checks and screenshots (Playwright, Chromium):
+`npm run typecheck` runs the TypeScript check. For the end-to-end checks, run `npx playwright install chromium` once, then `npm run build` and `npm run verify:ui`; it saves screenshots to `docs/screenshots/`.
 
-```sh
-npx playwright install chromium   # once
-npm run build
-npm run verify:ui                 # or: npm run verify:ui -- phone
-```
+## Docs
 
-This starts `vite preview`, clicks through the main flows on desktop and phone sizes, checks
-downloads and the clipboard, and saves screenshots to `docs/screenshots/`. Sections: `desktop`,
-`export`, `three`, `phone`, `keyboard`, `a11y`.
+- [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md): what the app does
+- [docs/TASKS.md](docs/TASKS.md): the build plan, decisions and stage reports
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): how it is built
 
-## How it is built
+## Later
 
-- `src/engine/`: the avatar engine, pure TypeScript.
-  `generateAvatar(name, { style, hue, background })` returns an `AvatarModel` (grid size,
-  background, cells). The hashing, random numbers and style rules are ported unchanged from
-  `reference/prototype.html`; a test compares both pixel by pixel.
-- `src/render/`: renderers that read only the model: a 2D canvas renderer and the 3D layout.
-- `src/ui/`, `src/styles/`: React interface, plain CSS with variables for light and dark.
+SVG and STL download, 3D for more styles, and animation.
 
-See `docs/ARCHITECTURE.md` for details, `docs/REQUIREMENTS.md` for the product spec, and
-`docs/TASKS.md` for the build log and decisions.
+## Licence
+
+MIT. See [LICENSE](LICENSE).
