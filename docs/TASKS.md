@@ -375,5 +375,4 @@ The text now says "about 30,500". `tests/about.test.ts` recomputes the count and
 
 **Please look at.**
 - `docs/screenshots/about-360x600-large-text.png`: at 200% text the phone sheet still works, but only a few lines fit on screen. That's expected; check it reads as you'd like.
-- The dimmed backdrop is the same colour in light and dark (as designed); in dark mode the page behind is barely darker than the dialog's edge.
 
