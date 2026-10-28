@@ -5,9 +5,10 @@
   --sunken: #f0eee6;
   --line: #e8e6dc;
   --line2: #d3d0c4;
-  --ink: #121214;
-  --ink2: #55534e;
-  --ink3: #6a6862;
+  --ink: #2b2a27;
+  --ink2: #57554f;
+  /* The design's #726F68 is 4.3:1 on --sunken; this is the nearest value that reaches 4.5:1. */
+  --ink3: #6f6c65;
   --accent: #be312d;
   --onaccent: #ffffff;
   --dot: #e3dfd2;
