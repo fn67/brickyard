@@ -97,6 +97,84 @@
   color: var(--ink);
 }
 
+/* Numbered steps: a red numeral in a small circle, the lead word in bold. */
+.about-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.about-step {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.about-num {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--sunken);
+  border: 1px solid var(--line2);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.about-code {
+  padding: 1px 6px;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+  background: var(--sunken);
+  color: var(--ink);
+  font: 500 0.78125rem var(--mono);
+}
+
+/* Step 3 drawing: theme colours only, so it follows light and dark. */
+.about-diagram {
+  display: block;
+  margin-top: 12px;
+}
+
+.md-on {
+  fill: var(--accent);
+}
+
+.md-mirror {
+  opacity: 0.55;
+}
+
+.md-off {
+  fill: var(--sunken);
+}
+
+.md-empty {
+  fill: none;
+  stroke: var(--line2);
+  stroke-dasharray: 2 2;
+}
+
+.md-arrow {
+  fill: none;
+  stroke: var(--ink3);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.md-cap {
+  fill: var(--ink3);
+  font-family: var(--sans);
+  font-size: 11px;
+}
+
 /* Phone: the sheet covers the screen; the header stays put while the text scrolls under it. */
 .about-sheet {
   padding: 0;

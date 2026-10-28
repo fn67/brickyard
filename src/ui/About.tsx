@@ -1,6 +1,7 @@
 import { useEffect, useRef, type KeyboardEvent } from 'react';
 import { ABOUT, type Inline } from '../content/about';
 import { CloseIcon } from './icons';
+import { MirrorDiagram } from './MirrorDiagram';
 
 interface Props {
   /** Full-screen sheet (phone widths) instead of the centred dialog. */
@@ -75,6 +76,7 @@ export function About({ sheet, onClose }: Props) {
                         <p>
                           <strong>{step.lead}</strong> {step.text}
                         </p>
+                        {step.diagram && <MirrorDiagram />}
                       </div>
                     </li>
                   ))}

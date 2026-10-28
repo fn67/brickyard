@@ -171,6 +171,17 @@ Notes:
 - Download opens as a bottom sheet. The layout also works with the keyboard open, and in light and dark app appearance.
 - The exact look is in the Claude Design file (see CLAUDE.md for the link).
 
+### 4.11 About
+
+- **What it is:** a short explanation of what Brickyard does and how a name becomes an avatar, opened from an icon-only "i" button in the top bar on desktop and phone (left of the light/dark switch, same borderless style; tooltip and accessible name "About Brickyard"; `aria-haspopup="dialog"`).
+- **Where the text lives:** all About text is in one file, `src/content/about.ts`, so it can be edited without touching components.
+- **Content, in this order** (title "What is Brickyard?"): an intro; "Same name, same face"; "What you can do"; "How it works" ("From text to face, in four steps": Hash, Seeded random numbers, Fill half the grid with a small left-half → mirrored drawing, Colour); "Why each style looks different"; "Variations" (with `hello-world:3` as a mono chip); "How unique is it?"; "Why blocks?". Sections are separated by thin dividers; step numbers sit in small circles with a red numeral and the lead word in bold.
+- **No privacy section.** There is deliberately no "Private by design" section, and the About text makes no claim that data is private, never uploaded or not stored.
+- **"How unique is it?"** states the real count for a 5×5 mirrored style: 30,537 distinct shapes (2^15 left halves, minus the sparse ones the engine fills in), written as "about 30,500". `tests/about.test.ts` recomputes it from the engine.
+- **Desktop and tablet (641 px and wider):** a centred dialog about 680 px wide over a dimmed page, with a header (title and close button); the text scrolls inside it. Escape, the close button or a click on the dimmed area closes it.
+- **Phone (640 px and narrower):** a full-screen sheet with a header (title and a 40 px close button); the text scrolls under the header. Escape or the close button closes it.
+- **Behaviour on both:** `role="dialog"`, `aria-modal="true"`, `aria-labelledby` the title. Focus moves to the close button on open, Tab and Shift+Tab stay inside, and focus returns to the "i" button on close. The page behind does not scroll while it is open. It uses the app's light/dark colours and accent, follows the app appearance, and has no animation when reduced motion is requested. It works down to 640 px high on desktop, on 390 × 650 and 360 × 600 phones, and with large text.
+
 ## 5. Non-functional requirements
 
 - **Runs locally** as a normal web app in the browser. No backend.
