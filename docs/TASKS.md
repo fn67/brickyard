@@ -87,6 +87,17 @@ The desktop design was revised again (phone unchanged). Refresh `reference/desig
 - [x] 6. Everything more compact on desktop (top bar, title, input, Shuffle, switch, icons, chips, swatches, menu rows, card padding, heading and facts type). Desktop controls may go below 40 px; the phone keeps 40 px.
 - [x] Verify: screenshots in light and dark at 1440×900, 1920×1080, 1280×720, 1440×640 and 1024×768, plus Critter 3D, the Download menu open, Background Dark and Transparent, and a variation selected; compare with the design and fix; no page scroll from 900 px high; nothing cut off at 640 px; the menu stays on screen; tiles wrap; phone at 390×650 and 360×600 unchanged. Report below.
 
+## Stage 10: Phone, tablet, palette revision
+The design was revised again (phone, tablet, palette). Refresh `reference/design/` first. Where this stage disagrees with REQUIREMENTS, CLAUDE.md or earlier stages, the new design wins: update the docs and log it. Every colour stays behind CSS variables for both appearances.
+- [x] 1. Phone: Copy PNG and Download become icon-only buttons with tooltips and accessible names; Download still opens the bottom sheet.
+- [ ] 2. Tablet (700–999 px): the compact two-column layout, page scrolls; 1000 px and up unchanged; below 700 px stacked with the preview centred.
+- [ ] 3. Phone tab indicator is a dot under the label (no top stroke); brick red accent (#BE312D light, #F2705F dark); red logo mark; new favicon.svg.
+- [ ] 4. Name field: label visually hidden, placeholder carries the instruction (desktop "Enter anything to see your avatar: a username, name or any string", phone "Username, name or any string"), lighter 14 px placeholder; desktop preview gains the height.
+- [ ] 5. Phone Background as three icon buttons; selected tab keeps its raised background and dot; warm palette surfaces in both themes, and the backdrops behind avatars match.
+- [ ] 6. Borderless icon-only theme switch on both layouts; compact phone (field, switches, icon buttons, swatches, tab bar, tiles, 150 px options panel).
+- [ ] 7. Softer text colours (#2B2A27, #57554F, #726F68 light; #ECEAE2 dark).
+- [ ] Verify: light and dark screenshots for phone 390×650 and 360×600 (each tab, Download sheet, keyboard open), tablet 768×1024, 699 / 700 / 999 / 1000 px, desktop 1440×900 and 1920×1080; compare with the design; no horizontal scroll; tablet scrolls; 1000 px and up unchanged; contrast ≥ 4.5:1 for body text; the error message distinguishable without colour. Report below.
+
 ---
 
 ## Decisions and open questions
@@ -134,6 +145,7 @@ The desktop design was revised again (phone unchanged). Refresh `reference/desig
 - 2026-10-27 Stage 9: with the compact sizes the Stage 8 short-window mode is no longer needed and was removed (at 1440 × 640 the preview is now about 323 px). One part stays, for windows under 700 px high: the preview fills the card's width, because the square (323 px) is too narrow for the seven 3D chips on one line.
 - 2026-10-27 Stage 9: in the design the variation note keeps a 40 px minimum height, so picking a variation would make the Variations heading line 8 px taller and shift the layout. On compact desktop the note is 28 px high (the height of its link), so the line stays 32 px.
 - 2026-10-27 Stage 9: phone screenshots were compared pixel by pixel with Stage 8. All are identical except a few pixels under the last tap in one shot, which change from run to run (a hover or border transition caught mid-way). The Stage 8 phone screenshots are kept.
+- 2026-10-28 Stage 10: on the phone, Copy PNG and Download are icon-only 36 px buttons on the right of the action row, named and titled "Copy PNG" and "Download"; Download still opens the bottom sheet (`aria-haspopup="dialog"`).
 
 ## Log
 (One short line per stage when finished: what was built, checks run, anything skipped or `[!]`.)

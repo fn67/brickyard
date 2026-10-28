@@ -5,7 +5,7 @@ import { BackgroundControl } from './BackgroundControl';
 import { ColourControl } from './ColourControl';
 import { DownloadSheet } from './DownloadSheet';
 import { Header } from './Header';
-import { DownloadIcon } from './icons';
+import { CopyIcon, DownloadIcon } from './icons';
 import { ModeSwitch } from './ModeSwitch';
 import { NameField } from './NameField';
 import { PhoneTabs, type PhoneTab } from './PhoneTabs';
@@ -74,19 +74,26 @@ export function PhoneEditor({ state, exporter, view3d, appearance, onToggleAppea
         {!typing && (
           <div className="phone-actions">
             <ModeSwitch compact view={state.view} can3d={can3d} onChange={state.setView} noteId="note3d" />
-            <button type="button" className="btn phone-btn" onClick={exporter.copy}>
-              Copy PNG
+            <button
+              type="button"
+              className="btn icon-btn phone-icon-btn phone-copy"
+              aria-label="Copy PNG"
+              title="Copy PNG"
+              onClick={exporter.copy}
+            >
+              <CopyIcon />
             </button>
             <button
               ref={downloadBtn}
               type="button"
-              className="btn phone-btn phone-download"
+              className="btn icon-btn phone-icon-btn"
+              aria-label="Download"
+              title="Download"
               aria-haspopup="dialog"
               aria-expanded={sheetOpen}
               onClick={() => setSheetOpen(true)}
             >
-              <DownloadIcon size={16} />
-              Download
+              <DownloadIcon />
             </button>
           </div>
         )}

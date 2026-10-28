@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <title>Brickyard</title>
 <script src="./support.js"></script>
 </head>
@@ -12,10 +13,11 @@
 <style>
 body{margin:0}
 .by{font-family:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
-.by.light,.by.auto{--bg:#F6F5F3;--surface:#FFFFFF;--sunken:#EFEEEB;--line:#E3E1DC;--line2:#CFCCC5;--ink:#121214;--ink2:#55534E;--ink3:#6A6862;--accent:#2F3BD0;--onaccent:#FFFFFF;--dot:#D9D6CF;--chk1:#E2E0DB;--chk2:#FFFFFF;--danger:#B42318;--pop:0 12px 32px -12px rgba(0,0,0,.28)}
-.by.dark{--bg:#0E0E10;--surface:#17171A;--sunken:#0B0B0D;--line:#2A2A2F;--line2:#3B3B42;--ink:#F2F1EE;--ink2:#B6B4AE;--ink3:#8E8C86;--accent:#98A0FF;--onaccent:#0B0B1A;--dot:#26262B;--chk1:#2A2A2F;--chk2:#1B1B1F;--danger:#FF9C93;--pop:0 12px 32px -12px rgba(0,0,0,.8)}
-@media (prefers-color-scheme: dark){.by.auto{--bg:#0E0E10;--surface:#17171A;--sunken:#0B0B0D;--line:#2A2A2F;--line2:#3B3B42;--ink:#F2F1EE;--ink2:#B6B4AE;--ink3:#8E8C86;--accent:#98A0FF;--onaccent:#0B0B1A;--dot:#26262B;--chk1:#2A2A2F;--chk2:#1B1B1F;--danger:#FF9C93;--pop:0 12px 32px -12px rgba(0,0,0,.8)}}
+.by.light,.by.auto{--bg:#FAF9F5;--surface:#FFFFFF;--sunken:#F0EEE6;--line:#E8E6DC;--line2:#D3D0C4;--ink:#2B2A27;--ink2:#57554F;--ink3:#726F68;--accent:#BE312D;--onaccent:#FFFFFF;--dot:#E3DFD2;--chk1:#E8E6DC;--chk2:#FFFFFF;--danger:#B42318;--pop:0 12px 32px -12px rgba(0,0,0,.28)}
+.by.dark{--bg:#262624;--surface:#30302E;--sunken:#1C1B1A;--line:#3D3D3A;--line2:#4D4C48;--ink:#ECEAE2;--ink2:#BDBAB0;--ink3:#9A978E;--accent:#F2705F;--onaccent:#1A0B09;--dot:#383734;--chk1:#3D3D3A;--chk2:#2B2B29;--danger:#FF9C93;--pop:0 12px 32px -12px rgba(0,0,0,.8)}
+@media (prefers-color-scheme: dark){.by.auto{--bg:#262624;--surface:#30302E;--sunken:#1C1B1A;--line:#3D3D3A;--line2:#4D4C48;--ink:#ECEAE2;--ink2:#BDBAB0;--ink3:#9A978E;--accent:#F2705F;--onaccent:#1A0B09;--dot:#383734;--chk1:#3D3D3A;--chk2:#2B2B29;--danger:#FF9C93;--pop:0 12px 32px -12px rgba(0,0,0,.8)}}
 .by button,.by input{font-family:inherit}
+.by input::placeholder{font-family:inherit;font-size:14px;color:var(--ink3);opacity:1}
 .by button{cursor:pointer}
 .by button:disabled{cursor:not-allowed}
 .by .btn:hover,.by .tile:hover{border-color:var(--ink3)}
@@ -30,11 +32,12 @@ body{margin:0}
 .by .wrap{width:100%;max-width:1360px;margin:0 auto;box-sizing:border-box;padding:24px clamp(16px,4vw,40px) 64px;display:flex;flex-direction:column;gap:24px}
 .by .bar{flex:none;background:color-mix(in srgb,var(--bg) 97%,var(--ink) 3%);border-bottom:1px solid var(--line)}
 .by .barIn{max-width:1600px;margin:0 auto;box-sizing:border-box;padding:12px clamp(16px,4vw,40px);display:flex;align-items:center;gap:16px}
-.by .themeBtn{flex:none;width:40px;height:40px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid var(--line2);background:var(--surface);color:var(--ink)}
+.by .themeBtn{flex:none;width:40px;height:40px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:8px;border:0;background:transparent;color:var(--ink2)}
+.by .themeBtn:hover{color:var(--ink);background:var(--sunken)}
 .by .nameIn{flex:1;min-width:0;height:56px;box-sizing:border-box;padding:0 18px;border-radius:8px;border:1px solid var(--line2);background:var(--surface);color:var(--ink);font:500 18px 'JetBrains Mono',ui-monospace,monospace}
 .by .nameBtn{flex:none;height:56px;padding:0 22px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:8px;border:1px solid var(--line2);background:var(--surface);color:var(--ink);font-size:15px;font-weight:600}
 .by .main{display:flex;flex-wrap:wrap;align-items:flex-start;gap:24px}
-.by .prev{flex:1 1 440px;max-width:440px;min-width:0;box-sizing:border-box;padding:20px;border-radius:12px;border:1px solid var(--line);background:var(--surface)}
+.by .prev{flex:1 1 440px;max-width:440px;margin:0 auto;min-width:0;box-sizing:border-box;padding:20px;border-radius:12px;border:1px solid var(--line);background:var(--surface)}
 .by .styles{flex:999 1 560px;min-width:0;box-sizing:border-box;padding:24px;border-radius:12px;border:1px solid var(--line);background:var(--surface)}
 .by .vp{position:relative;margin-top:12px;aspect-ratio:1;box-sizing:border-box;overflow:hidden;container-type:inline-size;border-radius:8px;border:1px solid var(--line)}
 .by .m16{margin-top:16px}.by .m20{margin-top:20px}
@@ -45,21 +48,15 @@ body{margin:0}
 .by .varBox{margin-top:24px;padding-top:24px;border-top:1px solid var(--line)}
 .by .vthumbs{margin-top:8px;display:grid;grid-template-columns:repeat(6,minmax(0,88px));gap:12px}
 .by .chip{height:34px;padding:0 10px;border-radius:8px;background:var(--surface);color:var(--ink);font-size:12.5px;font-weight:600}
-@media (min-width: 1000px){
-.by.shell{height:max(100vh,640px);min-height:0 !important;overflow:hidden}
+@media (min-width: 700px){
 .by .barIn{padding:8px 32px}
-.by .wrap{flex:1 1 0;min-height:0;max-height:1000px;max-width:1600px;padding:12px 32px 20px;gap:12px}
 .by .nameIn,.by .nameBtn{height:36px}
 .by .nameIn{font-size:15px;padding:0 12px}
 .by .nameBtn{font-size:13px;padding:0 14px;gap:6px}
 .by .themeBtn{width:32px;height:32px}
 .by header svg{width:22px;height:22px}
 .by .brand{font-size:20px !important}
-.by .main{flex:1;min-height:0;flex-wrap:nowrap;align-items:stretch;gap:20px}
-.by .prev{flex:none;max-width:none;width:clamp(380px,min(calc(100vh - 281px),46vw),640px);padding:12px;display:flex;flex-direction:column;gap:10px}
 .by .m16,.by .m20{margin-top:0}
-.by .vpWrap{flex:1 1 0;min-height:0;container-type:size;display:grid;place-items:center}
-.by .vp{margin-top:0;width:min(100cqw,100cqh)}
 .by .styles{flex:1 1 0;align-self:flex-start;padding:16px;display:flex;flex-direction:column}
 .by .colourBox{margin-top:12px;padding-bottom:16px}
 .by .tiles{flex:none;margin-top:12px;container-type:normal;grid-template-columns:repeat(auto-fill,minmax(80px,88px));grid-auto-rows:auto;gap:8px}
@@ -89,7 +86,18 @@ body{margin:0}
 .by .colourBox{margin-top:10px;padding-bottom:12px}
 .by .varBox{margin-top:12px;padding-top:10px}
 .by .varBox > div:first-child{min-height:32px !important}
-
+.by .wrap{max-width:1600px;padding:12px clamp(16px,3vw,32px) 24px;gap:12px}
+.by .main{flex-wrap:nowrap;align-items:flex-start;gap:20px}
+.by .prev{flex:none;max-width:none;width:clamp(340px,44vw,640px);margin:0;padding:12px;display:flex;flex-direction:column;gap:10px}
+.by .vp{margin-top:0}
+}
+@media (min-width: 1000px){
+.by.shell{height:max(100vh,640px);min-height:0 !important;overflow:hidden}
+.by .wrap{flex:1 1 0;min-height:0;max-height:1000px;padding:12px 32px 20px}
+.by .main{flex:1;min-height:0;align-items:stretch}
+.by .prev{width:clamp(380px,min(calc(100vh - 259px),46vw),640px)}
+.by .vpWrap{flex:1 1 0;min-height:0;container-type:size;display:grid;place-items:center}
+.by .vp{width:min(100cqw,100cqh)}
 }
 </style>
 </helmet>
@@ -98,7 +106,7 @@ body{margin:0}
 <div class="barIn">
 <header style="flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 16px">
 <div style="display: flex; align-items: center; gap: 12px">
-<svg width="30" height="30" viewBox="0 0 5 5" shape-rendering="crispEdges" aria-hidden="true" style="flex: none; color: var(--ink)"><g fill="currentColor"><rect x="0" y="0" width="1" height="2"></rect><rect x="4" y="0" width="1" height="2"></rect><rect x="1" y="1" width="3" height="1"></rect><rect x="1" y="2" width="1" height="2"></rect><rect x="3" y="2" width="1" height="2"></rect><rect x="2" y="3" width="1" height="1"></rect><rect x="0" y="4" width="1" height="1"></rect><rect x="4" y="4" width="1" height="1"></rect></g></svg>
+<svg width="30" height="30" viewBox="0 0 5 5" shape-rendering="crispEdges" aria-hidden="true" style="flex: none; color: var(--accent)"><g fill="currentColor"><rect x="0" y="0" width="1" height="2"></rect><rect x="4" y="0" width="1" height="2"></rect><rect x="1" y="1" width="3" height="1"></rect><rect x="1" y="2" width="1" height="2"></rect><rect x="3" y="2" width="1" height="2"></rect><rect x="2" y="3" width="1" height="1"></rect><rect x="0" y="4" width="1" height="1"></rect><rect x="4" y="4" width="1" height="1"></rect></g></svg>
 <h1 class="brand" style="margin: 0; font-size: 28px; line-height: 1.1; font-weight: 700; letter-spacing: -0.02em">Brickyard</h1>
 </div>
 </header>
@@ -112,9 +120,9 @@ body{margin:0}
 <div class="wrap">
 
 <section aria-label="Name" style="flex: none; display: flex; flex-direction: column; gap: 6px">
-<label for="name" style="font-size: 13px; font-weight: 600; color: var(--ink2)">Enter anything to see your avatar</label>
+<label for="name" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Enter anything to see your avatar</label>
 <div style="display: flex; gap: 12px">
-<input id="name" class="nameIn" type="text" value="{{person}}" onChange="{{onName}}" placeholder="Username, name or any string" spellcheck="false" autocomplete="off">
+<input id="name" class="nameIn" type="text" value="{{person}}" onChange="{{onName}}" placeholder="Enter anything to see your avatar: a username, name or any string" spellcheck="false" autocomplete="off">
 <button type="button" class="btn nameBtn" onClick="{{shuffle}}">
 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"></path></svg>
 Shuffle
@@ -399,7 +407,7 @@ class Component extends DCLogic {
     const L = h > 35 && h < 125 ? 42 : 50;
     const fg = 'hsl(' + h + ' 62% ' + L + '%)';
     const dark = bgMode === 'dark';
-    const bg = dark ? '#14151A' : bgMode === 'transparent' ? 'transparent' : '#EFEEEA';
+    const bg = dark ? '#1F1E1D' : bgMode === 'transparent' ? 'transparent' : '#F0EEE6';
     const n = this.defs().find((s) => s.id === id).n;
     let pad = '14%', cr = '0', tf = '', cells = [];
     const flat = (g, f) => g.flatMap((row, y) => row.map((v, x) => f(v, x, y)));
@@ -523,7 +531,7 @@ class Component extends DCLogic {
     const checker = 'background-color: var(--chk2); background-image: conic-gradient(var(--chk1) 25%, transparent 0 50%, var(--chk1) 0 75%, transparent 0); background-size: 20px 20px;';
     const dots = 'background-color: var(--sunken); background-image: radial-gradient(var(--dot) 1px, transparent 1.5px); background-size: 20px 20px;';
     let vpCss;
-    if (threeD) vpCss = bgMode === 'transparent' ? checker : 'background: ' + (bgMode === 'dark' ? '#14151A' : '#EFEEEA') + ';';
+    if (threeD) vpCss = bgMode === 'transparent' ? checker : 'background: ' + (bgMode === 'dark' ? '#1F1E1D' : '#F0EEE6') + ';';
     else vpCss = bgMode === 'transparent' ? checker : dots;
     if (threeD) vpCss += ' touch-action: none; cursor: grab;';
 
@@ -610,7 +618,7 @@ class Component extends DCLogic {
         const on = x.id === colourId;
         return { name: x.name, on, bg: 'hsl(' + x.h + ' 62% 46%)', ink: x.h > 35 && x.h < 125 ? '#141414' : '#FFFFFF', ring: on ? 'border: 2px solid var(--accent);' : 'border: 2px solid transparent;', pick: () => this.setState({ colour: x.id }) };
       }),
-      bgs: [['light', 'Light'], ['dark', 'Dark'], ['transparent', 'Transparent']].map((b) => ({ label: b[1], sw: b[0] === 'light' ? 'background: #F6F5F3;' : b[0] === 'dark' ? 'background: #14151A;' : 'background-color: #fff; background-image: conic-gradient(#CFCCC5 25%, transparent 0 50%, #CFCCC5 0 75%, transparent 0); background-size: 8px 8px;', on: bgMode === b[0], css: bgMode === b[0] ? segOn : segOff, pick: () => this.setState({ bg: b[0] }) })),
+      bgs: [['light', 'Light'], ['dark', 'Dark'], ['transparent', 'Transparent']].map((b) => ({ label: b[1], sw: b[0] === 'light' ? 'background: #F0EEE6;' : b[0] === 'dark' ? 'background: #1F1E1D;' : 'background-color: #fff; background-image: conic-gradient(#CFCCC5 25%, transparent 0 50%, #CFCCC5 0 75%, transparent 0); background-size: 8px 8px;', on: bgMode === b[0], css: bgMode === b[0] ? segOn : segOff, pick: () => this.setState({ bg: b[0] }) })),
       styles: defs.map((s) => ({
         name: s.name,
         meta: s.n + '×' + s.n,

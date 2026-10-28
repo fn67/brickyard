@@ -138,6 +138,20 @@
       "w": 1920,
       "x": 5700,
       "y": 4600
+    },
+    "DesktopTablet.dc.html": {
+      "h": 1024,
+      "title": "Tablet, 768 x 1024 (two columns, page scrolls)",
+      "w": 768,
+      "x": 2100,
+      "y": 5900
+    },
+    "DesktopTabletDark.dc.html": {
+      "h": 1024,
+      "title": "Tablet, dark appearance, 768 x 1024",
+      "w": 768,
+      "x": 3000,
+      "y": 5900
     }
   },
   "createdOnFiles": {
@@ -216,7 +230,9 @@
     "DesktopCritter3D.dc.html",
     "DesktopCritter3DDark.dc.html",
     "DesktopWide.dc.html",
-    "DesktopWideDark.dc.html"
+    "DesktopWideDark.dc.html",
+    "DesktopTablet.dc.html",
+    "DesktopTabletDark.dc.html"
   ],
   "pages": [],
   "title": "Identicon Lab"
