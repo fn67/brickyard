@@ -284,14 +284,23 @@
   width: 76px;
 }
 
-.colour-tab .background-control .segmented {
-  flex: 1;
+.colour-tab .bg-icons {
+  flex: 0 1 200px;
   min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 2px;
 }
 
-.colour-tab .background-control .seg {
-  padding: 0 2px;
-  font-size: 12.5px;
+.colour-tab .bg-icons .seg {
+  width: auto;
+  height: 32px;
+}
+
+.colour-tab .bg-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
 }
 
 .tabs {

@@ -119,7 +119,7 @@ export function PhoneEditor({ state, exporter, view3d, appearance, onToggleAppea
               {tab === 'colour' && (
                 <div className="colour-tab">
                   <ColourControl hue={state.hue} onChange={state.setHue} />
-                  <BackgroundControl value={state.background} onChange={state.setBackground} />
+                  <BackgroundControl showLabel value={state.background} onChange={state.setBackground} />
                 </div>
               )}
             </div>

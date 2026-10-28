@@ -4,9 +4,8 @@ import { Segmented } from './Segmented';
 interface Props {
   value: BackgroundMode;
   onChange: (bg: BackgroundMode) => void;
-  /** Icon-only swatch buttons with tooltips (desktop preview header) instead of the labelled control. */
-  icons?: boolean;
-  className?: string;
+  /** Show the "Background" label beside the icons (phone Colour tab); otherwise the group is named by aria-label. */
+  showLabel?: boolean;
 }
 
 const MODES: { value: BackgroundMode; label: string }[] = [
@@ -15,29 +14,30 @@ const MODES: { value: BackgroundMode; label: string }[] = [
   { value: 'transparent', label: 'Transparent' },
 ];
 
-export function BackgroundControl({ value, onChange, icons, className }: Props) {
-  if (icons) {
-    return (
-      <Segmented
-        label="Background"
-        className={'bg-icons ' + (className ?? '')}
-        value={value}
-        onChange={onChange}
-        options={MODES.map((m) => ({
-          value: m.value,
-          label: <span className={'bg-swatch bg-swatch-' + m.value} aria-hidden="true" />,
-          ariaLabel: m.label + ' background',
-          title: m.label + ' background',
-        }))}
-      />
-    );
-  }
+/** Light, Dark and Transparent as icon-only swatch buttons, each with a tooltip and an accessible name. */
+export function BackgroundControl({ value, onChange, showLabel }: Props) {
+  const icons = (
+    <Segmented
+      label={showLabel ? undefined : 'Background'}
+      labelledBy={showLabel ? 'lbl-bg' : undefined}
+      className="bg-icons"
+      value={value}
+      onChange={onChange}
+      options={MODES.map((m) => ({
+        value: m.value,
+        label: <span className={'bg-swatch bg-swatch-' + m.value} aria-hidden="true" />,
+        ariaLabel: m.label + ' background',
+        title: m.label + ' background',
+      }))}
+    />
+  );
+  if (!showLabel) return icons;
   return (
-    <div className={'background-control ' + (className ?? '')}>
+    <div className="background-control">
       <span id="lbl-bg" className="field-label">
         Background
       </span>
-      <Segmented labelledBy="lbl-bg" className="segmented-fill" value={value} onChange={onChange} options={MODES} />
+      {icons}
     </div>
   );
 }

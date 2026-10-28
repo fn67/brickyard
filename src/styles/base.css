@@ -111,12 +111,6 @@ button:disabled {
   border: 1px solid var(--line);
 }
 
-.segmented-fill {
-  display: grid;
-  grid-auto-columns: minmax(0, 1fr);
-  grid-auto-flow: column;
-}
-
 .seg {
   height: 40px;
   min-width: 56px;
@@ -133,11 +127,6 @@ button:disabled {
   font-weight: 600;
 }
 
-.segmented-fill .seg {
-  min-width: 0;
-  padding: 0 8px;
-}
-
 .seg:hover:not(:disabled) {
   color: var(--ink);
 }
@@ -150,6 +139,37 @@ button:disabled {
 
 .seg:disabled {
   color: var(--ink3);
+}
+
+/* Background: icon-only swatches picturing the avatar backgrounds */
+.bg-icons .seg {
+  width: 40px;
+  min-width: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bg-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1.5px solid var(--ink2);
+}
+
+.bg-swatch-light {
+  background: var(--bgicon-light);
+}
+
+.bg-swatch-dark {
+  background: var(--bgicon-dark);
+}
+
+.bg-swatch-transparent {
+  background-color: var(--bgicon-chk2);
+  background-image: conic-gradient(var(--bgicon-chk1) 25%, transparent 0 50%, var(--bgicon-chk1) 0 75%, transparent 0);
+  background-size: 8px 8px;
 }
 
 /* Tiles: style cards and variations */
