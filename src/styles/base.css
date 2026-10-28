@@ -75,6 +75,18 @@ button:disabled {
   flex: none;
 }
 
+/* Top bar icons (About, theme switch): a plain icon, no border or background until hovered. */
+.plain-icon-btn {
+  border: 0;
+  background: transparent;
+  color: var(--ink2);
+}
+
+.plain-icon-btn:hover {
+  color: var(--ink);
+  background: var(--sunken);
+}
+
 .link {
   min-height: 40px;
   padding: 0 4px;

@@ -1,10 +1,9 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { styleInfo } from '../engine';
 import { avatarAlt } from './avatarText';
 import { BackgroundControl } from './BackgroundControl';
 import { ColourControl } from './ColourControl';
 import { DownloadSheet } from './DownloadSheet';
-import { Header } from './Header';
 import { CopyIcon, DownloadIcon } from './icons';
 import { ModeSwitch } from './ModeSwitch';
 import { NameField } from './NameField';
@@ -12,7 +11,6 @@ import { PhoneTabs, type PhoneTab } from './PhoneTabs';
 import { PreviewOverlays } from './PreviewOverlays';
 import { Stage } from './Stage';
 import { StyleGrid } from './StyleGrid';
-import type { Appearance } from './useAppearance';
 import type { AvatarState } from './useAvatarState';
 import type { ExportControls } from './useExport';
 import type { View3d } from './useView3d';
@@ -23,12 +21,12 @@ interface Props {
   state: AvatarState;
   exporter: ExportControls;
   view3d: View3d;
-  appearance: Appearance;
-  onToggleAppearance: () => void;
+  /** The top bar, built by App so About and the theme switch work the same on both layouts. */
+  header: ReactNode;
 }
 
 /** The single-screen phone editor: preview on top, tabs for Style, Variations and Colour below. */
-export function PhoneEditor({ state, exporter, view3d, appearance, onToggleAppearance }: Props) {
+export function PhoneEditor({ state, exporter, view3d, header }: Props) {
   const [tab, setTab] = useState<PhoneTab>('style');
   const [typing, setTyping] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -46,7 +44,7 @@ export function PhoneEditor({ state, exporter, view3d, appearance, onToggleAppea
 
   return (
     <div className="app phone" style={height ? { height } : undefined}>
-      <Header compact appearance={appearance} onToggleAppearance={onToggleAppearance} />
+      {header}
       <NameField placeholder="Username, name or any string" value={state.field} onChange={state.setField} onShuffle={state.shuffle} onFocusChange={setTyping} />
 
       <main className="phone-main">

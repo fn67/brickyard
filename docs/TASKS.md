@@ -98,6 +98,16 @@ The design was revised again (phone, tablet, palette). Refresh `reference/design
 - [x] 7. Softer text colours (#2B2A27, #57554F, #726F68 light; #ECEAE2 dark).
 - [x] Verify: light and dark screenshots for phone 390×650 and 360×600 (each tab, Download sheet, keyboard open), tablet 768×1024, 699 / 700 / 999 / 1000 px, desktop 1440×900 and 1920×1080; compare with the design; no horizontal scroll; tablet scrolls; 1000 px and up unchanged; contrast ≥ 4.5:1 for body text; the error message distinguishable without colour. Report below.
 
+## Stage 11: About dialog
+The design adds an About feature. Refresh `reference/design/` first. All About text lives in one content file (`src/content/about.ts`). There is deliberately no "Private by design" section and no claim that data is private, never uploaded or not stored.
+- [x] 1. An icon-only "i" button in the top bar on desktop and phone, left of the light/dark switch, same borderless style; tooltip and accessible name "About Brickyard"; `aria-haspopup="dialog"`.
+- [ ] 2. Desktop About dialog: centred, about 680 px wide, over a dimmed background; header with "What is Brickyard?" and a close button; content scrolls inside; Escape or a click on the dimmed area closes it.
+- [ ] 3. Phone About sheet: full screen, header with the title and a 40 px close button, content scrolls under the header; Escape closes it.
+- [ ] 4. Content in the design's order and wording, with thin dividers, numbered steps, the `hello-world:3` chip and the step 3 drawing as inline SVG; the "How unique is it?" number checked against the engine.
+- [ ] 5. Theming: existing light and dark tokens and the brick red accent; follows the app appearance; reduced motion respected.
+- [ ] 6. Keyboard: focus moves into the dialog, Tab and Shift+Tab stay inside, Escape closes, focus returns to the "i" button; page scroll locked behind it.
+- [ ] Verify: Playwright tests (open, Escape, backdrop, Tab trap, focus return) and light/dark screenshots at 1440×900, 1440×640, 768×1024, 390×650 and 360×600, scrolled to the top and the bottom; large text; no horizontal scroll. Report below.
+
 ---
 
 ## Decisions and open questions
@@ -156,6 +166,7 @@ The design was revised again (phone, tablet, palette). Refresh `reference/design
 - 2026-10-28 Stage 10: the theme switch has no border or background on both layouts (`--ink2` icon; `--sunken` background and `--ink` icon on hover; the focus ring is unchanged). Compact phone from the design: 8 px header padding, 22 px logo, 18 px title, 18 px theme icon; 38 px name field and Shuffle (15 px / 13 px text); 6 px gaps around the preview; 32 px 2D | 3D switch; 36 px Copy and Download; 150 px options panel (was 172); 40 px tile art; 34 px swatches; 32 px Background icons; 44 px tabs with 18 px icons. The preview at 390 × 650 grows from about 291 to 319 px (+28 px). The written note said about 45 px, but the design's own heights add up to 320 px, so the app matches the design files. These phone controls are below the 40 px touch minimum, which the revision accepts; REQUIREMENTS 4.9 and 5 updated.
 - 2026-10-28 Stage 10: light text levels are `--ink` #2B2A27 and `--ink2` #57554F (design). The design's `--ink3` #726F68 fails body-text contrast on the warm `--sunken` (#F0EEE6): 4.32:1. The app uses #6F6C65, the nearest passing value (same hue, about 2% darker), which gives 4.51:1 on sunken, 4.97:1 on bg and 5.24:1 on surface. Every other design text colour passes in both appearances; the closest are dark `--ink3` on surface (4.53:1) and dark accent on surface (4.57:1). `tests/ui-contrast.test.ts` checks all of them.
 - 2026-10-28 Stage 10: the brick red accent (#BE312D) and the error red (`--danger` #B42318) are close, so "Clipboard blocked" does not rely on colour. It keeps its warning-triangle icon and plain wording ("Clipboard blocked. Use Download instead."), and it now appears in its own `role="alert"` region on the preview, separate from the polite `role="status"` region used for "Copied to clipboard" and the 3D hint. Both colours are as designed.
+- 2026-10-28 Stage 11: the "i" button (`About Brickyard`, `aria-haspopup="dialog"`) sits left of the theme switch on both layouts, 32 px on the compact desktop bar and 40 px on the phone. Both top-bar icons share a `.plain-icon-btn` style (no border or background until hovered). App now builds the header once and hands it to `PhoneEditor`, so the About state and the button ref live in one place.
 
 ## Log
 (One short line per stage when finished: what was built, checks run, anything skipped or `[!]`.)

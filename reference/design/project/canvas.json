@@ -152,6 +152,34 @@
       "w": 768,
       "x": 3000,
       "y": 5900
+    },
+    "DesktopAbout.dc.html": {
+      "h": 900,
+      "title": "Desktop, About dialog, 1440 x 900",
+      "w": 1440,
+      "x": 2100,
+      "y": 7200
+    },
+    "DesktopAboutDark.dc.html": {
+      "h": 900,
+      "title": "Desktop, About dialog, dark appearance",
+      "w": 1440,
+      "x": 3640,
+      "y": 7200
+    },
+    "PhoneAbout.dc.html": {
+      "h": 650,
+      "title": "Phone, About (full-screen sheet), 390 x 650",
+      "w": 390,
+      "x": 5200,
+      "y": 7200
+    },
+    "PhoneAboutDark.dc.html": {
+      "h": 650,
+      "title": "Phone, About, dark appearance",
+      "w": 390,
+      "x": 5700,
+      "y": 7200
     }
   },
   "createdOnFiles": {
@@ -167,7 +195,8 @@
     "t-phone",
     "t-phone-editor",
     "t-light",
-    "t-desktop-dark"
+    "t-desktop-dark",
+    "t-about"
   ],
   "notes": {
     "t-desktop": {
@@ -209,6 +238,14 @@
       "w": 240,
       "x": 2100,
       "y": 3300
+    },
+    "t-about": {
+      "kind": "title1",
+      "maxW": 3000,
+      "text": "About Brickyard",
+      "w": 240,
+      "x": 2100,
+      "y": 6900
     }
   },
   "order": [
@@ -232,7 +269,11 @@
     "DesktopWide.dc.html",
     "DesktopWideDark.dc.html",
     "DesktopTablet.dc.html",
-    "DesktopTabletDark.dc.html"
+    "DesktopTabletDark.dc.html",
+    "DesktopAbout.dc.html",
+    "DesktopAboutDark.dc.html",
+    "PhoneAbout.dc.html",
+    "PhoneAboutDark.dc.html"
   ],
   "pages": [],
   "title": "Identicon Lab"

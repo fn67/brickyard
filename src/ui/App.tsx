@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react';
 import { Header } from './Header';
 import { NameField } from './NameField';
 import { PhoneEditor } from './PhoneEditor';
@@ -15,14 +16,20 @@ export function App() {
   const exporter = useExport(state.model, state.name, state.style, state.view);
   const view3d = useView3d(state, exporter.capture3d);
   const phone = useMediaQuery(PHONE_QUERY);
+  const [, setAboutOpen] = useState(false);
+  const aboutBtn = useRef<HTMLButtonElement>(null);
+
+  const header = (
+    <Header compact={phone} appearance={appearance} onToggleAppearance={toggle} onAbout={() => setAboutOpen(true)} aboutRef={aboutBtn} />
+  );
 
   if (phone) {
-    return <PhoneEditor state={state} exporter={exporter} view3d={view3d} appearance={appearance} onToggleAppearance={toggle} />;
+    return <PhoneEditor state={state} exporter={exporter} view3d={view3d} header={header} />;
   }
 
   return (
     <div className="app desktop">
-      <Header appearance={appearance} onToggleAppearance={toggle} />
+      {header}
       <div className="desktop-wrap">
         <NameField
           placeholder="Enter anything to see your avatar: a username, name or any string"
@@ -30,16 +37,16 @@ export function App() {
           onChange={state.setField}
           onShuffle={state.shuffle}
         />
-      <main className="workspace">
-        <PreviewPanel
-          state={state}
-          exporter={exporter}
-          webgl={view3d.webgl}
-          scene={view3d.scene}
-          viewControls={view3d.controls({ zoomButtons: true })}
-        />
-        <StylesPanel state={state} />
-      </main>
+        <main className="workspace">
+          <PreviewPanel
+            state={state}
+            exporter={exporter}
+            webgl={view3d.webgl}
+            scene={view3d.scene}
+            viewControls={view3d.controls({ zoomButtons: true })}
+          />
+          <StylesPanel state={state} />
+        </main>
       </div>
     </div>
   );

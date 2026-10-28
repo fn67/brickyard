@@ -54,6 +54,19 @@ export const MoonIcon = (p: IconProps) => (
   </Svg>
 );
 
+export const InfoIcon = (p: IconProps) => (
+  <Svg size={20} {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 11v5M12 8h.01" />
+  </Svg>
+);
+
+export const CloseIcon = (p: IconProps) => (
+  <Svg size={18} strokeWidth={1.9} {...p}>
+    <path d="M18 6 6 18M6 6l12 12" />
+  </Svg>
+);
+
 export const ShuffleIcon = (p: IconProps) => (
   <Svg {...p}>
     <path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />

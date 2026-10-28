@@ -27,8 +27,12 @@
   line-height: 22px;
 }
 
+.phone .about-btn {
+  margin: -9px 0 -9px auto;
+}
+
 .phone .theme-toggle {
-  margin: -9px -10px -9px auto;
+  margin: -9px -10px -9px 0;
 }
 
 .phone .theme-toggle svg {
